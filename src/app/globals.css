@@ -1,26 +1,61 @@
+@import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Noto+Sans+Bengali:wght@300;400;500;600;700&family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@theme {
+  --color-primary-50: #E6FBF4;
+  --color-primary-100: #B3F2DE;
+  --color-primary-200: #80E9C8;
+  --color-primary-300: #4DE0B2;
+  --color-primary-400: #1AD79C;
+  --color-primary-500: #01B178;
+  --color-primary-600: #019563;
+  --color-primary-700: #01794F;
+  --color-primary-800: #005D3B;
+  --color-primary-900: #004127;
+  --color-primary-950: #002515;
+  --color-gold: #C5A028;
+  --color-gold-light: #F5E6A3;
+  --color-dark: #1A1A2E;
+  --color-dark-light: #2D2D44;
+  --font-family-bangla: 'Hind Siliguri', 'Noto Sans Bengali', sans-serif;
+  --font-family-arabic: 'Noto Naskh Arabic', serif;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-family-bangla);
+}
+
+.islamic-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2301B178' fill-opacity='0.05'%3E%3Cpath d='M30 0L60 30L30 60L0 30z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+.arabic-text {
+  font-family: var(--font-family-arabic);
+  direction: rtl;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #01B178;
+  border-radius: 4px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.2s ease-out forwards;
 }
