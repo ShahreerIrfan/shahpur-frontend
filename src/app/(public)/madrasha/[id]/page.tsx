@@ -112,37 +112,95 @@ export default function MadrashaDetail() {
 
     return (
         <div className="min-h-screen bg-gray-50/50 pb-20">
-            {/* Hero Banner - Premium light-mint theme matching image 3 check pattern */}
-            <section className="bg-gradient-to-br from-primary-50/60 via-white to-primary-50/40 border-t border-b border-primary-100/60 py-16 relative overflow-hidden shadow-sm">
-                <div className="absolute inset-0 islamic-pattern opacity-[0.95] pointer-events-none"></div>
-                <div className="absolute top-0 right-0 w-64 h-64 bg-primary-100/10 rounded-full -translate-y-20 translate-x-20 blur-2xl"></div>
-                <div className="absolute bottom-0 left-10 w-96 h-96 bg-primary-100/10 rounded-full translate-y-40 blur-3xl"></div>
+            {/* Hero Banner - Enhanced Islamic Design */}
+            <section className="madrasha-hero-gradient border-b border-primary-200/40 py-14 md:py-20 relative overflow-hidden">
+                {/* Islamic geometric pattern overlay */}
+                <div className="absolute inset-0 islamic-pattern-hero opacity-100 pointer-events-none"></div>
+                
+                {/* Decorative corner ornaments */}
+                <div className="absolute top-0 left-0 w-32 h-32 md:w-48 md:h-48 opacity-20 pointer-events-none">
+                  <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0 0L50 0L50 10L10 10L10 50L0 50Z" stroke="#01B178" strokeWidth="1" fill="#01B178" fillOpacity="0.05"/>
+                    <path d="M0 0L40 40" stroke="#01B178" strokeWidth="0.5" strokeDasharray="4 4"/>
+                    <circle cx="25" cy="25" r="15" stroke="#01B178" strokeWidth="0.5"/>
+                  </svg>
+                </div>
+                <div className="absolute top-0 right-0 w-32 h-32 md:w-48 md:h-48 opacity-20 pointer-events-none rotate-90">
+                  <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0 0L50 0L50 10L10 10L10 50L0 50Z" stroke="#01B178" strokeWidth="1" fill="#01B178" fillOpacity="0.05"/>
+                    <path d="M0 0L40 40" stroke="#01B178" strokeWidth="0.5" strokeDasharray="4 4"/>
+                    <circle cx="25" cy="25" r="15" stroke="#01B178" strokeWidth="0.5"/>
+                  </svg>
+                </div>
+                <div className="absolute bottom-0 left-0 w-32 h-32 md:w-48 md:h-48 opacity-20 pointer-events-none -rotate-90">
+                  <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0 0L50 0L50 10L10 10L10 50L0 50Z" stroke="#01B178" strokeWidth="1" fill="#01B178" fillOpacity="0.05"/>
+                    <path d="M0 0L40 40" stroke="#01B178" strokeWidth="0.5" strokeDasharray="4 4"/>
+                    <circle cx="25" cy="25" r="15" stroke="#01B178" strokeWidth="0.5"/>
+                  </svg>
+                </div>
+                <div className="absolute bottom-0 right-0 w-32 h-32 md:w-48 md:h-48 opacity-20 pointer-events-none rotate-180">
+                  <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0 0L50 0L50 10L10 10L10 50L0 50Z" stroke="#01B178" strokeWidth="1" fill="#01B178" fillOpacity="0.05"/>
+                    <path d="M0 0L40 40" stroke="#01B178" strokeWidth="0.5" strokeDasharray="4 4"/>
+                    <circle cx="25" cy="25" r="15" stroke="#01B178" strokeWidth="0.5"/>
+                  </svg>
+                </div>
+
+                {/* Floating decorative circles */}
+                <div className="absolute top-6 right-[15%] w-20 h-20 border border-primary-200/30 rounded-full animate-float pointer-events-none"></div>
+                <div className="absolute bottom-8 left-[10%] w-14 h-14 border border-primary-200/20 rounded-full animate-float pointer-events-none" style={{animationDelay: '2s'}}></div>
+                <div className="absolute top-[30%] right-[5%] w-8 h-8 bg-primary-100/20 rounded-full animate-float pointer-events-none" style={{animationDelay: '4s'}}></div>
+                
+                {/* Soft radial glows */}
+                <div className="absolute top-0 right-0 w-80 h-80 bg-primary-100/15 rounded-full -translate-y-32 translate-x-32 blur-3xl pointer-events-none"></div>
+                <div className="absolute bottom-0 left-0 w-96 h-96 bg-primary-100/10 rounded-full translate-y-48 -translate-x-24 blur-3xl pointer-events-none"></div>
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary-50/20 rounded-full blur-3xl pointer-events-none"></div>
+
+                {/* Content */}
                 <div className="max-w-6xl mx-auto px-4 relative z-10">
-                    <Link href="/madrasha" className="inline-flex items-center gap-2 text-primary-900 text-xs font-semibold uppercase tracking-wider mb-6 bg-white hover:bg-primary-50/70 px-3.5 py-1.5 rounded-full transition-all border border-primary-100/60 shadow-sm">
-                        <FaArrowLeft className="w-2.5 h-2.5" /> সকল মাদ্রাসা
+                    <Link href="/madrasha" className="inline-flex items-center gap-2 text-primary-800 text-xs font-semibold uppercase tracking-wider mb-8 bg-white/80 backdrop-blur-sm hover:bg-white px-4 py-2 rounded-full transition-all border border-primary-100/60 shadow-sm hover:shadow-md group">
+                        <FaArrowLeft className="w-2.5 h-2.5 group-hover:-translate-x-0.5 transition-transform" /> সকল মাদ্রাসা
                     </Link>
-                    <h1 className="text-2xl md:text-4xl font-extrabold tracking-tight leading-tight mb-4 text-primary-950">{v("madrasha_name")}</h1>
-                    <div className="flex flex-wrap items-center gap-4 text-xs md:text-sm text-primary-900/90">
+                    
+                    {/* Bismillah */}
+                    <p className="arabic-text text-primary-600/70 text-base md:text-lg mb-3">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</p>
+                    
+                    <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight leading-tight mb-5 text-primary-950">
+                        {v("madrasha_name")}
+                    </h1>
+                    
+                    {/* Decorative line under title */}
+                    <div className="flex items-center gap-3 mb-6">
+                        <div className="h-[2px] w-12 hero-decorative-border rounded-full"></div>
+                        <div className="w-2 h-2 bg-primary-500 rounded-full"></div>
+                        <div className="h-[2px] w-24 hero-decorative-border rounded-full"></div>
+                    </div>
+                    
+                    <div className="flex flex-wrap items-center gap-3 text-xs md:text-sm text-primary-900/90">
                         {v("village") && (
-                            <span className="flex items-center gap-1.5 bg-white px-3 py-1 rounded-lg border border-primary-100/40 shadow-sm">
-                                <FaMapMarkerAlt className="text-primary-600 w-3 h-3" />
+                            <span className="flex items-center gap-1.5 bg-white/80 backdrop-blur-sm px-4 py-1.5 rounded-full border border-primary-100/50 shadow-sm hover:shadow-md transition-all">
+                                <FaMapMarkerAlt className="text-primary-600 w-3.5 h-3.5" />
                                 {v("village")}
                                 {v("union_parishad") ? `, ${v("union_parishad")}` : ""}
                             </span>
                         )}
                         {v("type_of_madrasha") && (
-                            <span className="bg-primary-600 text-white px-3 py-1 rounded-lg font-bold shadow-sm">
+                            <span className="bg-primary-600 text-white px-4 py-1.5 rounded-full font-bold shadow-md hover:shadow-lg hover:bg-primary-700 transition-all">
                                 {TYPE_MAP[v("type_of_madrasha")] || v("type_of_madrasha")}
                             </span>
                         )}
                         {v("year_of_establishment") && (
-                            <span className="flex items-center gap-1.5 bg-white px-3 py-1 rounded-lg border border-primary-100/40 shadow-sm">
-                                <FaCalendar className="w-3 h-3 text-primary-600" />
+                            <span className="flex items-center gap-1.5 bg-white/80 backdrop-blur-sm px-4 py-1.5 rounded-full border border-primary-100/50 shadow-sm hover:shadow-md transition-all">
+                                <FaCalendar className="w-3.5 h-3.5 text-primary-600" />
                                 প্রতিষ্ঠা: {v("year_of_establishment")}
                             </span>
                         )}
                     </div>
                 </div>
+                
+                {/* Bottom decorative border */}
+                <div className="absolute bottom-0 left-0 right-0 h-[3px] hero-decorative-border opacity-40"></div>
             </section>
 
             <div className="max-w-6xl mx-auto px-4 py-6">
