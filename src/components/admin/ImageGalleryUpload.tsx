@@ -51,10 +51,19 @@ export default function ImageGalleryUpload({
         onFilesChange(newFiles);
     };
 
-    const getMediaUrl = (path: string) => {
+    const getMediaUrl = (path: string | null) => {
         if (!path) return "";
-        if (path.startsWith("http")) return path;
-        return `http://localhost:8000${path}`;
+        let url = path;
+        const baseApi = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+        const baseUrl = baseApi.replace("/api", "");
+        
+        if (url.includes("localhost:8000")) {
+            url = url.replace("http://localhost:8000", baseUrl);
+        }
+        if (!url.startsWith("http")) {
+            url = `${baseUrl}${url}`;
+        }
+        return url;
     };
 
     const hasAnyImages = existingImages.length > 0 || previews.length > 0;

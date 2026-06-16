@@ -75,9 +75,16 @@ export default function AdminTeachersPage() {
 
     const getMediaUrl = (path: string | null) => {
         if (!path) return "";
-        if (path.startsWith("http")) return path;
+        let url = path;
         const baseUrl = API_URL.replace("/api", "");
-        return `${baseUrl}${path}`;
+        
+        if (url.includes("localhost:8000")) {
+            url = url.replace("http://localhost:8000", baseUrl);
+        }
+        if (!url.startsWith("http")) {
+            url = `${baseUrl}${url}`;
+        }
+        return url;
     };
 
     return (

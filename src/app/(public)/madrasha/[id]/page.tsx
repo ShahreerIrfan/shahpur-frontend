@@ -7,8 +7,18 @@ import { FaSpinner, FaMapMarkerAlt, FaUsers, FaUserTie, FaPhone, FaCalendar, FaA
 import Breadcrumbs from "@/components/ui/Breadcrumbs";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
-const BACKEND = "http://localhost:8000";
-const img = (p: string | null) => p ? (p.startsWith("http") ? p : `${BACKEND}${p}`) : "";
+const img = (p: string | null) => {
+    if (!p) return "";
+    let url = p;
+    const baseUrl = API.replace("/api", "");
+    if (url.includes("localhost:8000")) {
+        url = url.replace("http://localhost:8000", baseUrl);
+    }
+    if (!url.startsWith("http")) {
+        url = `${baseUrl}${url}`;
+    }
+    return url;
+};
 
 const TYPE_MAP: Record<string, string> = { nurani: "নূরানী", hifz: "হিফজ", najera: "নাজেরা", academic: "একাডেমিক" };
 
