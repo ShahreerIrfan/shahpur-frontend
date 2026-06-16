@@ -1,5 +1,44 @@
-node_modules/
-.next/
-out/
-.git/
-.env*.local
+# ── Git ──────────────────────────────────────────────────
+.git
+.gitignore
+
+# ── Dependencies (reinstalled in Docker) ─────────────────
+node_modules
+
+# ── Next.js build cache ─────────────────────────────────
+.next
+out
+
+# ── Environment ─────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+.env.production
+!.env.example
+
+# ── Docker ───────────────────────────────────────────────
+Dockerfile
+.dockerignore
+docker-compose*.yml
+
+# ── IDE ──────────────────────────────────────────────────
+.vscode
+.idea
+*.swp
+*.swo
+
+# ── OS ───────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── Not needed in image ─────────────────────────────────
+README.md
+*.md
+ai*.md
+*.ai.md
+coverage/
+.nyc_output/
+.github/
+vitest.config.ts
+eslint.config.mjs
+src/__tests__/
