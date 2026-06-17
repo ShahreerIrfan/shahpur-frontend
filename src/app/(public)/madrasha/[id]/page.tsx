@@ -21,6 +21,7 @@ const img = (p: string | null) => {
 };
 
 const TYPE_MAP: Record<string, string> = { nurani: "নূরানী", hifz: "হিফজ", najera: "নাজেরা", academic: "একাডেমিক" };
+const MEDIUM_MAP: Record<string, string> = { bangla: "বাংলা", english: "ইংরেজি" };
 
 export default function MadrashaDetail() {
     const { id } = useParams();
@@ -86,10 +87,13 @@ export default function MadrashaDetail() {
     ];
 
     const ADDRESS_ITEMS = [
-        { label: "সম্পূর্ণ ঠিকানা", key: "full_address_madrsha", icon: <FaMapMarkedAlt className="w-4 h-4" /> },
         { label: "গ্রাম", key: "village", icon: <FaTree className="w-4 h-4" /> },
         { label: "ইউনিয়ন", key: "union_parishad", icon: <FaBuilding className="w-4 h-4" /> },
-        { label: "পোস্ট অফিস", key: "post_office", icon: <FaEnvelope className="w-4 h-4" /> }
+        { label: "পোস্ট অফিস", key: "post_office", icon: <FaEnvelope className="w-4 h-4" /> },
+        { label: "থানা/উপজেলা", key: "upazila_name", icon: <FaMapMarkerAlt className="w-4 h-4" /> },
+        { label: "জেলা", key: "district_name", icon: <FaMapMarkedAlt className="w-4 h-4" /> },
+        { label: "মাদ্রাসার ধরণ", key: "type_of_madrasha", icon: <FaBuilding className="w-4 h-4" /> },
+        { label: "শিক্ষার মাধ্যম", key: "medium_of_instruction", icon: <FaGraduationCap className="w-4 h-4" /> }
     ];
 
     // Collect all gallery images for the lightbox (featured image goes first)
@@ -368,13 +372,13 @@ export default function MadrashaDetail() {
                         { count: v("year_of_establishment") || "—", label: "প্রতিষ্ঠার সন", icon: <FaCalendar className="w-5 h-5" /> },
                         { count: v("village") || "—", label: "গ্রাম", icon: <FaMapMarkerAlt className="w-5 h-5" /> }
                     ].map((stat, idx) => (
-                        <div key={idx} className="bg-white p-6 rounded-2xl border border-gray-150 shadow-sm flex items-center gap-4 hover:shadow-md transition-shadow duration-200">
+                        <div key={idx} className="bg-white p-4 md:p-6 rounded-2xl border border-gray-150 shadow-sm flex flex-col md:flex-row items-center text-center md:text-left gap-3 md:gap-4 hover:shadow-md transition-shadow duration-200 w-full min-w-0">
                             <div className="w-12 h-12 rounded-xl bg-primary-50 text-primary-600 flex items-center justify-center shrink-0">
                                 {stat.icon}
                             </div>
-                            <div>
-                                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">{stat.label}</p>
-                                <p className="text-xl font-bold text-gray-800 mt-0.5">{stat.count}</p>
+                            <div className="min-w-0 w-full">
+                                <p className="text-[10px] md:text-xs font-semibold text-gray-400 uppercase tracking-wider">{stat.label}</p>
+                                <p className="text-sm sm:text-base md:text-xl font-bold text-gray-800 mt-0.5 break-words">{stat.count}</p>
                             </div>
                         </div>
                     ))}
@@ -433,7 +437,7 @@ export default function MadrashaDetail() {
                         <div>
                             <h2 className="text-lg font-bold text-gray-800 mb-5 flex items-center gap-2">
                                 <span className="w-1.5 h-5 bg-primary-600 rounded-full"></span>
-                                ঠিকানা
+                                ঠিকানা ও সাধারণ তথ্য
                             </h2>
                             <div className="border-t border-gray-100">
                                 {ADDRESS_ITEMS.filter(item => v(item.key)).map(item => (
@@ -444,7 +448,14 @@ export default function MadrashaDetail() {
                                             </div>
                                             <span className="text-gray-500 font-normal text-xs md:text-sm">{item.label}</span>
                                         </div>
-                                        <span className="font-extrabold text-gray-950 text-xs md:text-sm text-right pl-4 leading-relaxed max-w-[65%] break-words">{v(item.key)}</span>
+                                        <span className="font-extrabold text-gray-950 text-xs md:text-sm text-right pl-4 leading-relaxed max-w-[65%] break-words">
+                                            {item.key === "type_of_madrasha" 
+                                                ? (TYPE_MAP[v(item.key)] || v(item.key)) 
+                                                : item.key === "medium_of_instruction" 
+                                                    ? (MEDIUM_MAP[v(item.key)] || v(item.key)) 
+                                                    : v(item.key)
+                                            }
+                                        </span>
                                     </div>
                                 ))}
                             </div>
