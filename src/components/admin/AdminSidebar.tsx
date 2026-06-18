@@ -20,8 +20,6 @@ const menuItems: MenuItem[] = [
         children: [
             { title: "সকল মাদ্রাসা", href: "/admin/madrasha" },
             { title: "নতুন মাদ্রাসা যোগ", href: "/admin/madrasha/create" },
-            { title: "জেলা (District)", href: "/admin/madrasha/district" },
-            { title: "থানা (Upazila)", href: "/admin/madrasha/upazila" },
         ],
     },
     {
