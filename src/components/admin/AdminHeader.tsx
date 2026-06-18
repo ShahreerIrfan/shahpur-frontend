@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { FaUser, FaBell, FaBars } from "react-icons/fa";
+import Link from "next/link";
+import { FaUser, FaBell, FaBars, FaExternalLinkAlt } from "react-icons/fa";
 
 interface AdminHeaderProps {
     onMenuToggle: () => void;
@@ -15,7 +16,7 @@ export default function AdminHeader({ onMenuToggle }: AdminHeaderProps) {
     }, []);
 
     return (
-        <header className="bg-white border-b border-gray-100 px-4 md:px-6 py-3.5 flex items-center justify-between shadow-sm">
+        <header className="sticky top-0 z-[900] bg-white border-b border-gray-100 px-4 md:px-6 py-3.5 flex items-center justify-between shadow-sm">
             <div className="flex items-center gap-3">
                 <button
                     onClick={onMenuToggle}
@@ -27,6 +28,16 @@ export default function AdminHeader({ onMenuToggle }: AdminHeaderProps) {
                 <h2 className="text-sm font-medium text-gray-550 truncate">অ্যাডমিন ড্যাশবোর্ড</h2>
             </div>
             <div className="flex items-center gap-2 md:gap-4">
+                <Link
+                    href="https://shahpurdarbarsharif.org/"
+                    target="_blank"
+                    rel="noreferrer"
+                    title="ওয়েবসাইট দেখুন"
+                    aria-label="ওয়েবসাইট দেখুন"
+                    className="w-9 h-9 bg-gray-50 rounded-xl flex items-center justify-center hover:bg-primary-50 hover:text-primary-600 text-gray-400 transition-colors"
+                >
+                    <FaExternalLinkAlt className="w-4 h-4" />
+                </Link>
                 <button className="w-9 h-9 bg-gray-50 rounded-xl flex items-center justify-center hover:bg-gray-100 transition-colors relative">
                     <FaBell className="text-gray-400 w-4 h-4" />
                     <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-primary-500 rounded-full"></span>

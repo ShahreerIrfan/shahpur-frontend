@@ -172,11 +172,6 @@ export default function AdminDashboard() {
                         <h1 className="text-2xl md:text-3xl font-extrabold mt-3 tracking-tight">আসসালামু আলাইকুম!</h1>
                         <p className="text-primary-100/90 text-sm mt-1">শাহপুর দরবার শরীফ অ্যাডমিন কন্ট্রোল প্যানেলে আপনাকে স্বাগতম।</p>
                     </div>
-                    <div className="flex items-center gap-2">
-                        <Link target="_blank" href="/" className="bg-white/10 hover:bg-white/20 text-white border border-white/25 px-4 py-2 rounded-xl text-sm font-medium transition-all shadow-sm">
-                            ওয়েবসাইট দেখুন
-                        </Link>
-                    </div>
                 </div>
             </div>
 
