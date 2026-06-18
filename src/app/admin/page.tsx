@@ -39,6 +39,7 @@ export default function AdminDashboard() {
     const [madrashaCount, setMadrashaCount] = useState<number | string>("০");
     const [khankahCount, setKhankahCount] = useState<number | string>("০");
     const [teacherCount, setTeacherCount] = useState<number | string>("০");
+    const [eventCount, setEventCount] = useState<number | string>("০");
     const [recentActivities, setRecentActivities] = useState<RecentItem[]>([]);
     const [error, setError] = useState("");
 
@@ -71,6 +72,13 @@ export default function AdminDashboard() {
             if (teacherRes.ok) {
                 const data = await teacherRes.json();
                 setTeacherCount(data.count);
+            }
+
+            // Fetch Event count
+            const eventRes = await authFetch("/events/list/");
+            if (eventRes.ok) {
+                const data = await eventRes.json();
+                setEventCount(data.count);
             }
 
             // Build recent activities (latest 3 of each)
@@ -134,12 +142,12 @@ export default function AdminDashboard() {
             text: "শিক্ষক তালিকা"
         },
         { 
-            title: "দেশ সফর", 
-            count: "১৭+", 
-            icon: <FaGlobe className="w-5 h-5" />, 
+            title: "ইভেন্ট / মাহফিল", 
+            count: eventCount, 
+            icon: <FaCalendarAlt className="w-5 h-5" />, 
             color: "from-amber-500 to-orange-600 shadow-amber-100", 
             bg: "bg-amber-50 text-amber-600",
-            text: "মোট সফর কার্যক্রম"
+            text: "অনুষ্ঠান তালিকা"
         },
     ];
 
@@ -231,6 +239,14 @@ export default function AdminDashboard() {
                                 <span className="text-xs text-gray-400 mt-1">নতুন খানকাহ শরীফ যোগ করুন</span>
                             </Link>
 
+                            <Link href="/admin/events/create" className="flex flex-col p-5 bg-gradient-to-br from-amber-50/50 to-white hover:from-amber-50 rounded-2xl border border-amber-100/70 hover:border-amber-200 transition-all group shadow-sm hover:shadow-md">
+                                <div className="w-9 h-9 bg-amber-100 text-amber-700 rounded-xl flex items-center justify-center mb-3">
+                                    <FaPlus className="w-3.5 h-3.5" />
+                                </div>
+                                <span className="text-sm font-bold text-gray-800">নতুন ইভেন্ট</span>
+                                <span className="text-xs text-gray-400 mt-1">মাহফিল বা ওরশের তথ্য যোগ করুন</span>
+                            </Link>
+
                             <Link href="/admin/madrasha" className="flex items-center gap-3 p-4 bg-gray-50/50 hover:bg-gray-50 rounded-2xl border border-gray-150 transition-all group">
                                 <div className="w-8 h-8 bg-white border border-gray-200 text-gray-600 rounded-xl flex items-center justify-center shadow-sm">
                                     <FaBookOpen className="w-3.5 h-3.5" />
@@ -249,6 +265,17 @@ export default function AdminDashboard() {
                                 <div className="text-left">
                                     <p className="text-xs font-bold text-gray-800">খানকাহ ম্যানেজ</p>
                                     <p className="text-[10px] text-gray-400">সকল খানকাহ তালিকা</p>
+                                </div>
+                                <FaArrowRight className="w-3.5 h-3.5 text-gray-300 group-hover:text-gray-600 ml-auto transition-transform group-hover:translate-x-0.5" />
+                            </Link>
+
+                            <Link href="/admin/events" className="flex items-center gap-3 p-4 bg-gray-50/50 hover:bg-gray-50 rounded-2xl border border-gray-150 transition-all group">
+                                <div className="w-8 h-8 bg-white border border-gray-200 text-gray-600 rounded-xl flex items-center justify-center shadow-sm">
+                                    <FaCalendarAlt className="w-3.5 h-3.5" />
+                                </div>
+                                <div className="text-left">
+                                    <p className="text-xs font-bold text-gray-800">ইভেন্ট ম্যানেজ</p>
+                                    <p className="text-[10px] text-gray-400">সকল মাহফিল তালিকা</p>
                                 </div>
                                 <FaArrowRight className="w-3.5 h-3.5 text-gray-300 group-hover:text-gray-600 ml-auto transition-transform group-hover:translate-x-0.5" />
                             </Link>

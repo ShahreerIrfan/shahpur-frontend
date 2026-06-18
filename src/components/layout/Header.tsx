@@ -16,6 +16,7 @@ const menuItems = [
     },
     { title: "মাদ্রাসা", url: "/madrasha" },
     { title: "খানকাহ", url: "/khankah" },
+    { title: "ইভেন্ট", url: "/events" },
     { title: "সেবা কার্যক্রম", url: "/seva" },
     { title: "গ্যালারি", url: "/gallery" },
     { title: "যোগাযোগ", url: "/contact" },

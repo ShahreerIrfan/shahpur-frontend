@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FaHome, FaMosque, FaBookOpen, FaCog, FaSignOutAlt, FaImages, FaChevronRight, FaChevronDown, FaChevronUp, FaUserTie } from "react-icons/fa";
+import { FaHome, FaMosque, FaBookOpen, FaCog, FaSignOutAlt, FaImages, FaChevronRight, FaChevronDown, FaChevronUp, FaUserTie, FaCalendarAlt } from "react-icons/fa";
 
 interface MenuItem {
     title: string;
@@ -31,6 +31,7 @@ const menuItems: MenuItem[] = [
         ],
     },
     { title: "শিক্ষক তালিকা", href: "/admin/teachers", icon: <FaUserTie className="w-4 h-4" /> },
+    { title: "ইভেন্ট / মাহফিল", href: "/admin/events", icon: <FaCalendarAlt className="w-4 h-4" /> },
     { title: "স্লাইডার", href: "/admin/sliders", icon: <FaImages className="w-4 h-4" /> },
     { title: "সেটিংস", href: "/admin/settings", icon: <FaCog className="w-4 h-4" /> },
 ];

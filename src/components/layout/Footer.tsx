@@ -49,6 +49,11 @@ export default function Footer() {
                                 </Link>
                             </li>
                             <li>
+                                <Link href="/events" className="text-sm hover:text-primary-400 transition-colors">
+                                    ইভেন্ট ও মাহফিল
+                                </Link>
+                            </li>
+                            <li>
                                 <Link href="/seva" className="text-sm hover:text-primary-400 transition-colors">
                                     সেবা কার্যক্রম
                                 </Link>
