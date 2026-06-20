@@ -32,7 +32,16 @@ const menuItems: MenuItem[] = [
     },
     { title: "শিক্ষক তালিকা", href: "/admin/teachers", icon: <FaUserTie className="w-4 h-4" /> },
     { title: "ইভেন্ট / মাহফিল", href: "/admin/events", icon: <FaCalendarAlt className="w-4 h-4" /> },
-    { title: "বই / পিডিএফ", href: "/admin/books", icon: <FaFilePdf className="w-4 h-4" /> },
+    {
+        title: "বই / পিডিএফ",
+        icon: <FaFilePdf className="w-4 h-4" />,
+        children: [
+            { title: "সকল বই", href: "/admin/books" },
+            { title: "নতুন বই যোগ", href: "/admin/books/create" },
+            { title: "ক্যাটাগরি", href: "/admin/books/categories" },
+            { title: "লেখক", href: "/admin/books/authors" },
+        ],
+    },
     { title: "স্লাইডার", href: "/admin/sliders", icon: <FaImages className="w-4 h-4" /> },
     { title: "সেটিংস", href: "/admin/settings", icon: <FaCog className="w-4 h-4" /> },
 ];

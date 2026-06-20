@@ -65,7 +65,7 @@ export default function AdminBooksPage() {
 
   const filteredBooks = books.filter((book) =>
     book.title.toLowerCase().includes(search.toLowerCase()) ||
-    book.author.toLowerCase().includes(search.toLowerCase()) ||
+    book.author_name.toLowerCase().includes(search.toLowerCase()) ||
     book.category_display.toLowerCase().includes(search.toLowerCase())
   );
 
@@ -127,7 +127,7 @@ export default function AdminBooksPage() {
                   <tr key={book.id} className="hover:bg-gray-50/50 transition-colors">
                     <td className="px-6 py-4">
                       <p className="text-sm font-bold text-gray-800">{book.title}</p>
-                      <p className="text-xs text-gray-400 mt-1">{book.author || "লেখক দেয়া হয়নি"}</p>
+                      <p className="text-xs text-gray-400 mt-1">{book.author_name || "লেখক দেয়া হয়নি"}</p>
                     </td>
                     <td className="px-6 py-4">
                       <span className="text-xs font-medium bg-primary-50 text-primary-700 px-2 py-1 rounded-lg">{book.category_display}</span>

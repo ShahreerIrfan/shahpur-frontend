@@ -5,10 +5,18 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { FaArrowLeft, FaBookOpen, FaFilePdf, FaImage, FaSave, FaSpinner, FaTrash } from "react-icons/fa";
 import { authFetch } from "@/lib/api";
-import { BOOK_CATEGORIES, BOOK_LANGUAGES, BookDetail, mediaUrl } from "@/lib/books";
+import { BOOK_LANGUAGES, BookAuthor, BookCategory, BookDetail, mediaUrl } from "@/lib/books";
 
 interface BookFormProps {
   bookId?: string;
+}
+
+interface ApiList<T> {
+  results?: T[];
+}
+
+function listFromResponse<T>(data: T[] | ApiList<T>): T[] {
+  return Array.isArray(data) ? data : data.results || [];
 }
 
 export default function BookForm({ bookId }: BookFormProps) {
@@ -21,6 +29,23 @@ export default function BookForm({ bookId }: BookFormProps) {
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [pdfFile, setPdfFile] = useState<File | null>(null);
+  const [categories, setCategories] = useState<BookCategory[]>([]);
+  const [authors, setAuthors] = useState<BookAuthor[]>([]);
+
+  const fetchTaxonomies = useCallback(async () => {
+    const [categoryRes, authorRes] = await Promise.all([
+      authFetch("/books/categories/"),
+      authFetch("/books/authors/"),
+    ]);
+    if (categoryRes.ok) {
+      const data = (await categoryRes.json()) as BookCategory[] | ApiList<BookCategory>;
+      setCategories(listFromResponse(data));
+    }
+    if (authorRes.ok) {
+      const data = (await authorRes.json()) as BookAuthor[] | ApiList<BookAuthor>;
+      setAuthors(listFromResponse(data));
+    }
+  }, []);
 
   const fetchBook = useCallback(async () => {
     if (!bookId) return;
@@ -38,6 +63,7 @@ export default function BookForm({ bookId }: BookFormProps) {
   useEffect(() => {
     const load = async () => {
       try {
+        await fetchTaxonomies();
         await fetchBook();
       } catch (err) {
         setError(err instanceof Error ? err.message : "ডাটা লোড করতে সমস্যা হয়েছে।");
@@ -46,7 +72,7 @@ export default function BookForm({ bookId }: BookFormProps) {
       }
     };
     void load();
-  }, [fetchBook]);
+  }, [fetchBook, fetchTaxonomies]);
 
   const handleCoverChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -94,6 +120,11 @@ export default function BookForm({ bookId }: BookFormProps) {
     if (!data.get("pages")) {
       data.set("pages", "0");
     }
+    ["category", "author"].forEach((field) => {
+      if (!data.get(field)) {
+        data.delete(field);
+      }
+    });
 
     try {
       const res = await authFetch(isEdit ? `/books/list/${bookId}/` : "/books/list/", {
@@ -157,8 +188,9 @@ export default function BookForm({ bookId }: BookFormProps) {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-xs font-medium text-gray-600 mb-1.5">ক্যাটাগরি</label>
-                    <select name="category" defaultValue={String(value("category") || "other")} className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-500">
-                      {BOOK_CATEGORIES.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
+                    <select name="category" defaultValue={String(value("category") || "")} className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-500">
+                      <option value="">ক্যাটাগরি নির্বাচন করুন</option>
+                      {categories.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}
                     </select>
                   </div>
                   <div>
@@ -171,7 +203,10 @@ export default function BookForm({ bookId }: BookFormProps) {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-xs font-medium text-gray-600 mb-1.5">লেখক</label>
-                    <input name="author" defaultValue={String(value("author"))} className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-500" />
+                    <select name="author" defaultValue={String(value("author") || "")} className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-500">
+                      <option value="">লেখক নির্বাচন করুন</option>
+                      {authors.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}
+                    </select>
                   </div>
                   <div>
                     <label className="block text-xs font-medium text-gray-600 mb-1.5">অনুবাদক</label>

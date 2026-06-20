@@ -87,7 +87,7 @@ export default function BookDetailsPage() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
                 <div className="bg-white/80 border border-primary-100 rounded-xl px-4 py-3">
                   <p className="text-xs text-gray-400 mb-1">লেখক</p>
-                  <p className="font-bold text-gray-800">{book.author || "উল্লেখ নেই"}</p>
+                  <p className="font-bold text-gray-800">{book.author_name || "উল্লেখ নেই"}</p>
                 </div>
                 <div className="bg-white/80 border border-primary-100 rounded-xl px-4 py-3">
                   <p className="text-xs text-gray-400 mb-1">পৃষ্ঠা</p>

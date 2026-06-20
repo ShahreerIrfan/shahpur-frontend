@@ -4,9 +4,10 @@ export interface BookListItem {
   id: number;
   slug: string;
   title: string;
-  category: string;
+  category: number | null;
   category_display: string;
-  author: string;
+  author: number | null;
+  author_name: string;
   translator: string;
   publisher: string;
   publication_year: string;
@@ -24,22 +25,33 @@ export interface BookListItem {
 }
 
 export interface BookDetail extends BookListItem {
+  author_title: string;
   description: string;
   created_at: string;
   updated_at: string;
 }
 
-export const BOOK_CATEGORIES = [
-  { value: "quran", label: "কুরআন ও তাফসীর" },
-  { value: "hadith", label: "হাদিস" },
-  { value: "fiqh", label: "ফিকহ" },
-  { value: "tasawwuf", label: "তাসাউফ" },
-  { value: "biography", label: "জীবনী" },
-  { value: "history", label: "ইতিহাস" },
-  { value: "dua", label: "দোয়া ও আমল" },
-  { value: "madrasha", label: "মাদ্রাসা পাঠ্য" },
-  { value: "other", label: "অন্যান্য" },
-];
+export interface BookCategory {
+  id: number;
+  name: string;
+  slug: string;
+  description: string;
+  is_active: boolean;
+  order: number;
+  books_count: number;
+}
+
+export interface BookAuthor {
+  id: number;
+  name: string;
+  slug: string;
+  title: string;
+  biography: string;
+  photo: string | null;
+  is_active: boolean;
+  order: number;
+  books_count: number;
+}
 
 export const BOOK_LANGUAGES = [
   { value: "bn", label: "বাংলা" },
@@ -59,10 +71,6 @@ export function mediaUrl(path: string | null) {
     return `${baseUrl}${path}`;
   }
   return path;
-}
-
-export function bookCategoryLabel(category: string) {
-  return BOOK_CATEGORIES.find((item) => item.value === category)?.label || category;
 }
 
 export function bookLanguageLabel(language: string) {

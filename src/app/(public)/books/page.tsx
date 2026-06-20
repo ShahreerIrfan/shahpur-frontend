@@ -7,7 +7,7 @@ import { FaArrowRight, FaBookOpen, FaDownload, FaFilePdf, FaLanguage, FaSearch, 
 import Breadcrumbs from "@/components/ui/Breadcrumbs";
 import PageHero from "@/components/ui/PageHero";
 import { API_URL } from "@/lib/api";
-import { BOOK_CATEGORIES, BOOK_LANGUAGES, BookListItem, mediaUrl } from "@/lib/books";
+import { BOOK_LANGUAGES, BookCategory, BookListItem, mediaUrl } from "@/lib/books";
 
 interface ApiList<T> {
   results?: T[];
@@ -23,6 +23,18 @@ export default function BooksArchivePage() {
   const [category, setCategory] = useState("");
   const [language, setLanguage] = useState("");
   const [search, setSearch] = useState("");
+  const [categories, setCategories] = useState<BookCategory[]>([]);
+
+  useEffect(() => {
+    const loadTaxonomies = async () => {
+      const res = await fetch(`${API_URL}/books/categories/`);
+      if (res.ok) {
+        const data = (await res.json()) as BookCategory[] | ApiList<BookCategory>;
+        setCategories(listFromResponse(data));
+      }
+    };
+    void loadTaxonomies();
+  }, []);
 
   useEffect(() => {
     const load = async () => {
@@ -62,7 +74,7 @@ export default function BooksArchivePage() {
           </div>
           <select value={category} onChange={(e) => setCategory(e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary-500 bg-gray-50">
             <option value="">সকল ক্যাটাগরি</option>
-            {BOOK_CATEGORIES.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
+            {categories.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}
           </select>
           <select value={language} onChange={(e) => setLanguage(e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary-500 bg-gray-50">
             <option value="">সকল ভাষা</option>
@@ -99,7 +111,7 @@ export default function BooksArchivePage() {
                 </div>
                 <div className="p-5 flex-1 flex flex-col">
                   <h3 className="font-extrabold text-gray-800 mb-2 leading-snug group-hover:text-primary-700 transition-colors line-clamp-2">{book.title}</h3>
-                  {book.author && <p className="text-xs font-semibold text-primary-700 mb-2">{book.author}</p>}
+                  {book.author_name && <p className="text-xs font-semibold text-primary-700 mb-2">{book.author_name}</p>}
                   {book.short_description && <p className="text-sm text-gray-500 line-clamp-2 mb-4">{book.short_description}</p>}
                   <div className="space-y-2 text-xs text-gray-500 mt-auto">
                     <div className="flex items-center gap-2">
