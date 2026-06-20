@@ -30,7 +30,10 @@ export default function MadrashaListPage() {
     useEffect(() => {
         fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"}/madrasha/list/`)
             .then(res => res.json())
-            .then(data => setMadrashas(Array.isArray(data) ? data : data.results || []))
+            .then(data => {
+                const items = Array.isArray(data) ? data : data.results || [];
+                setMadrashas([...items].sort((a, b) => b.id - a.id));
+            })
             .finally(() => setLoading(false));
     }, []);
 

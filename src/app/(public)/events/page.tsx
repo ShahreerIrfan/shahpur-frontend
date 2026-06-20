@@ -29,7 +29,7 @@ export default function EventsArchivePage() {
         const res = await fetch(url);
         if (res.ok) {
           const data = (await res.json()) as EventListItem[] | ApiList<EventListItem>;
-          setEvents(listFromResponse(data));
+          setEvents(listFromResponse(data).sort((a, b) => b.id - a.id));
         }
       } finally {
         setLoading(false);

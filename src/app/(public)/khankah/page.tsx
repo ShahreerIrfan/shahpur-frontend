@@ -28,7 +28,10 @@ export default function KhankahListPage() {
     useEffect(() => {
         fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"}/khankah/list/`)
             .then(res => res.json())
-            .then(data => setKhankahs(Array.isArray(data) ? data : data.results || []))
+            .then(data => {
+                const items = Array.isArray(data) ? data : data.results || [];
+                setKhankahs([...items].sort((a, b) => b.id - a.id));
+            })
             .finally(() => setLoading(false));
     }, []);
 

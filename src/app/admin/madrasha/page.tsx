@@ -77,11 +77,13 @@ export default function AdminMadrashaPage() {
         }
     };
 
-    const filteredMadrashas = madrashas.filter((m) => {
-        const matchesSearch = m.madrasha_name.toLowerCase().includes(search.toLowerCase());
-        const matchesType = !typeFilter || m.type_of_madrasha === typeFilter;
-        return matchesSearch && matchesType;
-    });
+    const filteredMadrashas = [...madrashas]
+        .sort((a, b) => b.id - a.id)
+        .filter((m) => {
+            const matchesSearch = m.madrasha_name.toLowerCase().includes(search.toLowerCase());
+            const matchesType = !typeFilter || m.type_of_madrasha === typeFilter;
+            return matchesSearch && matchesType;
+        });
 
     return (
         <div>

@@ -63,10 +63,12 @@ export default function AdminEventsPage() {
     }
   };
 
-  const filteredEvents = events.filter((event) =>
-    event.title.toLowerCase().includes(search.toLowerCase()) ||
-    event.venue_name.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredEvents = [...events]
+    .sort((a, b) => b.id - a.id)
+    .filter((event) =>
+      event.title.toLowerCase().includes(search.toLowerCase()) ||
+      event.venue_name.toLowerCase().includes(search.toLowerCase())
+    );
 
   return (
     <div>

@@ -68,9 +68,9 @@ export default function AdminKhankahPage() {
         }
     };
 
-    const filteredKhankahs = khankahs.filter((k) =>
-        k.khankah_name.toLowerCase().includes(search.toLowerCase())
-    );
+    const filteredKhankahs = [...khankahs]
+        .sort((a, b) => b.id - a.id)
+        .filter((k) => k.khankah_name.toLowerCase().includes(search.toLowerCase()));
 
     return (
         <div>
