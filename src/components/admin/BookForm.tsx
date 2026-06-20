@@ -101,6 +101,12 @@ export default function BookForm({ bookId }: BookFormProps) {
       return item instanceof HTMLInputElement && item.checked;
     };
 
+    if (!isEdit && !pdfFile) {
+      setError("নতুন বই যোগ করতে PDF ফাইল আপলোড করুন।");
+      setSaving(false);
+      return;
+    }
+
     data.set("is_published", isChecked("is_published") ? "true" : "false");
     data.set("is_featured", isChecked("is_featured") ? "true" : "false");
     data.set("show_on_homepage", isChecked("show_on_homepage") ? "true" : "false");
@@ -274,7 +280,7 @@ export default function BookForm({ bookId }: BookFormProps) {
               <label className="block w-full border-2 border-dashed border-gray-200 rounded-xl p-5 text-center cursor-pointer hover:border-primary-300 hover:bg-primary-50/30 transition-all">
                 <FaFilePdf className="w-7 h-7 text-red-300 mx-auto mb-2" />
                 <p className="text-xs text-gray-500">{pdfFile ? pdfFile.name : "PDF আপলোড করুন"}</p>
-                <input name="pdf_file" type="file" accept="application/pdf,.pdf" required={!isEdit} className="hidden" onChange={handlePdfChange} />
+                <input name="pdf_file" type="file" accept="application/pdf,.pdf" className="hidden" onChange={handlePdfChange} />
               </label>
             </div>
 
