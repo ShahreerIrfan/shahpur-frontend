@@ -177,6 +177,12 @@ export default function BookForm({ bookId }: BookFormProps) {
       </div>
 
       {error && <div className="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">{error}</div>}
+      {saving && (
+        <div className="mb-6 bg-primary-50 border border-primary-100 text-primary-700 px-4 py-3 rounded-xl text-sm flex items-center gap-2">
+          <FaSpinner className="w-4 h-4 animate-spin" />
+          <span>{isEdit ? "বইয়ের তথ্য আপডেট হচ্ছে..." : "PDF আপলোড ও বই সংরক্ষণ হচ্ছে। বড় PDF হলে একটু সময় লাগতে পারে।"}</span>
+        </div>
+      )}
 
       <form onSubmit={handleSubmit}>
         <div className="grid grid-cols-1 xl:grid-cols-[1fr_330px] gap-6">
@@ -263,8 +269,8 @@ export default function BookForm({ bookId }: BookFormProps) {
                 </label>
               </div>
               <button type="submit" disabled={saving} className="w-full inline-flex items-center justify-center gap-2 bg-primary-500 hover:bg-primary-600 disabled:bg-primary-300 text-white py-2.5 rounded-xl text-sm font-medium transition-all shadow-sm">
-                <FaSave className="w-3.5 h-3.5" />
-                {saving ? "সংরক্ষণ হচ্ছে..." : isEdit ? "আপডেট করুন" : "সংরক্ষণ করুন"}
+                {saving ? <FaSpinner className="w-3.5 h-3.5 animate-spin" /> : <FaSave className="w-3.5 h-3.5" />}
+                {saving ? (isEdit ? "আপডেট হচ্ছে..." : "আপলোড হচ্ছে...") : isEdit ? "আপডেট করুন" : "সংরক্ষণ করুন"}
               </button>
             </div>
 

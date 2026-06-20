@@ -1,9 +1,10 @@
 import BookForm from "@/components/admin/BookForm";
 
 interface EditBookPageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
-export default function EditBookPage({ params }: EditBookPageProps) {
-  return <BookForm bookId={params.id} />;
+export default async function EditBookPage({ params }: EditBookPageProps) {
+  const { id } = await params;
+  return <BookForm bookId={id} />;
 }

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { FaArrowLeft, FaBookOpen, FaDownload, FaEye, FaFilePdf, FaLanguage, FaSpinner } from "react-icons/fa";
 import Breadcrumbs from "@/components/ui/Breadcrumbs";
+import PdfBookReader from "@/components/books/PdfBookReader";
 import { API_URL } from "@/lib/api";
 import { BookDetail, mediaUrl } from "@/lib/books";
 
@@ -30,10 +31,13 @@ export default function BookDetailsPage() {
     void load();
   }, [id]);
 
-  const handleDownload = async () => {
+  const registerDownload = async () => {
     if (!book) return;
-    await fetch(`${API_URL}/books/list/${book.id}/download/`, { method: "POST" }).catch(() => null);
-    window.open(mediaUrl(book.pdf_file), "_blank", "noopener,noreferrer");
+    const res = await fetch(`${API_URL}/books/list/${book.id}/download/`, { method: "POST" }).catch(() => null);
+    if (res?.ok) {
+      const data = (await res.json().catch(() => null)) as { download_count?: number } | null;
+      setBook((current) => current ? { ...current, download_count: data?.download_count ?? current.download_count + 1 } : current);
+    }
   };
 
   if (loading) {
@@ -98,14 +102,9 @@ export default function BookDetailsPage() {
                   <p className="font-bold text-gray-800">{book.view_count} / {book.download_count}</p>
                 </div>
               </div>
-              <div className="flex flex-col sm:flex-row gap-3 mt-6">
-                <button onClick={handleDownload} className="inline-flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-5 py-3 rounded-xl text-sm font-bold transition-colors shadow-sm">
-                  <FaDownload className="w-3.5 h-3.5" /> PDF খুলুন / ডাউনলোড
-                </button>
-                <a href={pdfUrl} target="_blank" rel="noreferrer" className="inline-flex items-center justify-center gap-2 bg-white hover:bg-primary-50 text-primary-700 border border-primary-100 px-5 py-3 rounded-xl text-sm font-bold transition-colors">
-                  <FaFilePdf className="w-3.5 h-3.5" /> নতুন ট্যাবে পড়ুন
-                </a>
-              </div>
+              <a href="#book-reader" className="inline-flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-5 py-3 rounded-xl text-sm font-bold transition-colors shadow-sm mt-6">
+                <FaBookOpen className="w-3.5 h-3.5" /> বই রিডারে পড়ুন
+              </a>
             </div>
           </div>
         </div>
@@ -123,18 +122,7 @@ export default function BookDetailsPage() {
               </div>
             )}
 
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-              <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between gap-3">
-                <div>
-                  <h2 className="text-xl font-bold text-gray-800">PDF রিডার</h2>
-                  <p className="text-xs text-gray-400 mt-1">বইটি সরাসরি ব্রাউজারে পড়ুন</p>
-                </div>
-                <a href={pdfUrl} target="_blank" rel="noreferrer" className="text-xs font-bold text-primary-600 bg-primary-50 hover:bg-primary-100 px-3 py-2 rounded-lg transition-colors">
-                  ফুলস্ক্রিন
-                </a>
-              </div>
-              <iframe src={`${pdfUrl}#toolbar=1&navpanes=0`} title={book.title} className="w-full h-[720px] bg-gray-100" />
-            </div>
+            <PdfBookReader pdfUrl={pdfUrl} title={book.title} onDownload={registerDownload} />
           </div>
 
           <aside className="space-y-5">
