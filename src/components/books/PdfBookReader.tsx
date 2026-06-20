@@ -582,12 +582,10 @@ export default function PdfBookReader({ pdfUrl, title, onDownload }: PdfBookRead
                   onTouchMove={handleTouchMove}
                   className="book-turn-stage relative flex justify-center items-start gap-0 overflow-auto pb-8 px-2 md:px-8"
                 >
-                  <button type="button" aria-label="আগের পৃষ্ঠা" onClick={() => turnPage("prev")} disabled={turning || page <= 1} className="book-edge book-edge-left" />
-                  <button type="button" aria-label="পরের পৃষ্ঠা" onClick={() => turnPage("next")} disabled={turning || page >= totalPages} className="book-edge book-edge-right" />
                   {turning && <div className={`book-flip-sheet ${turnDirection === "next" ? "book-flip-next" : "book-flip-prev"}`} />}
                   {isDoublePage && <div className="book-spine" />}
                   {visibleBookPages.map((pageNumber) => (
-                    <PdfCanvasPage key={`${pageNumber}-${scale}-${resolvedMode}`} doc={doc} pageNumber={pageNumber} scale={scale} filterClass={canvasFilter} isLeftPage={isDoublePage && pageNumber === visibleBookPages[0]} />
+                    <PdfCanvasPage key={`${pageNumber}-${scale}`} doc={doc} pageNumber={pageNumber} scale={scale} filterClass={canvasFilter} isLeftPage={isDoublePage && pageNumber === visibleBookPages[0]} />
                   ))}
                 </div>
               ) : (
@@ -751,46 +749,6 @@ export default function PdfBookReader({ pdfUrl, title, onDownload }: PdfBookRead
             radial-gradient(ellipse at center, rgba(0,0,0,0.30), rgba(0,0,0,0.08) 38%, transparent 68%),
             linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
           filter: blur(0.2px);
-        }
-
-        .book-edge {
-          position: sticky;
-          top: 44%;
-          width: 44px;
-          height: 120px;
-          border: 0;
-          border-radius: 999px;
-          opacity: 0;
-          z-index: 20;
-          transition: opacity 180ms ease, transform 180ms ease;
-          background: rgba(255,255,255,0.75);
-          box-shadow: 0 16px 40px rgba(15, 23, 42, 0.18);
-        }
-
-        .book-turn-stage:hover .book-edge:not(:disabled) {
-          opacity: 1;
-        }
-
-        .book-edge:disabled {
-          display: none;
-        }
-
-        .book-edge-left {
-          left: 12px;
-          margin-right: -44px;
-        }
-
-        .book-edge-right {
-          right: 12px;
-          margin-left: -44px;
-        }
-
-        .book-edge-left:hover {
-          transform: translateX(-4px);
-        }
-
-        .book-edge-right:hover {
-          transform: translateX(4px);
         }
 
         .book-flip-sheet {
