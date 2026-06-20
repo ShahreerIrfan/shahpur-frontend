@@ -158,6 +158,7 @@ export default function AdminMadrashaPage() {
                         <table className="w-full">
                             <thead>
                                 <tr className="bg-gray-50 border-b border-gray-100">
+                                    <th className="text-left px-6 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">SL</th>
                                     <th className="text-left px-6 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">নাম</th>
                                     <th className="text-left px-6 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">জেলা</th>
                                     <th className="text-left px-6 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">থানা</th>
@@ -167,8 +168,11 @@ export default function AdminMadrashaPage() {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-50">
-                                {filteredMadrashas.map((madrasha) => (
+                                {filteredMadrashas.map((madrasha, index) => (
                                     <tr key={madrasha.id} className="hover:bg-gray-50/50 transition-colors">
+                                        <td className="px-6 py-4">
+                                            <span className="text-sm font-bold text-gray-500">{index + 1}</span>
+                                        </td>
                                         <td className="px-6 py-4">
                                             <span className="text-sm font-medium text-gray-800">{madrasha.madrasha_name}</span>
                                         </td>

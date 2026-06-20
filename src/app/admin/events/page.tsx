@@ -113,6 +113,7 @@ export default function AdminEventsPage() {
             <table className="w-full">
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-100">
+                  <th className="text-left px-6 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">SL</th>
                   <th className="text-left px-6 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">ইভেন্ট</th>
                   <th className="text-left px-6 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">ক্যাটাগরি</th>
                   <th className="text-left px-6 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">তারিখ</th>
@@ -122,8 +123,11 @@ export default function AdminEventsPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
-                {filteredEvents.map((event) => (
+                {filteredEvents.map((event, index) => (
                   <tr key={event.id} className="hover:bg-gray-50/50 transition-colors">
+                    <td className="px-6 py-4">
+                      <span className="text-sm font-bold text-gray-500">{index + 1}</span>
+                    </td>
                     <td className="px-6 py-4">
                       <p className="text-sm font-bold text-gray-800">{event.title}</p>
                       <p className="text-xs text-gray-400 mt-1">{event.venue_name || "ভেন্যু দেয়া হয়নি"}</p>

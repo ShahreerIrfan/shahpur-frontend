@@ -132,6 +132,7 @@ export default function AdminKhankahPage() {
                         <table className="w-full">
                             <thead>
                                 <tr className="bg-gray-50 border-b border-gray-100">
+                                    <th className="text-left px-6 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">SL</th>
                                     <th className="text-left px-6 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">নাম</th>
                                     <th className="text-left px-6 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">গ্রাম</th>
                                     <th className="text-left px-6 py-3.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">ইউনিয়ন</th>
@@ -140,8 +141,11 @@ export default function AdminKhankahPage() {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-50">
-                                {filteredKhankahs.map((khankah) => (
+                                {filteredKhankahs.map((khankah, index) => (
                                     <tr key={khankah.id} className="hover:bg-gray-50/50 transition-colors">
+                                        <td className="px-6 py-4">
+                                            <span className="text-sm font-bold text-gray-500">{index + 1}</span>
+                                        </td>
                                         <td className="px-6 py-4">
                                             <span className="text-sm font-medium text-gray-800">{khankah.khankah_name}</span>
                                         </td>
