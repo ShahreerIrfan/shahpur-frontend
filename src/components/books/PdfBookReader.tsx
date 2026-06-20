@@ -14,10 +14,7 @@ import {
   FaHighlighter,
   FaLayerGroup,
   FaListUl,
-  FaMicrophone,
   FaMoon,
-  FaPause,
-  FaPlay,
   FaRegBookmark,
   FaRegStar,
   FaScroll,
@@ -26,11 +23,8 @@ import {
   FaSearchPlus,
   FaStar,
   FaStickyNote,
-  FaStop,
   FaSun,
   FaThLarge,
-  FaVolumeMute,
-  FaVolumeUp,
 } from "react-icons/fa";
 import * as pdfjsLib from "pdfjs-dist";
 import type { PDFDocumentProxy } from "pdfjs-dist";
@@ -213,7 +207,6 @@ export default function PdfBookReader({ pdfUrl, title, onDownload }: PdfBookRead
   const containerRef = useRef<HTMLDivElement | null>(null);
   const pinchStartRef = useRef(0);
   const zoomStartRef = useRef(1);
-  const speechRef = useRef<SpeechSynthesisUtterance | null>(null);
   const [doc, setDoc] = useState<PDFDocumentProxy | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -224,7 +217,6 @@ export default function PdfBookReader({ pdfUrl, title, onDownload }: PdfBookRead
   const [fitMode, setFitMode] = useState<FitMode>("width");
   const [mode, setMode] = useState<ReaderMode>("light");
   const [viewMode, setViewMode] = useState<ViewMode>("book");
-  const [soundOn, setSoundOn] = useState(false);
   const [turning, setTurning] = useState(false);
   const [turnDirection, setTurnDirection] = useState<"next" | "prev">("next");
   const [bookmarks, setBookmarks] = useState<ReaderBookmark[]>([]);
@@ -235,11 +227,7 @@ export default function PdfBookReader({ pdfUrl, title, onDownload }: PdfBookRead
   const [searchQuery, setSearchQuery] = useState("");
   const [searching, setSearching] = useState(false);
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
-  const [toolsOpen, setToolsOpen] = useState(true);
-  const [speaking, setSpeaking] = useState(false);
-  const [speechRate, setSpeechRate] = useState(1);
-  const [autoScroll, setAutoScroll] = useState(false);
-  const [autoScrollSpeed, setAutoScrollSpeed] = useState(2);
+  const [toolsOpen, setToolsOpen] = useState(false);
   const [sessionSeconds, setSessionSeconds] = useState(0);
 
   const storageKey = useMemo(() => `pdf-reader:${storageSafeKey(pdfUrl)}`, [pdfUrl]);
@@ -273,14 +261,6 @@ export default function PdfBookReader({ pdfUrl, title, onDownload }: PdfBookRead
   }, []);
 
   useEffect(() => {
-    if (!autoScroll) return;
-    const timer = window.setInterval(() => {
-      containerRef.current?.scrollBy({ top: autoScrollSpeed * 12, behavior: "smooth" });
-    }, 450);
-    return () => window.clearInterval(timer);
-  }, [autoScroll, autoScrollSpeed]);
-
-  useEffect(() => {
     let cancelled = false;
     const load = async () => {
       setLoading(true);
@@ -309,7 +289,6 @@ export default function PdfBookReader({ pdfUrl, title, onDownload }: PdfBookRead
     void load();
     return () => {
       cancelled = true;
-      window.speechSynthesis?.cancel();
     };
   }, [pdfUrl, storageKey]);
 
@@ -390,21 +369,6 @@ export default function PdfBookReader({ pdfUrl, title, onDownload }: PdfBookRead
     }
   }, [totalPages, viewMode]);
 
-  const playTurnSound = useCallback(() => {
-    if (!soundOn) return;
-    const context = new AudioContext();
-    const oscillator = context.createOscillator();
-    const gain = context.createGain();
-    oscillator.type = "triangle";
-    oscillator.frequency.setValueAtTime(220, context.currentTime);
-    gain.gain.setValueAtTime(0.03, context.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, context.currentTime + 0.12);
-    oscillator.connect(gain);
-    gain.connect(context.destination);
-    oscillator.start();
-    oscillator.stop(context.currentTime + 0.12);
-  }, [soundOn]);
-
   const turnPage = useCallback((direction: "next" | "prev") => {
     if (!doc || turning) return;
     const step = isDoublePage ? 2 : 1;
@@ -412,10 +376,9 @@ export default function PdfBookReader({ pdfUrl, title, onDownload }: PdfBookRead
     if (nextPage === page) return;
     setTurnDirection(direction);
     setTurning(true);
-    playTurnSound();
     window.setTimeout(() => goToPage(nextPage), 280);
     window.setTimeout(() => setTurning(false), 720);
-  }, [doc, goToPage, isDoublePage, page, playTurnSound, turning]);
+  }, [doc, goToPage, isDoublePage, page, turning]);
 
   useEffect(() => {
     const handleKey = (event: KeyboardEvent) => {
@@ -487,24 +450,6 @@ export default function PdfBookReader({ pdfUrl, title, onDownload }: PdfBookRead
     if (results[0]) goToPage(results[0].page);
   };
 
-  const toggleReadAloud = async () => {
-    if (!doc || typeof window === "undefined") return;
-    if (speaking) {
-      window.speechSynthesis.cancel();
-      setSpeaking(false);
-      return;
-    }
-    const text = await getPageText(doc, page);
-    if (!text.trim()) return;
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = "bn-BD";
-    utterance.rate = speechRate;
-    utterance.onend = () => setSpeaking(false);
-    speechRef.current = utterance;
-    setSpeaking(true);
-    window.speechSynthesis.speak(utterance);
-  };
-
   const handleScroll = () => {
     if (viewMode !== "scroll") return;
     const elements = Array.from(document.querySelectorAll<HTMLElement>("[data-scroll-page]"));
@@ -522,6 +467,10 @@ export default function PdfBookReader({ pdfUrl, title, onDownload }: PdfBookRead
   };
 
   const zoomPercent = Math.round(zoom * 100);
+  const modeLabel = { light: "Light", sepia: "Sepia", dark: "Dark", auto: "Auto" }[mode];
+  const cycleMode = () => {
+    setMode((current) => current === "light" ? "sepia" : current === "sepia" ? "dark" : current === "dark" ? "auto" : "light");
+  };
 
   return (
     <div id="book-reader" className={`rounded-[28px] border border-black/5 shadow-xl overflow-hidden ${readerClasses}`}>
@@ -533,9 +482,9 @@ export default function PdfBookReader({ pdfUrl, title, onDownload }: PdfBookRead
             </span>
             বই রিডার
           </h2>
-          <p className="text-xs text-gray-400 mt-1">শেষ পড়া পৃষ্ঠা, বুকমার্ক, সার্চ, নোট, TTS, অটো স্ক্রল এবং বইয়ের মতো পৃষ্ঠা উল্টানো একসাথে।</p>
+          <p className="text-xs text-gray-400 mt-1">শেষ পড়া পৃষ্ঠা, বুকমার্ক, সার্চ, নোট এবং বইয়ের মতো পৃষ্ঠা উল্টানো একসাথে।</p>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="hidden md:flex flex-wrap items-center gap-2">
           <button type="button" onClick={() => setMode("light")} className={`px-3 py-2 rounded-xl text-xs font-bold border transition-all ${mode === "light" ? "bg-primary-600 text-white border-primary-600 shadow-sm" : "bg-white text-gray-600 border-gray-200 hover:border-primary-200"}`}>
             <FaSun className="inline w-3 h-3 mr-1" /> Light
           </button>
@@ -574,9 +523,6 @@ export default function PdfBookReader({ pdfUrl, title, onDownload }: PdfBookRead
           <button type="button" onClick={() => setFavorite((current) => !current)} className="w-9 h-9 bg-gray-50 hover:bg-gray-100 rounded-xl flex items-center justify-center text-gray-600">
             {favorite ? <FaStar className="w-3.5 h-3.5 text-amber-500" /> : <FaRegStar className="w-3.5 h-3.5" />}
           </button>
-          <button type="button" onClick={() => setSoundOn((current) => !current)} className="w-9 h-9 bg-gray-50 hover:bg-gray-100 rounded-xl flex items-center justify-center text-gray-600">
-            {soundOn ? <FaVolumeUp className="w-3.5 h-3.5" /> : <FaVolumeMute className="w-3.5 h-3.5" />}
-          </button>
           <button type="button" onClick={() => setToolsOpen((current) => !current)} className="inline-flex items-center gap-2 bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded-xl text-xs font-bold">
             <FaListUl className="w-3.5 h-3.5" /> Tools
           </button>
@@ -584,10 +530,27 @@ export default function PdfBookReader({ pdfUrl, title, onDownload }: PdfBookRead
             <FaDownload className="w-3.5 h-3.5" /> ডাউনলোড
           </button>
         </div>
+        <div className="md:hidden flex items-center gap-2 overflow-x-auto pb-1">
+          <button type="button" onClick={cycleMode} className="shrink-0 px-3 py-2 rounded-xl text-xs font-bold bg-primary-600 text-white">
+            {modeLabel}
+          </button>
+          <button type="button" onClick={() => setViewMode((current) => current === "book" ? "scroll" : "book")} className="shrink-0 px-3 py-2 rounded-xl text-xs font-bold bg-primary-50 text-primary-700 border border-primary-100">
+            {viewMode === "book" ? "Book" : "Scroll"}
+          </button>
+          <button type="button" onClick={() => setFitMode((current) => current === "width" ? "page" : "width")} className="shrink-0 px-3 py-2 rounded-xl text-xs font-bold bg-gray-50 text-gray-700 border border-gray-200">
+            {fitMode === "width" ? "Fit width" : "Fit page"}
+          </button>
+          <button type="button" onClick={toggleBookmark} className="shrink-0 w-9 h-9 bg-gray-50 rounded-xl flex items-center justify-center text-gray-600">
+            {currentPageBookmarked ? <FaBookmark className="w-3.5 h-3.5 text-primary-600" /> : <FaRegBookmark className="w-3.5 h-3.5" />}
+          </button>
+          <button type="button" onClick={() => setToolsOpen((current) => !current)} className="shrink-0 px-3 py-2 rounded-xl text-xs font-bold bg-white border border-gray-200 text-gray-700">
+            Tools
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_320px]">
-        <div ref={containerRef} onScroll={handleScroll} className={`relative max-h-[calc(100vh-96px)] overflow-auto min-h-[680px] p-4 md:p-8 bg-gradient-to-br ${readerSurface}`}>
+        <div ref={containerRef} onScroll={handleScroll} className={`relative max-h-[calc(100vh-96px)] overflow-auto min-h-[680px] p-3 md:p-8 bg-gradient-to-br ${readerSurface}`}>
           {loading ? (
             <div className="min-h-[540px] flex items-center justify-center text-sm font-semibold opacity-70">PDF লোড হচ্ছে...</div>
           ) : error || !doc ? (
@@ -595,20 +558,20 @@ export default function PdfBookReader({ pdfUrl, title, onDownload }: PdfBookRead
           ) : (
             <>
               <div className="flex items-center justify-between gap-3 mb-5">
-                <button type="button" onClick={() => turnPage("prev")} disabled={turning || page <= 1} className="inline-flex items-center gap-2 px-4 py-2 bg-white/90 disabled:opacity-40 border border-black/5 rounded-xl text-sm font-bold shadow-sm hover:-translate-x-0.5 transition-transform">
-                  <FaAngleLeft /> আগের পৃষ্ঠা
+                <button type="button" onClick={() => turnPage("prev")} disabled={turning || page <= 1} className="inline-flex items-center gap-1 px-3 md:px-4 py-2 bg-white/90 disabled:opacity-40 border border-black/5 rounded-xl text-xs md:text-sm font-bold shadow-sm hover:-translate-x-0.5 transition-transform">
+                  <FaAngleLeft /> <span className="hidden sm:inline">আগের পৃষ্ঠা</span>
                 </button>
-                <div className="text-center bg-white/75 backdrop-blur border border-white/70 rounded-2xl px-5 py-3 shadow-sm min-w-52">
+                <div className="text-center bg-white/75 backdrop-blur border border-white/70 rounded-2xl px-4 md:px-5 py-3 shadow-sm min-w-36 md:min-w-52">
                   <p className="text-sm font-extrabold">পৃষ্ঠা {viewMode === "book" ? visibleBookPages.join(" - ") : page} / {totalPages}</p>
                   <div className="h-1.5 bg-black/10 rounded-full mt-2 overflow-hidden">
                     <div className="h-full bg-primary-500 rounded-full" style={{ width: `${progress}%` }} />
                   </div>
-                  <p className="text-xs opacity-60 flex items-center justify-center gap-1 mt-1">
+                  <p className="hidden sm:flex text-xs opacity-60 items-center justify-center gap-1 mt-1">
                     <FaLayerGroup className="w-3 h-3" /> {progress}% শেষ, আনুমানিক {remainingMinutes} মিনিট বাকি
                   </p>
                 </div>
-                <button type="button" onClick={() => turnPage("next")} disabled={turning || page >= totalPages} className="inline-flex items-center gap-2 px-4 py-2 bg-white/90 disabled:opacity-40 border border-black/5 rounded-xl text-sm font-bold shadow-sm hover:translate-x-0.5 transition-transform">
-                  পরের পৃষ্ঠা <FaAngleRight />
+                <button type="button" onClick={() => turnPage("next")} disabled={turning || page >= totalPages} className="inline-flex items-center gap-1 px-3 md:px-4 py-2 bg-white/90 disabled:opacity-40 border border-black/5 rounded-xl text-xs md:text-sm font-bold shadow-sm hover:translate-x-0.5 transition-transform">
+                  <span className="hidden sm:inline">পরের পৃষ্ঠা</span> <FaAngleRight />
                 </button>
               </div>
 
@@ -697,21 +660,6 @@ export default function PdfBookReader({ pdfUrl, title, onDownload }: PdfBookRead
                   </button>
                 ))}
               </div>
-            </ReaderPanelCard>
-
-            <ReaderPanelCard title="অডিও ও অটো স্ক্রল" icon={<FaMicrophone />}>
-              <div className="flex gap-2">
-                <button type="button" onClick={() => void toggleReadAloud()} className="flex-1 rounded-xl bg-primary-600 text-white px-3 py-2 text-xs font-bold">
-                  {speaking ? <><FaStop className="inline mr-1" /> বন্ধ</> : <><FaPlay className="inline mr-1" /> পড়ুন</>}
-                </button>
-                <button type="button" onClick={() => setAutoScroll((current) => !current)} className="flex-1 rounded-xl bg-gray-100 text-gray-700 px-3 py-2 text-xs font-bold">
-                  {autoScroll ? <><FaPause className="inline mr-1" /> স্ক্রল বন্ধ</> : <><FaPlay className="inline mr-1" /> অটো স্ক্রল</>}
-                </button>
-              </div>
-              <label className="block text-xs font-bold text-gray-500 mt-3">TTS গতি: {speechRate.toFixed(1)}x</label>
-              <input type="range" min="0.6" max="1.8" step="0.1" value={speechRate} onChange={(event) => setSpeechRate(Number(event.target.value))} className="w-full" />
-              <label className="block text-xs font-bold text-gray-500 mt-2">স্ক্রল গতি: {autoScrollSpeed}</label>
-              <input type="range" min="1" max="8" step="1" value={autoScrollSpeed} onChange={(event) => setAutoScrollSpeed(Number(event.target.value))} className="w-full" />
             </ReaderPanelCard>
 
             <ReaderPanelCard title="সূচিপত্র ও পৃষ্ঠা" icon={<FaThLarge />}>
