@@ -26,6 +26,7 @@ const menuItems = [
 export default function Header() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+    const [openMobileSubmenu, setOpenMobileSubmenu] = useState<string | null>(null);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
 
@@ -33,6 +34,12 @@ export default function Header() {
         setIsLoggedIn(!!localStorage.getItem("access_token"));
         setIsAdmin(localStorage.getItem("is_admin") === "true");
     }, []);
+
+    useEffect(() => {
+        if (!mobileMenuOpen) {
+            setOpenMobileSubmenu(null);
+        }
+    }, [mobileMenuOpen]);
 
     const handleLogout = () => {
         localStorage.removeItem("access_token");
@@ -163,20 +170,39 @@ export default function Header() {
                     <nav className="max-w-7xl mx-auto px-4 py-4 space-y-1">
                         {menuItems.map((item) => (
                             <div key={item.title}>
-                                <Link
-                                    href={item.url}
-                                    className="block px-4 py-2 text-gray-700 hover:bg-primary-50 hover:text-primary-600 rounded-md font-medium"
-                                    onClick={() => !item.children && setMobileMenuOpen(false)}
-                                >
-                                    {item.title}
-                                </Link>
-                                {item.children && (
-                                    <div className="ml-4 space-y-1">
+                                {item.children ? (
+                                    <button
+                                        type="button"
+                                        className="w-full flex items-center justify-between px-4 py-2 text-gray-700 hover:bg-primary-50 hover:text-primary-600 rounded-md font-medium text-left"
+                                        aria-expanded={openMobileSubmenu === item.title}
+                                        onClick={() => setOpenMobileSubmenu((current) => current === item.title ? null : item.title)}
+                                    >
+                                        <span>{item.title}</span>
+                                        <svg
+                                            className={`w-4 h-4 transition-transform ${openMobileSubmenu === item.title ? "rotate-180" : ""}`}
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                        </svg>
+                                    </button>
+                                ) : (
+                                    <Link
+                                        href={item.url}
+                                        className="block px-4 py-2 text-gray-700 hover:bg-primary-50 hover:text-primary-600 rounded-md font-medium"
+                                        onClick={() => setMobileMenuOpen(false)}
+                                    >
+                                        {item.title}
+                                    </Link>
+                                )}
+                                {item.children && openMobileSubmenu === item.title && (
+                                    <div className="ml-4 mt-1 space-y-1 border-l border-primary-100 pl-2">
                                         {item.children.map((child) => (
                                             <Link
                                                 key={child.title}
                                                 href={child.url}
-                                                className="block px-4 py-1.5 text-sm text-gray-600 hover:text-primary-600"
+                                                className="block px-4 py-2 text-sm text-gray-600 hover:bg-primary-50 hover:text-primary-600 rounded-md"
                                                 onClick={() => setMobileMenuOpen(false)}
                                             >
                                                 • {child.title}
