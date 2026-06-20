@@ -13,7 +13,8 @@ import {
     FaSpinner, 
     FaCalendarAlt, 
     FaClock, 
-    FaEye 
+    FaEye,
+    FaFilePdf
 } from "react-icons/fa";
 import { authFetch } from "@/lib/api";
 
@@ -40,6 +41,7 @@ export default function AdminDashboard() {
     const [khankahCount, setKhankahCount] = useState<number | string>("০");
     const [teacherCount, setTeacherCount] = useState<number | string>("০");
     const [eventCount, setEventCount] = useState<number | string>("০");
+    const [bookCount, setBookCount] = useState<number | string>("০");
     const [recentActivities, setRecentActivities] = useState<RecentItem[]>([]);
     const [error, setError] = useState("");
 
@@ -79,6 +81,12 @@ export default function AdminDashboard() {
             if (eventRes.ok) {
                 const data = await eventRes.json();
                 setEventCount(data.count);
+            }
+
+            const bookRes = await authFetch("/books/list/");
+            if (bookRes.ok) {
+                const data = await bookRes.json();
+                setBookCount(data.count);
             }
 
             // Build recent activities (latest 3 of each)
@@ -149,6 +157,14 @@ export default function AdminDashboard() {
             bg: "bg-amber-50 text-amber-600",
             text: "অনুষ্ঠান তালিকা"
         },
+        { 
+            title: "বই / পিডিএফ", 
+            count: bookCount, 
+            icon: <FaFilePdf className="w-5 h-5" />, 
+            color: "from-red-500 to-rose-600 shadow-red-100", 
+            bg: "bg-red-50 text-red-600",
+            text: "লাইব্রেরি তালিকা"
+        },
     ];
 
     if (loading) {
@@ -183,7 +199,7 @@ export default function AdminDashboard() {
             )}
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-6">
                 {stats.map((stat, i) => (
                     <div key={i} className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm hover:shadow-md transition-all duration-350 hover:-translate-y-1 group relative overflow-hidden">
                         <div className="flex items-start justify-between">
@@ -242,6 +258,14 @@ export default function AdminDashboard() {
                                 <span className="text-xs text-gray-400 mt-1">মাহফিল বা ওরশের তথ্য যোগ করুন</span>
                             </Link>
 
+                            <Link href="/admin/books/create" className="flex flex-col p-5 bg-gradient-to-br from-red-50/50 to-white hover:from-red-50 rounded-2xl border border-red-100/70 hover:border-red-200 transition-all group shadow-sm hover:shadow-md">
+                                <div className="w-9 h-9 bg-red-100 text-red-700 rounded-xl flex items-center justify-center mb-3">
+                                    <FaPlus className="w-3.5 h-3.5" />
+                                </div>
+                                <span className="text-sm font-bold text-gray-800">নতুন বই / PDF</span>
+                                <span className="text-xs text-gray-400 mt-1">লাইব্রেরিতে নতুন বই যোগ করুন</span>
+                            </Link>
+
                             <Link href="/admin/madrasha" className="flex items-center gap-3 p-4 bg-gray-50/50 hover:bg-gray-50 rounded-2xl border border-gray-150 transition-all group">
                                 <div className="w-8 h-8 bg-white border border-gray-200 text-gray-600 rounded-xl flex items-center justify-center shadow-sm">
                                     <FaBookOpen className="w-3.5 h-3.5" />
@@ -271,6 +295,17 @@ export default function AdminDashboard() {
                                 <div className="text-left">
                                     <p className="text-xs font-bold text-gray-800">ইভেন্ট ম্যানেজ</p>
                                     <p className="text-[10px] text-gray-400">সকল মাহফিল তালিকা</p>
+                                </div>
+                                <FaArrowRight className="w-3.5 h-3.5 text-gray-300 group-hover:text-gray-600 ml-auto transition-transform group-hover:translate-x-0.5" />
+                            </Link>
+
+                            <Link href="/admin/books" className="flex items-center gap-3 p-4 bg-gray-50/50 hover:bg-gray-50 rounded-2xl border border-gray-150 transition-all group">
+                                <div className="w-8 h-8 bg-white border border-gray-200 text-gray-600 rounded-xl flex items-center justify-center shadow-sm">
+                                    <FaFilePdf className="w-3.5 h-3.5" />
+                                </div>
+                                <div className="text-left">
+                                    <p className="text-xs font-bold text-gray-800">বই ম্যানেজ</p>
+                                    <p className="text-[10px] text-gray-400">সকল PDF বই তালিকা</p>
                                 </div>
                                 <FaArrowRight className="w-3.5 h-3.5 text-gray-300 group-hover:text-gray-600 ml-auto transition-transform group-hover:translate-x-0.5" />
                             </Link>
