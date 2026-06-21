@@ -3,7 +3,9 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FaHome, FaMosque, FaBookOpen, FaCog, FaSignOutAlt, FaImages, FaChevronRight, FaChevronDown, FaChevronUp, FaUserTie, FaCalendarAlt, FaFilePdf } from "react-icons/fa";
+import { FaHome, FaMosque, FaBookOpen, FaCog, FaSignOutAlt, FaChevronRight, FaChevronDown, FaChevronUp, FaUserTie, FaCalendarAlt, FaFilePdf, FaPalette } from "react-icons/fa";
+import { fetchSiteSettings, SiteSettings } from "@/lib/appearance";
+import { mediaUrl } from "@/lib/media";
 
 interface MenuItem {
     title: string;
@@ -42,7 +44,14 @@ const menuItems: MenuItem[] = [
             { title: "লেখক", href: "/admin/books/authors" },
         ],
     },
-    { title: "স্লাইডার", href: "/admin/sliders", icon: <FaImages className="w-4 h-4" /> },
+    {
+        title: "অ্যাপিয়ারেন্স",
+        icon: <FaPalette className="w-4 h-4" />,
+        children: [
+            { title: "স্লাইড", href: "/admin/appearance/slides" },
+            { title: "লোগো", href: "/admin/appearance/logo" },
+        ],
+    },
     { title: "সেটিংস", href: "/admin/settings", icon: <FaCog className="w-4 h-4" /> },
 ];
 
@@ -54,6 +63,11 @@ interface AdminSidebarProps {
 export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
     const pathname = usePathname();
     const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
+    const [settings, setSettings] = useState<SiteSettings | null>(null);
+
+    useEffect(() => {
+        fetchSiteSettings().then(setSettings).catch(() => undefined);
+    }, []);
 
     useEffect(() => {
         onClose();
@@ -90,11 +104,15 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
             {/* Logo */}
             <div className="p-5 border-b border-gray-100">
                 <Link href="/admin" className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex items-center justify-center shadow-sm">
-                        <span className="text-white font-bold">শ</span>
+                    <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex items-center justify-center shadow-sm overflow-hidden">
+                        {settings?.logo ? (
+                            <img src={mediaUrl(settings.logo)} alt={settings.site_name} className="w-full h-full object-cover" />
+                        ) : (
+                            <span className="text-white font-bold">শ</span>
+                        )}
                     </div>
                     <div>
-                        <h2 className="font-bold text-gray-800 text-sm leading-tight">শাহপুর দরবার শরীফ</h2>
+                        <h2 className="font-bold text-gray-800 text-sm leading-tight">{settings?.site_name || "শাহপুর দরবার শরীফ"}</h2>
                         <p className="text-[11px] text-gray-400">অ্যাডমিন প্যানেল</p>
                     </div>
                 </Link>

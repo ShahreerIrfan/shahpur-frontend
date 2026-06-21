@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { FaUser } from "react-icons/fa";
+import { fetchSiteSettings, SiteSettings } from "@/lib/appearance";
+import { mediaUrl } from "@/lib/media";
 
 const menuItems = [
     { title: "হোম", url: "/" },
@@ -29,10 +31,12 @@ export default function Header() {
     const [openMobileSubmenu, setOpenMobileSubmenu] = useState<string | null>(null);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
+    const [settings, setSettings] = useState<SiteSettings | null>(null);
 
     useEffect(() => {
         setIsLoggedIn(!!localStorage.getItem("access_token"));
         setIsAdmin(localStorage.getItem("is_admin") === "true");
+        fetchSiteSettings().then(setSettings).catch(() => undefined);
     }, []);
 
     useEffect(() => {
@@ -63,14 +67,18 @@ export default function Header() {
                     <div className="flex items-center justify-between h-20">
                         {/* Logo / Site Name */}
                         <Link href="/" className="flex items-center gap-3">
-                            <div className="w-12 h-12 bg-primary-500 rounded-full flex items-center justify-center">
-                                <span className="text-white text-lg font-bold">শ</span>
+                            <div className="w-12 h-12 bg-primary-500 rounded-full flex items-center justify-center overflow-hidden">
+                                {settings?.logo ? (
+                                    <img src={mediaUrl(settings.logo)} alt={settings.site_name} className="w-full h-full object-cover" />
+                                ) : (
+                                    <span className="text-white text-lg font-bold">শ</span>
+                                )}
                             </div>
                             <div>
                                 <h1 className="text-xl font-bold text-primary-700 leading-tight">
-                                    শাহপুর দরবার শরীফ
+                                    {settings?.site_name || "শাহপুর দরবার শরীফ"}
                                 </h1>
-                                <p className="text-xs text-gray-500">Shahpur Darbar Sharif</p>
+                                <p className="text-xs text-gray-500">{settings?.site_name_en || "Shahpur Darbar Sharif"}</p>
                             </div>
                         </Link>
 
