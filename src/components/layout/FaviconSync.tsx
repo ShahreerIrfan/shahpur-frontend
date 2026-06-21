@@ -1,36 +1,42 @@
 "use client";
 
 import { useEffect } from "react";
-import { fetchSiteSettings } from "@/lib/appearance";
-import { mediaUrl } from "@/lib/media";
 
-const FAVICON_SELECTOR = "link[rel='icon'][data-dynamic-favicon='true']";
+const FAVICON_SELECTORS = [
+  "link[rel='icon']",
+  "link[rel='shortcut icon']",
+  "link[rel='apple-touch-icon']",
+];
 
 function setFavicon(href: string) {
   if (!href) return;
 
-  let link = document.querySelector<HTMLLinkElement>(FAVICON_SELECTOR);
-  if (!link) {
-    link = document.createElement("link");
-    link.rel = "icon";
-    link.type = "image/png";
-    link.dataset.dynamicFavicon = "true";
-    document.head.appendChild(link);
+  for (const selector of FAVICON_SELECTORS) {
+    document.querySelectorAll<HTMLLinkElement>(selector).forEach((node) => node.remove());
   }
 
-  link.href = href;
+  const icon = document.createElement("link");
+  icon.rel = "icon";
+  icon.type = "image/png";
+  icon.href = href;
+  icon.dataset.dynamicFavicon = "true";
+
+  const shortcut = document.createElement("link");
+  shortcut.rel = "shortcut icon";
+  shortcut.type = "image/png";
+  shortcut.href = href;
+  shortcut.dataset.dynamicFavicon = "true";
+
+  const apple = document.createElement("link");
+  apple.rel = "apple-touch-icon";
+  apple.href = href;
+  apple.dataset.dynamicFavicon = "true";
+
+  document.head.append(icon, shortcut, apple);
 }
 
 async function syncFavicon() {
-  try {
-    const settings = await fetchSiteSettings();
-    const favicon = mediaUrl(settings?.favicon);
-    if (favicon) {
-      setFavicon(`${favicon}${favicon.includes("?") ? "&" : "?"}v=${Date.now()}`);
-    }
-  } catch {
-    // Keep the static favicon if the settings API is unavailable.
-  }
+  setFavicon(`/api/favicon?v=${Date.now()}`);
 }
 
 export default function FaviconSync() {
