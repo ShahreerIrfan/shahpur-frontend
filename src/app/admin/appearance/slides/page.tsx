@@ -84,7 +84,7 @@ export default function AppearanceSlidesPage() {
       is_active: slide.is_active,
     });
     setImageFile(null);
-    setCurrentImage(mediaUrl(slide.image));
+    setCurrentImage(mediaUrl(slide.background_image || slide.image));
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -96,7 +96,7 @@ export default function AppearanceSlidesPage() {
     Object.entries(form).forEach(([key, value]) => {
       body.append(key, typeof value === "boolean" ? String(value) : value);
     });
-    if (imageFile) body.append("image", imageFile);
+    if (imageFile) body.append("background_image", imageFile);
 
     try {
       const res = await authFetch(editingId ? `/core/sliders/${editingId}/` : "/core/sliders/", {
@@ -251,7 +251,7 @@ export default function AppearanceSlidesPage() {
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           <div className="w-16 h-12 rounded-xl overflow-hidden bg-primary-50 flex-shrink-0">
-                            {slide.image ? <img src={mediaUrl(slide.image)} alt={slide.title} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-primary-500"><FaImage /></div>}
+                            {(slide.background_image || slide.image) ? <img src={mediaUrl(slide.background_image || slide.image)} alt={slide.title} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-primary-500"><FaImage /></div>}
                           </div>
                           <div>
                             <p className="text-sm font-bold text-gray-800 line-clamp-1">{slide.title}</p>

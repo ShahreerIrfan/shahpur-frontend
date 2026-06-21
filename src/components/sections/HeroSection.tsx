@@ -11,6 +11,7 @@ const fallbackSlide: HomeSlide = {
   title: "শাহপুর দরবার\nশরীফ",
   subtitle: "কুমিল্লার গোমতী নদী তীরবর্তী ইসলামী শরীয়াতের অনুশীলন, কাদেরীয়া তরিকার প্রচার ও আধ্যাত্মিক সাধনার ঐতিহাসিক কেন্দ্র",
   image: null,
+  background_image: null,
   primary_button_text: "বাগদাদী হুজুর (রাঃ) এঁর জীবনী",
   primary_button_url: "/biography/baghdadi",
   secondary_button_text: "মাও. আব্দুস সুবহান (রাঃ)",

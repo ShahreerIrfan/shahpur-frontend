@@ -11,6 +11,7 @@ export interface HomeSlide {
   title: string;
   subtitle: string;
   image: string | null;
+  background_image: string | null;
   primary_button_text: string;
   primary_button_url: string;
   secondary_button_text: string;
@@ -45,8 +46,8 @@ export function listFromResponse<T>(data: T[] | ApiList<T>): T[] {
   return Array.isArray(data) ? data : data.results || [];
 }
 
-export function slideImageUrl(slide: Pick<HomeSlide, "image">) {
-  return mediaUrl(slide.image) || "https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?q=80&w=2000&auto=format";
+export function slideImageUrl(slide: Pick<HomeSlide, "image" | "background_image">) {
+  return mediaUrl(slide.background_image || slide.image) || "https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?q=80&w=2000&auto=format";
 }
 
 export async function fetchHomeSlides() {
