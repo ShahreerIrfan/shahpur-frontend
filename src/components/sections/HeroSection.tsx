@@ -80,8 +80,9 @@ export default function HeroSection() {
           style={{ backgroundImage: `url('${slideImageUrl(slide)}')` }}
         />
       ))}
-      <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/85 to-white/60" />
-      <div className="absolute inset-0 islamic-pattern opacity-20" />
+      <div className="absolute inset-0 bg-gradient-to-r from-white/88 via-white/55 to-white/10" />
+      <div className="absolute inset-0 bg-white/10" />
+      <div className="absolute inset-0 islamic-pattern opacity-10" />
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary-500 via-primary-400 to-primary-500" />
 
       <div className="relative max-w-7xl mx-auto px-4 py-16 w-full">
