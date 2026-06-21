@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { FaUserTie, FaTrash, FaSpinner, FaChevronLeft, FaChevronRight, FaPlus } from "react-icons/fa";
-import { authFetch, API_URL } from "@/lib/api";
+import { authFetch } from "@/lib/api";
+import { mediaUrl } from "@/lib/media";
 import Link from "next/link";
 
 interface Teacher {
@@ -73,20 +74,6 @@ export default function AdminTeachersPage() {
         }
     };
 
-    const getMediaUrl = (path: string | null) => {
-        if (!path) return "";
-        let url = path;
-        const baseUrl = API_URL.replace("/api", "");
-        
-        if (url.includes("localhost:8000")) {
-            url = url.replace("http://localhost:8000", baseUrl);
-        }
-        if (!url.startsWith("http")) {
-            url = `${baseUrl}${url}`;
-        }
-        return url;
-    };
-
     return (
         <div className="space-y-6">
             {/* Header */}
@@ -139,7 +126,7 @@ export default function AdminTeachersPage() {
                                         <td className="py-4 px-6">
                                             {teacher.teacher_image ? (
                                                 <img 
-                                                    src={getMediaUrl(teacher.teacher_image)} 
+                                                    src={mediaUrl(teacher.teacher_image)} 
                                                     alt={teacher.teacher_name} 
                                                     className="w-10 h-10 rounded-full object-cover border border-gray-200"
                                                 />

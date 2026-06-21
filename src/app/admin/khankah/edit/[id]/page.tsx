@@ -4,6 +4,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { FaArrowLeft, FaSave, FaSpinner, FaImage, FaImages, FaTrash } from "react-icons/fa";
 import { authFetch, API_URL } from "@/lib/api";
+import { mediaUrl } from "@/lib/media";
 import ImageGalleryUpload from "@/components/admin/ImageGalleryUpload";
 
 interface District {
@@ -48,20 +49,6 @@ export default function EditKhankahPage() {
         fetchInitialData();
     }, [id]);
 
-    const getMediaUrl = (path: string | null) => {
-        if (!path) return "";
-        let url = path;
-        const baseUrl = API_URL.replace("/api", "");
-        
-        if (url.includes("localhost:8000")) {
-            url = url.replace("http://localhost:8000", baseUrl);
-        }
-        if (!url.startsWith("http")) {
-            url = `${baseUrl}${url}`;
-        }
-        return url;
-    };
-
     const fetchInitialData = async () => {
         try {
             // 1. Fetch Khankah details
@@ -75,7 +62,7 @@ export default function EditKhankahPage() {
             }
 
             if (kData.featured_image) {
-                setFeaturedImagePreview(getMediaUrl(kData.featured_image));
+                setFeaturedImagePreview(mediaUrl(kData.featured_image));
             }
 
             if (kData.photos) {

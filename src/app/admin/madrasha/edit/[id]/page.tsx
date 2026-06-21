@@ -4,6 +4,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { FaArrowLeft, FaSave, FaSpinner, FaUserTie, FaPlus, FaTrash, FaImage, FaImages } from "react-icons/fa";
 import { authFetch } from "@/lib/api";
+import { mediaUrl } from "@/lib/media";
 import ImageGalleryUpload from "@/components/admin/ImageGalleryUpload";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
@@ -49,20 +50,6 @@ export default function EditMadrashaPage() {
         fetchData();
     }, [id]);
 
-    const getMediaUrl = (path: string | null) => {
-        if (!path) return "";
-        let url = path;
-        const baseUrl = API_BASE.replace("/api", "");
-        
-        if (url.includes("localhost:8000")) {
-            url = url.replace("http://localhost:8000", baseUrl);
-        }
-        if (!url.startsWith("http")) {
-            url = `${baseUrl}${url}`;
-        }
-        return url;
-    };
-
     const fetchData = async () => {
         try {
             // Fetch madrasha detail
@@ -91,7 +78,7 @@ export default function EditMadrashaPage() {
                 // Featured image preview
                 if (data.featured_image) {
                     const img = data.featured_image as string;
-                    setFeaturedPreview(getMediaUrl(img));
+                    setFeaturedPreview(mediaUrl(img));
                 }
             }
             // Fetch districts & upazilas
@@ -253,7 +240,7 @@ export default function EditMadrashaPage() {
                                                 <input type="file" accept="image/*" data-teacher-image={t.key} className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded-lg text-xs outline-none file:mr-2 file:py-0.5 file:px-2 file:rounded file:border-0 file:text-[10px] file:bg-primary-50 file:text-primary-700" />
                                                 {t.teacher_image && (
                                                     <div className="flex items-center gap-2 mt-1">
-                                                        <img src={getMediaUrl(t.teacher_image)} alt={t.teacher_name} className="w-8 h-8 rounded-full object-cover border border-gray-200" />
+                                                        <img src={mediaUrl(t.teacher_image)} alt={t.teacher_name} className="w-8 h-8 rounded-full object-cover border border-gray-200" />
                                                         <span className="text-[10px] text-gray-400">বিদ্যমান ছবি</span>
                                                     </div>
                                                 )}

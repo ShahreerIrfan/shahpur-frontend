@@ -6,6 +6,7 @@ import Image from "next/image";
 import { FaMosque, FaMapMarkerAlt, FaSpinner, FaUserTie, FaArrowRight } from "react-icons/fa";
 import PageHero from "@/components/ui/PageHero";
 import Breadcrumbs from "@/components/ui/Breadcrumbs";
+import { mediaUrl } from "@/lib/media";
 
 interface Khankah {
     id: number;
@@ -35,21 +36,6 @@ export default function KhankahListPage() {
             .finally(() => setLoading(false));
     }, []);
 
-    const getImageUrl = (path: string | null) => {
-        if (!path) return "";
-        let url = path;
-        const baseApi = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
-        const baseUrl = baseApi.replace("/api", "");
-        
-        if (url.includes("localhost:8000")) {
-            url = url.replace("http://localhost:8000", baseUrl);
-        }
-        if (!url.startsWith("http")) {
-            url = `${baseUrl}${url}`;
-        }
-        return url;
-    };
-
     return (
         <div className="min-h-screen bg-gray-50/30 pb-20">
             <PageHero title="খানকাহ শরীফ সমূহ" subtitle="শাহপুর দরবার শরীফ কর্তৃক প্রতিষ্ঠিত খানকাহ শরীফ সমূহ" showBismillah={false} />
@@ -74,7 +60,7 @@ export default function KhankahListPage() {
                                     <div className="relative h-48 bg-gray-100 overflow-hidden">
                                         {k.featured_image ? (
                                             <Image 
-                                                src={getImageUrl(k.featured_image)} 
+                                                src={mediaUrl(k.featured_image)} 
                                                 alt={k.khankah_name} 
                                                 fill 
                                                 className="object-cover group-hover:scale-105 transition-transform duration-500" 

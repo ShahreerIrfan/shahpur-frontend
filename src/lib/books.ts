@@ -1,4 +1,4 @@
-import { API_URL } from "@/lib/api";
+import { mediaUrl as secureMediaUrl } from "@/lib/media";
 
 export interface BookListItem {
   id: number;
@@ -62,15 +62,7 @@ export const BOOK_LANGUAGES = [
 ];
 
 export function mediaUrl(path: string | null) {
-  if (!path) return "";
-  const baseUrl = API_URL.replace("/api", "");
-  if (path.includes("localhost:8000")) {
-    return path.replace("http://localhost:8000", baseUrl);
-  }
-  if (!path.startsWith("http")) {
-    return `${baseUrl}${path}`;
-  }
-  return path;
+  return secureMediaUrl(path);
 }
 
 export function bookLanguageLabel(language: string) {

@@ -5,20 +5,10 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { FaSpinner, FaMapMarkerAlt, FaUsers, FaUserTie, FaPhone, FaCalendar, FaArrowLeft, FaUserEdit, FaAward, FaCoins, FaGraduationCap, FaComments, FaLaptopCode, FaMapMarkedAlt, FaTree, FaBuilding, FaEnvelope } from "react-icons/fa";
 import Breadcrumbs from "@/components/ui/Breadcrumbs";
+import { mediaUrl } from "@/lib/media";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
-const img = (p: string | null) => {
-    if (!p) return "";
-    let url = p;
-    const baseUrl = API.replace("/api", "");
-    if (url.includes("localhost:8000")) {
-        url = url.replace("http://localhost:8000", baseUrl);
-    }
-    if (!url.startsWith("http")) {
-        url = `${baseUrl}${url}`;
-    }
-    return url;
-};
+const img = mediaUrl;
 
 const TYPE_MAP: Record<string, string> = { nurani: "নূরানী", hifz: "হিফজ", najera: "নাজেরা", academic: "একাডেমিক" };
 const MEDIUM_MAP: Record<string, string> = { bangla: "বাংলা", english: "ইংরেজি" };
