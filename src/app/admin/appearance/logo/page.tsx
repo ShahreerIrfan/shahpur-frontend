@@ -78,6 +78,7 @@ export default function AppearanceLogoPage() {
       setSettings(data);
       setLogoFile(null);
       setFaviconFile(null);
+      window.dispatchEvent(new Event("site-settings-updated"));
       setSuccess("লোগো ও সাইট পরিচিতি আপডেট হয়েছে।");
     } catch (err) {
       setError(err instanceof Error ? err.message : "লোগো সংরক্ষণ করতে সমস্যা হয়েছে।");

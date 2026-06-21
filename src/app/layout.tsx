@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import FaviconSync from "@/components/layout/FaviconSync";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -15,6 +16,7 @@ export default function RootLayout({
   return (
     <html lang="bn">
       <body suppressHydrationWarning className="min-h-screen flex flex-col bg-gray-50">
+        <FaviconSync />
         {children}
       </body>
     </html>
