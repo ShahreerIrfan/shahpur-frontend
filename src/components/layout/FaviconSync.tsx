@@ -36,7 +36,7 @@ function setFavicon(href: string) {
 }
 
 async function syncFavicon() {
-  setFavicon(`/api/favicon?v=${Date.now()}`);
+  setFavicon(`/favicon.ico?v=${Date.now()}`);
 }
 
 export default function FaviconSync() {

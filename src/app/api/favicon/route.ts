@@ -7,7 +7,7 @@ type SiteSettings = {
   favicon?: string | null;
 };
 
-const DEFAULT_FAVICON = "site/shahpur-darbar-favicon.png";
+const DEFAULT_FAVICON = "site/shahpur-darbar-favicon-round.png";
 
 function backendMediaUrl(path: string) {
   const apiOrigin = API_URL.replace(/\/api\/?$/, "");

@@ -27,6 +27,7 @@ export default function AppearanceLogoPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [previewVersion, setPreviewVersion] = useState(Date.now());
 
   useEffect(() => {
     const loadSettings = async () => {
@@ -78,6 +79,7 @@ export default function AppearanceLogoPage() {
       setSettings(data);
       setLogoFile(null);
       setFaviconFile(null);
+      setPreviewVersion(Date.now());
       window.dispatchEvent(new Event("site-settings-updated"));
       setSuccess("লোগো ও সাইট পরিচিতি আপডেট হয়েছে।");
     } catch (err) {
@@ -87,8 +89,9 @@ export default function AppearanceLogoPage() {
     }
   };
 
-  const logoPreview = logoFile ? URL.createObjectURL(logoFile) : mediaUrl(settings?.logo);
-  const faviconPreview = faviconFile ? URL.createObjectURL(faviconFile) : mediaUrl(settings?.favicon);
+  const withPreviewVersion = (url: string) => url ? `${url}${url.includes("?") ? "&" : "?"}v=${previewVersion}` : "";
+  const logoPreview = logoFile ? URL.createObjectURL(logoFile) : withPreviewVersion(mediaUrl(settings?.logo));
+  const faviconPreview = faviconFile ? URL.createObjectURL(faviconFile) : withPreviewVersion(mediaUrl(settings?.favicon));
 
   return (
     <div>
@@ -159,9 +162,12 @@ export default function AppearanceLogoPage() {
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
               <h2 className="text-sm font-bold text-gray-800 mb-5">Favicon</h2>
               <div className="space-y-4">
-                <div className="h-24 rounded-2xl bg-gray-50 border border-dashed border-gray-200 flex items-center justify-center overflow-hidden">
-                  {faviconPreview ? <img src={faviconPreview} alt="Favicon preview" className="max-h-full max-w-full object-contain p-4" /> : <FaImage className="w-8 h-8 text-gray-300" />}
+                <div className="h-28 rounded-2xl border border-dashed border-gray-200 flex items-center justify-center overflow-hidden bg-[linear-gradient(45deg,#f3f4f6_25%,transparent_25%),linear-gradient(-45deg,#f3f4f6_25%,transparent_25%),linear-gradient(45deg,transparent_75%,#f3f4f6_75%),linear-gradient(-45deg,transparent_75%,#f3f4f6_75%)] bg-[length:18px_18px] bg-[position:0_0,0_9px,9px_-9px,-9px_0px]">
+                  <div className="w-20 h-20 rounded-full bg-white/70 shadow-sm border border-white/80 flex items-center justify-center overflow-hidden">
+                    {faviconPreview ? <img src={faviconPreview} alt="Favicon preview" className="w-full h-full rounded-full object-contain" /> : <FaImage className="w-8 h-8 text-gray-300" />}
+                  </div>
                 </div>
+                <p className="text-xs text-gray-400">ব্রাউজার ট্যাব আইকন এখানে গোল ও transparent preview হিসেবে দেখাবে</p>
                 <input type="file" accept="image/*" onChange={(e) => setFaviconFile(e.target.files?.[0] || null)} className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm" />
               </div>
             </div>
