@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useState, useEffect } from "react";
 import { FaUser } from "react-icons/fa";
 import { fetchSiteSettings, SiteSettings } from "@/lib/appearance";
@@ -79,7 +78,7 @@ export default function Header() {
                 <div className="max-w-7xl mx-auto px-4">
                     <div className="flex items-center justify-between h-20">
                         {/* Logo / Site Name */}
-                        <Link href="/" className="flex items-center gap-3">
+                        <a href="/" className="flex items-center gap-3">
                             <div className="w-12 h-12 bg-primary-500 rounded-full flex items-center justify-center overflow-hidden">
                                 {settings?.logo ? (
                                     <img src={mediaUrl(settings.logo)} alt={settings.site_name} className="w-full h-full object-cover" />
@@ -93,7 +92,7 @@ export default function Header() {
                                 </h1>
                                 <p className="text-xs text-gray-500">{settings?.site_name_en || "Shahpur Darbar Sharif"}</p>
                             </div>
-                        </Link>
+                        </a>
 
                         {/* Desktop Navigation */}
                         <nav className="hidden lg:flex items-center gap-1">
@@ -110,7 +109,7 @@ export default function Header() {
                                             <span className="text-[10px] bg-amber-50 text-amber-700 border border-amber-100 px-1.5 py-0.5 rounded-full">Soon</span>
                                         </span>
                                     ) : (
-                                        <Link
+                                        <a
                                             href={item.url}
                                             className="px-4 py-2 text-gray-700 hover:text-primary-600 hover:bg-primary-50 rounded-md transition-colors font-medium text-[15px]"
                                         >
@@ -120,7 +119,7 @@ export default function Header() {
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                                 </svg>
                                             )}
-                                        </Link>
+                                        </a>
                                     )}
 
                                     {/* Dropdown */}
@@ -132,13 +131,13 @@ export default function Header() {
                                                         {child.title} <span className="text-[10px] text-amber-600">(Soon)</span>
                                                     </span>
                                                 ) : (
-                                                    <Link
+                                                    <a
                                                         key={child.title}
                                                         href={child.url}
                                                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-600 transition-colors"
                                                     >
                                                         {child.title}
-                                                    </Link>
+                                                    </a>
                                                 )
                                             ))}
                                         </div>
@@ -151,13 +150,13 @@ export default function Header() {
                         <div className="hidden lg:flex items-center gap-3 ml-4">
                             {isLoggedIn ? (
                                 <>
-                                    <Link 
+                                    <a
                                         href={isAdmin ? "/admin" : "/dashboard"} 
                                         className="flex items-center gap-2 text-gray-600 hover:text-primary-600 text-sm font-medium"
                                     >
                                         <FaUser className="w-3.5 h-3.5" />
                                         <span>{isAdmin ? "Admin Panel" : "Dashboard"}</span>
-                                    </Link>
+                                    </a>
                                     <button 
                                         onClick={handleLogout} 
                                         className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
@@ -167,13 +166,13 @@ export default function Header() {
                                 </>
                             ) : (
                                 <>
-                                    <Link href="/login" className="flex items-center gap-2 text-gray-600 hover:text-primary-600 text-sm font-medium">
+                                    <a href="/login" className="flex items-center gap-2 text-gray-600 hover:text-primary-600 text-sm font-medium">
                                         <FaUser className="w-3.5 h-3.5" />
                                         <span>Login</span>
-                                    </Link>
-                                    <Link href="/register" className="bg-primary-500 hover:bg-primary-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                                    </a>
+                                    <a href="/register" className="bg-primary-500 hover:bg-primary-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
                                         Register
-                                    </Link>
+                                    </a>
                                 </>
                             )}
                         </div>
@@ -227,13 +226,13 @@ export default function Header() {
                                         <span className="text-[10px] bg-amber-50 text-amber-700 border border-amber-100 px-1.5 py-0.5 rounded-full">Soon</span>
                                     </div>
                                 ) : (
-                                    <Link
+                                    <a
                                         href={item.url}
                                         className="block px-4 py-2 text-gray-700 hover:bg-primary-50 hover:text-primary-600 rounded-md font-medium"
                                         onClick={() => setMobileMenuOpen(false)}
                                     >
                                         {item.title}
-                                    </Link>
+                                    </a>
                                 )}
                                 {item.children && openMobileSubmenu === item.title && (
                                     <div className="ml-4 mt-1 space-y-1 border-l border-primary-100 pl-2">
@@ -243,14 +242,14 @@ export default function Header() {
                                                     • {child.title} <span className="text-[10px] text-amber-600">(Soon)</span>
                                                 </div>
                                             ) : (
-                                                <Link
+                                                <a
                                                     key={child.title}
                                                     href={child.url}
                                                     className="block px-4 py-2 text-sm text-gray-600 hover:bg-primary-50 hover:text-primary-600 rounded-md"
                                                     onClick={() => setMobileMenuOpen(false)}
                                                 >
                                                     • {child.title}
-                                                </Link>
+                                                </a>
                                             )
                                         ))}
                                     </div>
@@ -262,13 +261,13 @@ export default function Header() {
                         <div className="pt-4 border-t border-gray-100 mt-4 space-y-2">
                             {isLoggedIn ? (
                                 <>
-                                    <Link
+                                    <a
                                         href={isAdmin ? "/admin" : "/dashboard"}
                                         onClick={() => setMobileMenuOpen(false)}
                                         className="block px-4 py-2 text-gray-700 hover:bg-primary-50 hover:text-primary-600 rounded-md font-medium"
                                     >
                                         {isAdmin ? "Admin Panel" : "Dashboard"}
-                                    </Link>
+                                    </a>
                                     <button
                                         onClick={() => {
                                             setMobileMenuOpen(false);
@@ -281,20 +280,20 @@ export default function Header() {
                                 </>
                             ) : (
                                 <>
-                                    <Link
+                                    <a
                                         href="/login"
                                         onClick={() => setMobileMenuOpen(false)}
                                         className="block px-4 py-2 text-gray-700 hover:bg-primary-50 hover:text-primary-600 rounded-md font-medium"
                                     >
                                         Login
-                                    </Link>
-                                    <Link
+                                    </a>
+                                    <a
                                         href="/register"
                                         onClick={() => setMobileMenuOpen(false)}
                                         className="block mx-4 my-2 text-center bg-primary-500 hover:bg-primary-600 text-white py-2 rounded-lg font-medium transition-colors"
                                     >
                                         Register
-                                    </Link>
+                                    </a>
                                 </>
                             )}
                         </div>

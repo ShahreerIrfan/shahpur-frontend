@@ -4,7 +4,9 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { FaBookOpen, FaEdit, FaEye, FaPlus, FaSearch, FaSpinner, FaTrash } from "react-icons/fa";
 import { authFetch } from "@/lib/api";
-import { HadithListItem, listFromResponse } from "@/lib/hadith";
+import { ApiList, HadithListItem, listFromResponse } from "@/lib/hadith";
+
+const PAGE_SIZE = 15;
 
 export default function AdminHadithPage() {
   const [hadiths, setHadiths] = useState<HadithListItem[]>([]);
@@ -13,23 +15,39 @@ export default function AdminHadithPage() {
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState("");
+  const [page, setPage] = useState(1);
+  const [count, setCount] = useState(0);
 
   const fetchHadiths = useCallback(async () => {
     try {
-      const res = await authFetch("/hadith/list/");
+      const params = new URLSearchParams({
+        page: String(page),
+        page_size: String(PAGE_SIZE),
+      });
+      if (search.trim()) params.set("search", search.trim());
+      const res = await authFetch(`/hadith/list/?${params.toString()}`);
       if (!res.ok) throw new Error("হাদিস তালিকা লোড করতে সমস্যা হয়েছে।");
-      const data = (await res.json()) as HadithListItem[] | { results?: HadithListItem[] };
+      const data = (await res.json()) as HadithListItem[] | ApiList<HadithListItem>;
       setHadiths(listFromResponse(data));
+      setCount(Array.isArray(data) ? data.length : data.count || 0);
     } catch (err) {
       setError(err instanceof Error ? err.message : "সার্ভারে সমস্যা হয়েছে।");
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [page, search]);
 
   useEffect(() => {
-    void fetchHadiths();
+    setLoading(true);
+    const timer = window.setTimeout(() => {
+      void fetchHadiths();
+    }, 250);
+    return () => window.clearTimeout(timer);
   }, [fetchHadiths]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [search]);
 
   const handleDelete = async () => {
     if (!deleteId) return;
@@ -37,8 +55,8 @@ export default function AdminHadithPage() {
     try {
       const res = await authFetch(`/hadith/list/${deleteId}/`, { method: "DELETE" });
       if (res.ok || res.status === 204) {
-        setHadiths((prev) => prev.filter((item) => item.id !== deleteId));
         setDeleteId(null);
+        void fetchHadiths();
       } else {
         throw new Error("হাদিস মুছে ফেলতে সমস্যা হয়েছে।");
       }
@@ -49,12 +67,7 @@ export default function AdminHadithPage() {
     }
   };
 
-  const filtered = hadiths.filter((item) =>
-    [item.title, item.hadith_number, item.reference, item.collection_name, item.book_name, item.chapter_title, item.bangla_text]
-      .join(" ")
-      .toLowerCase()
-      .includes(search.toLowerCase())
-  );
+  const totalPages = Math.max(1, Math.ceil(count / PAGE_SIZE));
 
   return (
     <div>
@@ -83,7 +96,7 @@ export default function AdminHadithPage() {
           <FaSpinner className="w-8 h-8 text-primary-500 mx-auto mb-4 animate-spin" />
           <p className="text-gray-500 text-sm">তথ্য লোড হচ্ছে...</p>
         </div>
-      ) : filtered.length === 0 ? (
+      ) : hadiths.length === 0 ? (
         <div className="bg-white rounded-2xl p-16 border border-gray-100 shadow-sm text-center">
           <div className="w-20 h-20 bg-gradient-to-br from-primary-100 to-primary-50 rounded-2xl flex items-center justify-center mx-auto mb-5">
             <FaBookOpen className="w-8 h-8 text-primary-500" />
@@ -110,10 +123,10 @@ export default function AdminHadithPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
-                {filtered.map((item, index) => (
+                {hadiths.map((item, index) => (
                   <tr key={item.id} className="hover:bg-gray-50/50 transition-colors">
                     <td className="px-6 py-4">
-                      <span className="text-sm font-bold text-gray-500">{index + 1}</span>
+                      <span className="text-sm font-bold text-gray-500">{(page - 1) * PAGE_SIZE + index + 1}</span>
                     </td>
                     <td className="px-6 py-4 max-w-xl">
                       <p className="text-sm font-bold text-gray-800">{item.title}</p>
@@ -146,8 +159,26 @@ export default function AdminHadithPage() {
               </tbody>
             </table>
           </div>
-          <div className="px-6 py-3 border-t border-gray-100 bg-gray-50/50">
-            <p className="text-xs text-gray-500">মোট {filtered.length}টি হাদিস</p>
+          <div className="px-6 py-3 border-t border-gray-100 bg-gray-50/50 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <p className="text-xs text-gray-500">মোট {count}টি হাদিস · পৃষ্ঠা {page} / {totalPages}</p>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setPage((current) => Math.max(1, current - 1))}
+                disabled={page <= 1}
+                className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-semibold text-gray-600 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-white"
+              >
+                আগের পৃষ্ঠা
+              </button>
+              <button
+                type="button"
+                onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
+                disabled={page >= totalPages}
+                className="px-3 py-1.5 rounded-lg bg-primary-600 text-white text-xs font-semibold disabled:opacity-40 disabled:cursor-not-allowed hover:bg-primary-700"
+              >
+                পরের পৃষ্ঠা
+              </button>
+            </div>
           </div>
         </div>
       )}
