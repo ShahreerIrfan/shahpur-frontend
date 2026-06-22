@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FaHome, FaMosque, FaBookOpen, FaCog, FaSignOutAlt, FaChevronRight, FaChevronDown, FaChevronUp, FaUserTie, FaCalendarAlt, FaFilePdf, FaPalette } from "react-icons/fa";
+import { FaHome, FaMosque, FaBookOpen, FaCog, FaSignOutAlt, FaChevronRight, FaChevronDown, FaChevronUp, FaUserTie, FaCalendarAlt, FaFilePdf, FaPalette, FaQuoteRight } from "react-icons/fa";
 import { fetchSiteSettings, SiteSettings } from "@/lib/appearance";
 import { mediaUrl } from "@/lib/media";
 
@@ -34,6 +34,20 @@ const menuItems: MenuItem[] = [
     },
     { title: "শিক্ষক তালিকা", href: "/admin/teachers", icon: <FaUserTie className="w-4 h-4" /> },
     { title: "ইভেন্ট / মাহফিল", href: "/admin/events", icon: <FaCalendarAlt className="w-4 h-4" /> },
+    {
+        title: "হাদিস",
+        icon: <FaQuoteRight className="w-4 h-4" />,
+        children: [
+            { title: "সকল হাদিস", href: "/admin/hadith" },
+            { title: "নতুন হাদিস যোগ", href: "/admin/hadith/create" },
+            { title: "সংকলন", href: "/admin/hadith/collections" },
+            { title: "কিতাব", href: "/admin/hadith/books" },
+            { title: "পরিচ্ছেদ", href: "/admin/hadith/chapters" },
+            { title: "রাবী", href: "/admin/hadith/narrators" },
+            { title: "মান", href: "/admin/hadith/grades" },
+            { title: "বিষয়", href: "/admin/hadith/topics" },
+        ],
+    },
     {
         title: "বই / পিডিএফ",
         icon: <FaFilePdf className="w-4 h-4" />,
