@@ -11,7 +11,6 @@ import {
   HadithDetail,
   HadithGrade,
   HadithNarrator,
-  HadithTopic,
   listFromResponse,
 } from "@/lib/hadith";
 
@@ -31,16 +30,14 @@ export default function HadithForm({ hadithId }: HadithFormProps) {
   const [chapters, setChapters] = useState<HadithChapter[]>([]);
   const [narrators, setNarrators] = useState<HadithNarrator[]>([]);
   const [grades, setGrades] = useState<HadithGrade[]>([]);
-  const [topics, setTopics] = useState<HadithTopic[]>([]);
 
   const fetchOptions = useCallback(async () => {
-    const [collectionRes, bookRes, chapterRes, narratorRes, gradeRes, topicRes] = await Promise.all([
+    const [collectionRes, bookRes, chapterRes, narratorRes, gradeRes] = await Promise.all([
       authFetch("/hadith/collections/"),
       authFetch("/hadith/books/"),
       authFetch("/hadith/chapters/"),
       authFetch("/hadith/narrators/"),
       authFetch("/hadith/grades/"),
-      authFetch("/hadith/topics/"),
     ]);
 
     if (collectionRes.ok) setCollections(listFromResponse(await collectionRes.json()));
@@ -48,7 +45,6 @@ export default function HadithForm({ hadithId }: HadithFormProps) {
     if (chapterRes.ok) setChapters(listFromResponse(await chapterRes.json()));
     if (narratorRes.ok) setNarrators(listFromResponse(await narratorRes.json()));
     if (gradeRes.ok) setGrades(listFromResponse(await gradeRes.json()));
-    if (topicRes.ok) setTopics(listFromResponse(await topicRes.json()));
   }, []);
 
   const fetchHadith = useCallback(async () => {
@@ -92,9 +88,7 @@ export default function HadithForm({ hadithId }: HadithFormProps) {
       if (!data.get(field)) data.delete(field);
     });
 
-    if (data.getAll("topics").length === 0) {
-      data.delete("topics");
-    }
+    data.delete("topics");
 
     try {
       const res = await authFetch(isEdit ? `/hadith/list/${hadithId}/` : "/hadith/list/", {
@@ -127,7 +121,7 @@ export default function HadithForm({ hadithId }: HadithFormProps) {
   }
 
   const value = (field: keyof HadithDetail) => hadith?.[field] ?? "";
-  const selectedTopics = (hadith?.topics || []).map(String);
+  const topicsText = hadith?.topics_display?.map((item) => item.name).join(", ") || "";
 
   return (
     <div>
@@ -207,10 +201,8 @@ export default function HadithForm({ hadithId }: HadithFormProps) {
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-gray-600 mb-1.5">বিষয়</label>
-                  <select name="topics" multiple defaultValue={selectedTopics} className="w-full min-h-28 px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-500">
-                    {topics.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}
-                  </select>
-                  <p className="text-[11px] text-gray-400 mt-1">একাধিক নির্বাচন করতে Ctrl ধরে ক্লিক করুন।</p>
+                  <input name="topics_text" defaultValue={topicsText} className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:bg-white outline-none" placeholder="যেমন: সালাত, ঈমান, আখলাক" />
+                  <p className="text-[11px] text-gray-400 mt-1">একাধিক বিষয় কমা দিয়ে লিখুন। নতুন বিষয় হলে স্বয়ংক্রিয়ভাবে taxonomy তে যোগ হবে।</p>
                 </div>
               </div>
             </div>
