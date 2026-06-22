@@ -67,7 +67,7 @@ export default function HadithArchivePage() {
 
   return (
     <div className="min-h-screen bg-gray-50/30 pb-20">
-      <PageHero title="হাদিস" subtitle="কুরআন ও সুন্নাহর আলোকে নির্বাচিত হাদিস সংগ্রহ" showBismillah={false} />
+      <PageHero title="হাদিস" subtitle="রাসূলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লামের বাণী ও শিক্ষা — কুরআন ও সুন্নাহর আলোকে নির্বাচিত সহীহ হাদিস সংকলন" showBismillah={false} />
       <Breadcrumbs items={[{ label: "হাদিস" }]} />
 
       <div className="max-w-7xl mx-auto px-4 py-6">
@@ -102,30 +102,40 @@ export default function HadithArchivePage() {
         ) : (
           <div className="space-y-5">
             {hadiths.map((item) => (
-              <Link key={item.id} href={`/hadith/${item.id}`} className="group block bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-all overflow-hidden">
-                <div className="px-5 py-3 bg-gray-50 border-b border-gray-100 flex flex-wrap items-center justify-between gap-3">
-                  <span className="inline-flex items-center gap-2 bg-primary-600 text-white px-3 py-1 rounded-full text-xs font-bold">
-                    <FaQuoteRight className="w-3 h-3" /> {item.hadith_number}
-                  </span>
+              <Link key={item.id} href={`/hadith/${item.id}`} className="group block bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-primary-100 transition-all overflow-hidden">
+                <div className="px-5 py-3 bg-gradient-to-r from-primary-50 to-white border-b border-gray-100 flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <span className="inline-flex items-center gap-2 bg-primary-600 text-white px-3.5 py-1.5 rounded-full text-xs font-bold shadow-sm">
+                      <FaQuoteRight className="w-3 h-3" /> {item.hadith_number}
+                    </span>
+                    {item.topics_display && item.topics_display.length > 0 && (
+                      <div className="hidden sm:flex items-center gap-1.5">
+                        {item.topics_display.slice(0, 3).map((t) => (
+                          <span key={t.id} className="bg-white text-primary-700 border border-primary-100 px-2 py-0.5 rounded-full text-[11px] font-semibold">{t.name}</span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                   <div className="flex flex-wrap items-center gap-2 text-xs text-gray-500">
-                    {item.collection_name && <span>{item.collection_name}</span>}
-                    {item.grade_name && <span className="bg-green-50 text-green-700 border border-green-100 px-2 py-1 rounded-lg font-semibold">{item.grade_name}</span>}
-                    <span className="inline-flex items-center gap-1"><FaEye className="w-3 h-3" /> {item.view_count}</span>
+                    {item.collection_name && <span className="font-medium">{item.collection_name}</span>}
+                    {item.grade_name && <span className="bg-green-50 text-green-700 border border-green-100 px-2 py-1 rounded-lg font-bold">{item.grade_name}</span>}
+                    <span className="inline-flex items-center gap-1 text-gray-400"><FaEye className="w-3 h-3" /> {item.view_count}</span>
                   </div>
                 </div>
                 <div className="p-5 md:p-6">
-                  <h3 className="text-xl font-extrabold text-gray-900 mb-2 group-hover:text-primary-700 transition-colors">{item.title}</h3>
+                  <h3 className="text-xl font-extrabold text-gray-900 mb-1 group-hover:text-primary-700 transition-colors">{item.title}</h3>
                   {item.chapter_title && <p className="text-sm text-primary-700 font-semibold mb-3">{item.chapter_title}</p>}
+                  {item.narrator_name && <p className="text-xs text-gray-500 mb-3 flex items-center gap-1"><FaBookOpen className="w-3 h-3 text-primary-400" /> রাবী: {item.narrator_name}</p>}
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <p className="text-gray-700 leading-loose line-clamp-4 text-justify">{item.bangla_text}</p>
-                    {item.arabic_text && <p dir="rtl" className="text-2xl text-gray-900 leading-loose line-clamp-4 font-serif">{item.arabic_text}</p>}
+                    {item.arabic_text && <p dir="rtl" className="text-2xl text-gray-900 leading-loose line-clamp-3 font-serif text-right">{item.arabic_text}</p>}
                   </div>
                   <div className="pt-4 mt-4 border-t border-gray-50 flex items-center justify-between">
                     <span className="inline-flex items-center gap-2 text-xs text-gray-500">
                       <FaBookOpen className="w-3.5 h-3.5 text-primary-500" />
                       {item.book_name || item.reference || "বিস্তারিত"}
                     </span>
-                    <span className="inline-flex items-center gap-2 text-xs font-bold text-primary-600">
+                    <span className="inline-flex items-center gap-2 text-xs font-bold text-primary-600 group-hover:gap-3 transition-all">
                       বিস্তারিত পড়ুন <FaArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                     </span>
                   </div>

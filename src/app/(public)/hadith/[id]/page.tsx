@@ -121,7 +121,7 @@ export default function HadithDetailsPage() {
           </div>
         </article>
 
-        <aside className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <aside className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
             <p className="text-xs text-gray-400 mb-1">সংকলন</p>
             <p className="font-bold text-gray-800">{hadith.collection_name || "উল্লেখ নেই"}</p>
@@ -132,13 +132,45 @@ export default function HadithDetailsPage() {
             {hadith.book_arabic_name && <p dir="rtl" className="text-sm text-gray-500 mt-1">{hadith.book_arabic_name}</p>}
           </div>
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+            <p className="text-xs text-gray-400 mb-1">পরিচ্ছেদ</p>
+            <p className="font-bold text-gray-800">{hadith.chapter_title || "উল্লেখ নেই"}</p>
+            {hadith.chapter_arabic_title && <p dir="rtl" className="text-sm text-gray-500 mt-1">{hadith.chapter_arabic_title}</p>}
+          </div>
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
             <p className="text-xs text-gray-400 mb-1 flex items-center gap-1"><FaUserEdit className="w-3 h-3" /> রাবী</p>
             <p className="font-bold text-gray-800">{hadith.narrator_name || "উল্লেখ নেই"}</p>
           </div>
         </aside>
 
+        <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+            <p className="text-xs text-gray-400 mb-1">মান / গ্রেড</p>
+            <p className="font-bold text-gray-800">{hadith.grade_name || "উল্লেখ নেই"}</p>
+          </div>
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+            <p className="text-xs text-gray-400 mb-1">রেফারেন্স</p>
+            <p className="font-bold text-gray-800">{hadith.reference || "উল্লেখ নেই"}</p>
+          </div>
+          {hadith.source_note && (
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+              <p className="text-xs text-gray-400 mb-1">উৎস নোট</p>
+              <p className="font-bold text-gray-800">{hadith.source_note}</p>
+            </div>
+          )}
+          {hadith.keywords && (
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+              <p className="text-xs text-gray-400 mb-1">কীওয়ার্ড</p>
+              <div className="flex flex-wrap gap-1.5 mt-1">
+                {hadith.keywords.split(",").map((kw, i) => (
+                  <span key={i} className="bg-gray-100 text-gray-600 px-2 py-0.5 rounded text-xs">{kw.trim()}</span>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
         {hadith.topics_display.length > 0 && (
-          <div className="mt-6 bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+          <div className="mt-5 bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
             <p className="text-xs text-gray-400 mb-3">বিষয়</p>
             <div className="flex flex-wrap gap-2">
               {hadith.topics_display.map((topic) => (

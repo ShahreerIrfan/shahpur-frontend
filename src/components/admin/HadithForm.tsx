@@ -5,14 +5,15 @@ import { useRouter } from "next/navigation";
 import { FaArrowLeft, FaBook, FaSave, FaSpinner } from "react-icons/fa";
 import { authFetch, API_URL } from "@/lib/api";
 import {
-  HADITH_GRADES,
+  HadithBook,
   HadithChapter,
   HadithCollection,
   HadithDetail,
-  HadithKitab,
+  HadithGrade,
   HadithNarrator,
-  HadithTaxonomy,
-} from "@/lib/hadiths";
+  HadithTopic,
+  listFromResponse,
+} from "@/lib/hadith";
 
 interface HadithFormProps {
   hadithId?: string;
@@ -21,76 +22,50 @@ interface HadithFormProps {
 export default function HadithForm({ hadithId }: HadithFormProps) {
   const router = useRouter();
   const isEdit = Boolean(hadithId);
-  const [loading, setLoading] = useState(Boolean(hadithId));
+  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
   const [hadith, setHadith] = useState<HadithDetail | null>(null);
-  const [taxonomies, setTaxonomies] = useState<HadithTaxonomy[]>([]);
   const [collections, setCollections] = useState<HadithCollection[]>([]);
-  const [kitabs, setKitabs] = useState<HadithKitab[]>([]);
+  const [books, setBooks] = useState<HadithBook[]>([]);
   const [chapters, setChapters] = useState<HadithChapter[]>([]);
   const [narrators, setNarrators] = useState<HadithNarrator[]>([]);
+  const [grades, setGrades] = useState<HadithGrade[]>([]);
+  const [topics, setTopics] = useState<HadithTopic[]>([]);
+  const [selectedTopics, setSelectedTopics] = useState<number[]>([]);
 
-  const [selectedCollection, setSelectedCollection] = useState("");
-  const [selectedKitab, setSelectedKitab] = useState("");
-  const [selectedTaxonomies, setSelectedTaxonomies] = useState<number[]>([]);
-
-  const fetchKitabs = useCallback(async (collectionId?: string) => {
-    const url = collectionId
-      ? `${API_URL}/hadiths/kitabs/?collection=${collectionId}`
-      : `${API_URL}/hadiths/kitabs/`;
-    const res = await fetch(url);
-    if (res.ok) {
-      const data = await res.json();
-      setKitabs(Array.isArray(data) ? data : data.results || []);
-    }
+  const fetchOptions = useCallback(async () => {
+    const [collRes, bookRes, chapterRes, narratorRes, gradeRes, topicRes] = await Promise.all([
+      fetch(`${API_URL}/hadith/collections/`),
+      fetch(`${API_URL}/hadith/books/`),
+      fetch(`${API_URL}/hadith/chapters/`),
+      fetch(`${API_URL}/hadith/narrators/`),
+      fetch(`${API_URL}/hadith/grades/`),
+      fetch(`${API_URL}/hadith/topics/`),
+    ]);
+    if (collRes.ok) setCollections(listFromResponse(await collRes.json()));
+    if (bookRes.ok) setBooks(listFromResponse(await bookRes.json()));
+    if (chapterRes.ok) setChapters(listFromResponse(await chapterRes.json()));
+    if (narratorRes.ok) setNarrators(listFromResponse(await narratorRes.json()));
+    if (gradeRes.ok) setGrades(listFromResponse(await gradeRes.json()));
+    if (topicRes.ok) setTopics(listFromResponse(await topicRes.json()));
   }, []);
 
-  const fetchChapters = useCallback(async (kitabId?: string) => {
-    const url = kitabId
-      ? `${API_URL}/hadiths/chapters/?kitab=${kitabId}`
-      : `${API_URL}/hadiths/chapters/`;
-    const res = await fetch(url);
-    if (res.ok) {
-      const data = await res.json();
-      setChapters(Array.isArray(data) ? data : data.results || []);
-    }
-  }, []);
+  const fetchHadith = useCallback(async () => {
+    if (!hadithId) return;
+    const res = await authFetch(`/hadith/list/${hadithId}/`);
+    if (!res.ok) throw new Error("হাদিস লোড করতে সমস্যা হয়েছে।");
+    const data = (await res.json()) as HadithDetail;
+    setHadith(data);
+    setSelectedTopics(data.topics || []);
+  }, [hadithId]);
 
   useEffect(() => {
     const load = async () => {
       try {
-        const [taxRes, collRes, narratorRes] = await Promise.all([
-          fetch(`${API_URL}/hadiths/taxonomies/`),
-          fetch(`${API_URL}/hadiths/collections/`),
-          fetch(`${API_URL}/hadiths/narrators/`),
-        ]);
-        if (taxRes.ok) {
-          const data = await taxRes.json();
-          setTaxonomies(Array.isArray(data) ? data : data.results || []);
-        }
-        if (collRes.ok) {
-          const data = await collRes.json();
-          setCollections(Array.isArray(data) ? data : data.results || []);
-        }
-        if (narratorRes.ok) {
-          const data = await narratorRes.json();
-          setNarrators(Array.isArray(data) ? data : data.results || []);
-        }
-
-        if (hadithId) {
-          const res = await authFetch(`/hadiths/list/${hadithId}/`);
-          if (res.ok) {
-            const data = (await res.json()) as HadithDetail;
-            setHadith(data);
-            setSelectedCollection(data.collection ? String(data.collection) : "");
-            setSelectedKitab(data.kitab ? String(data.kitab) : "");
-            setSelectedTaxonomies(data.taxonomy_ids || []);
-            if (data.collection) await fetchKitabs(String(data.collection));
-            if (data.kitab) await fetchChapters(String(data.kitab));
-          }
-        }
+        await fetchOptions();
+        if (hadithId) await fetchHadith();
       } catch (err) {
         setError(err instanceof Error ? err.message : "ডাটা লোড করতে সমস্যা হয়েছে।");
       } finally {
@@ -98,24 +73,10 @@ export default function HadithForm({ hadithId }: HadithFormProps) {
       }
     };
     void load();
-  }, [hadithId, fetchKitabs, fetchChapters]);
+  }, [hadithId, fetchOptions, fetchHadith]);
 
-  const handleCollectionChange = (collId: string) => {
-    setSelectedCollection(collId);
-    setSelectedKitab("");
-    setChapters([]);
-    if (collId) void fetchKitabs(collId);
-    else setKitabs([]);
-  };
-
-  const handleKitabChange = (kitabId: string) => {
-    setSelectedKitab(kitabId);
-    if (kitabId) void fetchChapters(kitabId);
-    else setChapters([]);
-  };
-
-  const toggleTaxonomy = (id: number) => {
-    setSelectedTaxonomies((prev) =>
+  const toggleTopic = (id: number) => {
+    setSelectedTopics((prev) =>
       prev.includes(id) ? prev.filter((t) => t !== id) : [...prev, id]
     );
   };
@@ -126,42 +87,33 @@ export default function HadithForm({ hadithId }: HadithFormProps) {
     setError("");
 
     const form = e.currentTarget;
-    const get = (name: string) => (form.elements.namedItem(name) as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement)?.value || "";
+    const data = new FormData(form);
     const isChecked = (name: string) => {
       const el = form.elements.namedItem(name);
       return el instanceof HTMLInputElement && el.checked;
     };
 
-    const payload: Record<string, unknown> = {
-      title: get("title"),
-      hadith_number: get("hadith_number"),
-      reference: get("reference"),
-      collection: selectedCollection ? Number(selectedCollection) : null,
-      kitab: selectedKitab ? Number(selectedKitab) : null,
-      chapter: get("chapter") ? Number(get("chapter")) : null,
-      narrator: get("narrator") ? Number(get("narrator")) : null,
-      grade: get("grade"),
-      taxonomy_ids: selectedTaxonomies,
-      arabic_text: get("arabic_text"),
-      bangla_translation: get("bangla_translation"),
-      english_translation: get("english_translation"),
-      explanation: get("explanation"),
-      source_note: get("source_note"),
-      keywords: get("keywords"),
-      is_published: isChecked("is_published"),
-      is_featured: isChecked("is_featured"),
-      show_on_homepage: isChecked("show_on_homepage"),
-    };
+    data.set("is_published", isChecked("is_published") ? "true" : "false");
+    data.set("is_featured", isChecked("is_featured") ? "true" : "false");
+    data.set("show_on_homepage", isChecked("show_on_homepage") ? "true" : "false");
+
+    // Clear empty FK fields
+    ["collection", "book", "chapter", "narrator", "grade"].forEach((field) => {
+      if (!data.get(field)) data.delete(field);
+    });
+
+    // Convert selected topics to comma-separated text for topics_text field
+    const topicNames = selectedTopics
+      .map((id) => topics.find((t) => t.id === id)?.name)
+      .filter(Boolean)
+      .join(", ");
+    data.set("topics_text", topicNames);
 
     try {
-      const res = await authFetch(
-        isEdit ? `/hadiths/list/${hadithId}/` : "/hadiths/list/",
-        {
-          method: isEdit ? "PATCH" : "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        }
-      );
+      const res = await authFetch(isEdit ? `/hadith/list/${hadithId}/` : "/hadith/list/", {
+        method: isEdit ? "PATCH" : "POST",
+        body: data,
+      });
 
       if (!res.ok) {
         const errorData = (await res.json().catch(() => null)) as Record<string, unknown> | null;
@@ -171,7 +123,7 @@ export default function HadithForm({ hadithId }: HadithFormProps) {
         throw new Error(message);
       }
 
-      router.push("/admin/hadiths");
+      router.push("/admin/hadith");
     } catch (err) {
       setError(err instanceof Error ? err.message : "হাদিস সংরক্ষণ করতে সমস্যা হয়েছে।");
     } finally {
@@ -192,7 +144,7 @@ export default function HadithForm({ hadithId }: HadithFormProps) {
   return (
     <div>
       <div className="flex items-center gap-4 mb-6">
-        <button onClick={() => router.back()} className="w-9 h-9 bg-white border border-gray-200 rounded-lg flex items-center justify-center hover:bg-gray-50 transition-colors shadow-sm">
+        <button type="button" onClick={() => router.back()} className="w-9 h-9 bg-white border border-gray-200 rounded-lg flex items-center justify-center hover:bg-gray-50 transition-colors shadow-sm">
           <FaArrowLeft className="text-gray-400 w-3.5 h-3.5" />
         </button>
         <div>
@@ -230,23 +182,23 @@ export default function HadithForm({ hadithId }: HadithFormProps) {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                   <div>
                     <label className="block text-xs font-medium text-gray-600 mb-1.5">সংকলন</label>
-                    <select value={selectedCollection} onChange={(e) => handleCollectionChange(e.target.value)} className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-500">
+                    <select name="collection" defaultValue={hadith?.collection ?? ""} className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-500">
                       <option value="">নির্বাচন করুন</option>
                       {collections.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
                     </select>
                   </div>
                   <div>
                     <label className="block text-xs font-medium text-gray-600 mb-1.5">কিতাব</label>
-                    <select value={selectedKitab} onChange={(e) => handleKitabChange(e.target.value)} className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-500">
+                    <select name="book" defaultValue={hadith?.book ?? ""} className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-500">
                       <option value="">নির্বাচন করুন</option>
-                      {kitabs.map((k) => <option key={k.id} value={k.id}>{k.name}</option>)}
+                      {books.map((b) => <option key={b.id} value={b.id}>{b.name}</option>)}
                     </select>
                   </div>
                   <div>
                     <label className="block text-xs font-medium text-gray-600 mb-1.5">পরিচ্ছেদ</label>
                     <select name="chapter" defaultValue={hadith?.chapter ?? ""} className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-500">
                       <option value="">নির্বাচন করুন</option>
-                      {chapters.map((ch) => <option key={ch.id} value={ch.id}>{ch.name}</option>)}
+                      {chapters.map((ch) => <option key={ch.id} value={ch.id}>{ch.title}</option>)}
                     </select>
                   </div>
                 </div>
@@ -260,38 +212,39 @@ export default function HadithForm({ hadithId }: HadithFormProps) {
                   </div>
                   <div>
                     <label className="block text-xs font-medium text-gray-600 mb-1.5">মান/গ্রেড</label>
-                    <select name="grade" defaultValue={String(val("grade") || "sahih")} className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-500">
-                      {HADITH_GRADES.map((g) => <option key={g.value} value={g.value}>{g.label}</option>)}
+                    <select name="grade" defaultValue={hadith?.grade ?? ""} className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-500">
+                      <option value="">নির্বাচন করুন</option>
+                      {grades.map((g) => <option key={g.id} value={g.id}>{g.name}</option>)}
                     </select>
                   </div>
                 </div>
                 {/* বিষয় - Multi-select with checkboxes */}
                 <div>
                   <label className="block text-xs font-medium text-gray-600 mb-1.5">বিষয়</label>
-                  <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 max-h-48 overflow-y-auto">
-                    {taxonomies.length === 0 && <p className="text-xs text-gray-400">কোনো বিষয় পাওয়া যায়নি</p>}
+                  <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 max-h-52 overflow-y-auto">
+                    {topics.length === 0 && <p className="text-xs text-gray-400">কোনো বিষয় পাওয়া যায়নি। প্রথমে বিষয় ট্যাক্সোনমি যোগ করুন।</p>}
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                      {taxonomies.map((tax) => (
-                        <label key={tax.id} className="flex items-center gap-2 cursor-pointer hover:bg-white rounded px-2 py-1.5 transition-colors">
+                      {topics.map((t) => (
+                        <label key={t.id} className="flex items-center gap-2 cursor-pointer hover:bg-white rounded px-2 py-1.5 transition-colors">
                           <input
                             type="checkbox"
-                            checked={selectedTaxonomies.includes(tax.id)}
-                            onChange={() => toggleTaxonomy(tax.id)}
+                            checked={selectedTopics.includes(t.id)}
+                            onChange={() => toggleTopic(t.id)}
                             className="w-4 h-4 accent-primary-500 rounded"
                           />
-                          <span className="text-sm text-gray-700">{tax.name}</span>
+                          <span className="text-sm text-gray-700">{t.name}</span>
                         </label>
                       ))}
                     </div>
                   </div>
-                  {selectedTaxonomies.length > 0 && (
+                  {selectedTopics.length > 0 && (
                     <div className="flex flex-wrap gap-1.5 mt-2">
-                      {selectedTaxonomies.map((id) => {
-                        const tax = taxonomies.find((t) => t.id === id);
-                        return tax ? (
+                      {selectedTopics.map((id) => {
+                        const t = topics.find((tp) => tp.id === id);
+                        return t ? (
                           <span key={id} className="inline-flex items-center gap-1 bg-primary-50 text-primary-700 px-2 py-0.5 rounded-full text-xs font-medium">
-                            {tax.name}
-                            <button type="button" onClick={() => toggleTaxonomy(id)} className="text-primary-400 hover:text-primary-600">&times;</button>
+                            {t.name}
+                            <button type="button" onClick={() => toggleTopic(id)} className="text-primary-400 hover:text-primary-600">&times;</button>
                           </span>
                         ) : null;
                       })}
@@ -309,24 +262,24 @@ export default function HadithForm({ hadithId }: HadithFormProps) {
               </div>
               <div className="p-6 space-y-4">
                 <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1.5">আরবি হাদিস *</label>
-                  <textarea name="arabic_text" defaultValue={String(val("arabic_text"))} required rows={5} dir="rtl" className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-500 resize-none font-arabic text-lg leading-loose"></textarea>
+                  <label className="block text-xs font-medium text-gray-600 mb-1.5">আরবি হাদিস</label>
+                  <textarea name="arabic_text" defaultValue={String(val("arabic_text"))} rows={5} dir="rtl" className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-lg outline-none focus:ring-2 focus:ring-primary-500 resize-y leading-loose font-serif"></textarea>
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-gray-600 mb-1.5">বাংলা অনুবাদ *</label>
-                  <textarea name="bangla_translation" defaultValue={String(val("bangla_translation"))} required rows={6} className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-500 resize-none"></textarea>
+                  <textarea name="bangla_text" defaultValue={String(val("bangla_text"))} required rows={6} className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-500 resize-y leading-relaxed"></textarea>
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-gray-600 mb-1.5">ইংরেজি অনুবাদ</label>
-                  <textarea name="english_translation" defaultValue={String(val("english_translation"))} rows={4} className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-500 resize-none"></textarea>
+                  <textarea name="english_text" defaultValue={String(val("english_text"))} rows={4} className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-500 resize-y"></textarea>
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-gray-600 mb-1.5">ব্যাখ্যা/নোট</label>
-                  <textarea name="explanation" defaultValue={String(val("explanation"))} rows={4} className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-500 resize-none"></textarea>
+                  <textarea name="explanation" defaultValue={String(val("explanation"))} rows={4} className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-500 resize-y"></textarea>
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-gray-600 mb-1.5">উৎস নোট</label>
-                  <textarea name="source_note" defaultValue={String(val("source_note"))} rows={2} className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-500 resize-none"></textarea>
+                  <input name="source_note" defaultValue={String(val("source_note"))} className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-500" />
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-gray-600 mb-1.5">কীওয়ার্ড</label>
@@ -355,7 +308,7 @@ export default function HadithForm({ hadithId }: HadithFormProps) {
                 </label>
               </div>
               <button type="submit" disabled={saving} className="w-full inline-flex items-center justify-center gap-2 bg-primary-500 hover:bg-primary-600 disabled:bg-primary-300 text-white py-2.5 rounded-xl text-sm font-medium transition-all shadow-sm">
-                <FaSave className="w-3.5 h-3.5" />
+                {saving ? <FaSpinner className="w-3.5 h-3.5 animate-spin" /> : <FaSave className="w-3.5 h-3.5" />}
                 {saving ? "সংরক্ষণ হচ্ছে..." : isEdit ? "আপডেট করুন" : "সংরক্ষণ করুন"}
               </button>
             </div>
