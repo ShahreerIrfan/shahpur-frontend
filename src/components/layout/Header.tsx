@@ -6,7 +6,12 @@ import { FaUser } from "react-icons/fa";
 import { fetchSiteSettings, SiteSettings } from "@/lib/appearance";
 import { mediaUrl } from "@/lib/media";
 
-const menuItems = [
+const menuItems: {
+    title: string;
+    url: string;
+    comingSoon?: boolean;
+    children?: { title: string; url: string; comingSoon?: boolean }[];
+}[] = [
     { title: "হোম", url: "/" },
     {
         title: "জীবনী",
@@ -16,13 +21,21 @@ const menuItems = [
             { title: "মাও. আব্দুস সুবহান (রাঃ) এঁর জীবনী", url: "/biography/subhan" },
         ],
     },
+    { title: "হাদিস", url: "/hadith" },
+    { title: "বই", url: "/books" },
     { title: "মাদ্রাসা", url: "/madrasha" },
     { title: "খানকাহ", url: "/khankah" },
     { title: "ইভেন্ট", url: "/events" },
-    { title: "বই", url: "/books" },
-    { title: "সেবা কার্যক্রম", url: "/seva" },
-    { title: "গ্যালারি", url: "/gallery" },
-    { title: "যোগাযোগ", url: "/contact" },
+    { title: "মাজিউন্নবী", url: "#", comingSoon: true },
+    {
+        title: "আরও দেখুন",
+        url: "#",
+        children: [
+            { title: "সেবা কার্যক্রম", url: "/seva" },
+            { title: "গ্যালারি", url: "/gallery" },
+            { title: "যোগাযোগ", url: "/contact" },
+        ],
+    },
 ];
 
 export default function Header() {
@@ -91,29 +104,42 @@ export default function Header() {
                                     onMouseEnter={() => item.children && setOpenDropdown(item.title)}
                                     onMouseLeave={() => setOpenDropdown(null)}
                                 >
-                                    <Link
-                                        href={item.url}
-                                        className="px-4 py-2 text-gray-700 hover:text-primary-600 hover:bg-primary-50 rounded-md transition-colors font-medium text-[15px]"
-                                    >
-                                        {item.title}
-                                        {item.children && (
-                                            <svg className="w-3 h-3 ml-1 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                            </svg>
-                                        )}
-                                    </Link>
+                                    {item.comingSoon ? (
+                                        <span className="px-4 py-2 text-gray-400 rounded-md font-medium text-[15px] cursor-default inline-flex items-center gap-1">
+                                            {item.title}
+                                            <span className="text-[10px] bg-amber-50 text-amber-700 border border-amber-100 px-1.5 py-0.5 rounded-full">Soon</span>
+                                        </span>
+                                    ) : (
+                                        <Link
+                                            href={item.url}
+                                            className="px-4 py-2 text-gray-700 hover:text-primary-600 hover:bg-primary-50 rounded-md transition-colors font-medium text-[15px]"
+                                        >
+                                            {item.title}
+                                            {item.children && (
+                                                <svg className="w-3 h-3 ml-1 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                                </svg>
+                                            )}
+                                        </Link>
+                                    )}
 
                                     {/* Dropdown */}
                                     {item.children && openDropdown === item.title && (
                                         <div className="absolute top-full left-0 bg-white shadow-lg rounded-md border border-gray-100 py-2 min-w-[320px] z-50">
                                             {item.children.map((child) => (
-                                                <Link
-                                                    key={child.title}
-                                                    href={child.url}
-                                                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-600 transition-colors"
-                                                >
-                                                    {child.title}
-                                                </Link>
+                                                child.comingSoon ? (
+                                                    <span key={child.title} className="block px-4 py-2 text-sm text-gray-400 cursor-default">
+                                                        {child.title} <span className="text-[10px] text-amber-600">(Soon)</span>
+                                                    </span>
+                                                ) : (
+                                                    <Link
+                                                        key={child.title}
+                                                        href={child.url}
+                                                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-600 transition-colors"
+                                                    >
+                                                        {child.title}
+                                                    </Link>
+                                                )
                                             ))}
                                         </div>
                                     )}
@@ -195,6 +221,11 @@ export default function Header() {
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                         </svg>
                                     </button>
+                                ) : item.comingSoon ? (
+                                    <div className="flex items-center justify-between px-4 py-2 text-gray-400 rounded-md font-medium">
+                                        <span>{item.title}</span>
+                                        <span className="text-[10px] bg-amber-50 text-amber-700 border border-amber-100 px-1.5 py-0.5 rounded-full">Soon</span>
+                                    </div>
                                 ) : (
                                     <Link
                                         href={item.url}
@@ -207,14 +238,20 @@ export default function Header() {
                                 {item.children && openMobileSubmenu === item.title && (
                                     <div className="ml-4 mt-1 space-y-1 border-l border-primary-100 pl-2">
                                         {item.children.map((child) => (
-                                            <Link
-                                                key={child.title}
-                                                href={child.url}
-                                                className="block px-4 py-2 text-sm text-gray-600 hover:bg-primary-50 hover:text-primary-600 rounded-md"
-                                                onClick={() => setMobileMenuOpen(false)}
-                                            >
-                                                • {child.title}
-                                            </Link>
+                                            child.comingSoon ? (
+                                                <div key={child.title} className="px-4 py-2 text-sm text-gray-400 rounded-md">
+                                                    • {child.title} <span className="text-[10px] text-amber-600">(Soon)</span>
+                                                </div>
+                                            ) : (
+                                                <Link
+                                                    key={child.title}
+                                                    href={child.url}
+                                                    className="block px-4 py-2 text-sm text-gray-600 hover:bg-primary-50 hover:text-primary-600 rounded-md"
+                                                    onClick={() => setMobileMenuOpen(false)}
+                                                >
+                                                    • {child.title}
+                                                </Link>
+                                            )
                                         ))}
                                     </div>
                                 )}
