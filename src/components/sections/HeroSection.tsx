@@ -76,27 +76,28 @@ export default function HeroSection() {
       {slides.map((slide, index) => (
         <div
           key={slide.id}
-          className={`absolute inset-0 bg-cover bg-center transition-opacity duration-700 ${index === activeIndex ? "opacity-100" : "opacity-0"}`}
+          className={`absolute inset-0 bg-cover bg-center transition-all duration-700 scale-[1.02] ${index === activeIndex ? "opacity-100" : "opacity-0"}`}
           style={{ backgroundImage: `url('${slideImageUrl(slide)}')` }}
         />
       ))}
-      <div className="absolute inset-0 bg-gradient-to-r from-white/88 via-white/55 to-white/10" />
-      <div className="absolute inset-0 bg-white/10" />
-      <div className="absolute inset-0 islamic-pattern opacity-10" />
+      <div className="absolute inset-0 bg-gradient-to-r from-primary-950/90 via-primary-900/45 to-black/5" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-black/10" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_72%_42%,transparent_0%,rgba(0,0,0,0.08)_45%,rgba(3,72,56,0.32)_100%)]" />
+      <div className="absolute inset-0 islamic-pattern opacity-[0.06]" />
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary-500 via-primary-400 to-primary-500" />
 
       <div className="relative max-w-7xl mx-auto px-4 py-16 w-full">
         <div className="max-w-2xl space-y-6">
-          <div className="inline-flex items-center gap-2 bg-primary-500/10 backdrop-blur-sm px-4 py-2 rounded-full border border-primary-300/40">
-            <FaMosque className="text-primary-600" />
-            <span className="text-sm text-primary-700 font-medium">{activeSlide.eyebrow || fallbackSlide.eyebrow}</span>
+          <div className="inline-flex items-center gap-2 bg-white/12 backdrop-blur-md px-4 py-2 rounded-full border border-white/25 shadow-lg shadow-black/10">
+            <FaMosque className="text-emerald-200" />
+            <span className="text-sm text-white font-medium">{activeSlide.eyebrow || fallbackSlide.eyebrow}</span>
           </div>
 
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-gray-800 whitespace-pre-line">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-white whitespace-pre-line drop-shadow-[0_4px_18px_rgba(0,0,0,0.38)]">
             {activeSlide.title}
           </h1>
 
-          <p className="text-lg text-gray-600 max-w-lg leading-relaxed">
+          <p className="text-lg text-white/85 max-w-lg leading-relaxed drop-shadow-[0_2px_10px_rgba(0,0,0,0.35)]">
             {activeSlide.subtitle}
           </p>
 
@@ -104,7 +105,7 @@ export default function HeroSection() {
             {activeSlide.primary_button_text && activeSlide.primary_button_url && (
               <Link
                 href={activeSlide.primary_button_url}
-                className="inline-flex items-center gap-2 bg-primary-500 hover:bg-primary-600 text-white px-6 py-3 rounded-lg font-medium transition-all hover:scale-105 shadow-lg shadow-primary-500/20"
+                className="inline-flex items-center gap-2 bg-primary-500 hover:bg-primary-400 text-white px-6 py-3 rounded-lg font-medium transition-all hover:scale-105 shadow-xl shadow-primary-950/25"
               >
                 <FaBookOpen />
                 {activeSlide.primary_button_text}
@@ -113,7 +114,7 @@ export default function HeroSection() {
             {activeSlide.secondary_button_text && activeSlide.secondary_button_url && (
               <Link
                 href={activeSlide.secondary_button_url}
-                className="inline-flex items-center gap-2 border-2 border-primary-300 hover:bg-primary-50 text-primary-700 px-6 py-3 rounded-lg font-medium transition-all"
+                className="inline-flex items-center gap-2 border-2 border-white/45 bg-white/10 hover:bg-white/20 text-white px-6 py-3 rounded-lg font-medium transition-all backdrop-blur-sm"
               >
                 {activeSlide.secondary_button_text}
               </Link>
@@ -123,8 +124,8 @@ export default function HeroSection() {
           <div className="flex flex-wrap gap-8 pt-4">
             {stats.map((stat, index) => (
               <div key={`${stat.label}-${index}`}>
-                <p className="text-3xl font-bold text-primary-600">{stat.value}</p>
-                <p className="text-sm text-gray-500">{stat.label}</p>
+                <p className="text-3xl font-bold text-emerald-200 drop-shadow-[0_2px_10px_rgba(0,0,0,0.35)]">{stat.value}</p>
+                <p className="text-sm text-white/75">{stat.label}</p>
               </div>
             ))}
           </div>
@@ -135,7 +136,7 @@ export default function HeroSection() {
             <button
               type="button"
               onClick={() => goToSlide("prev")}
-              className="w-10 h-10 rounded-full bg-white/80 border border-primary-100 text-primary-700 shadow-sm hover:bg-white flex items-center justify-center"
+              className="w-10 h-10 rounded-full bg-white/15 border border-white/30 text-white shadow-sm hover:bg-white/25 backdrop-blur-md flex items-center justify-center"
               aria-label="Previous slide"
             >
               <FaChevronLeft className="w-3 h-3" />
@@ -146,7 +147,7 @@ export default function HeroSection() {
                   key={slide.id}
                   type="button"
                   onClick={() => setActiveIndex(index)}
-                  className={`h-2.5 rounded-full transition-all ${index === activeIndex ? "w-8 bg-primary-500" : "w-2.5 bg-primary-200"}`}
+                  className={`h-2.5 rounded-full transition-all ${index === activeIndex ? "w-8 bg-emerald-300" : "w-2.5 bg-white/45"}`}
                   aria-label={`Go to slide ${index + 1}`}
                 />
               ))}
@@ -154,7 +155,7 @@ export default function HeroSection() {
             <button
               type="button"
               onClick={() => goToSlide("next")}
-              className="w-10 h-10 rounded-full bg-white/80 border border-primary-100 text-primary-700 shadow-sm hover:bg-white flex items-center justify-center"
+              className="w-10 h-10 rounded-full bg-white/15 border border-white/30 text-white shadow-sm hover:bg-white/25 backdrop-blur-md flex items-center justify-center"
               aria-label="Next slide"
             >
               <FaChevronRight className="w-3 h-3" />
