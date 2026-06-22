@@ -117,7 +117,7 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
         <aside className={`w-[260px] bg-white border-r border-gray-100 min-h-screen flex flex-col shadow-sm fixed lg:static top-0 bottom-0 left-0 z-[999] transition-transform duration-300 transform lg:translate-x-0 ${isOpen ? "translate-x-0" : "-translate-x-full"}`}>
             {/* Logo */}
             <div className="p-5 border-b border-gray-100">
-                <Link href="/admin" className="flex items-center gap-3">
+                <Link href="/admin" prefetch={false} className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex items-center justify-center shadow-sm overflow-hidden">
                         {settings?.logo ? (
                             <img src={mediaUrl(settings.logo)} alt={settings.site_name} className="w-full h-full object-cover" />
@@ -167,6 +167,7 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
                                                 <Link
                                                     key={child.href}
                                                     href={child.href}
+                                                    prefetch={false}
                                                     className={`block px-3 py-2 rounded-lg text-xs font-medium transition-all ${isChildItemActive
                                                             ? "bg-primary-50 text-primary-700"
                                                             : "text-gray-500 hover:bg-gray-50 hover:text-gray-700"
@@ -188,6 +189,7 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
                         <Link
                             key={item.href}
                             href={item.href!}
+                            prefetch={false}
                             className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${isActive
                                     ? "bg-primary-50 text-primary-700 shadow-sm border border-primary-100"
                                     : "text-gray-600 hover:bg-gray-50 hover:text-gray-800"

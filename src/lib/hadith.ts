@@ -1,6 +1,8 @@
 export interface ApiList<T> {
   results?: T[];
   count?: number;
+  next?: string | null;
+  previous?: string | null;
 }
 
 export function listFromResponse<T>(data: T[] | ApiList<T>): T[] {
@@ -101,6 +103,7 @@ export interface HadithListItem {
   narrator_name: string;
   grade: number | null;
   grade_name: string;
+  grade_color: string;
   topics: number[];
   topics_display: HadithTopicDisplay[];
   arabic_text: string;

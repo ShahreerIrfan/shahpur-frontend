@@ -79,7 +79,7 @@ export default function Header() {
                 <div className="max-w-7xl mx-auto px-4">
                     <div className="flex items-center justify-between h-20">
                         {/* Logo / Site Name */}
-                        <Link href="/" className="flex items-center gap-3">
+                        <Link href="/" prefetch={false} className="flex items-center gap-3">
                             <div className="w-12 h-12 bg-primary-500 rounded-full flex items-center justify-center overflow-hidden">
                                 {settings?.logo ? (
                                     <img src={mediaUrl(settings.logo)} alt={settings.site_name} className="w-full h-full object-cover" />
@@ -112,6 +112,7 @@ export default function Header() {
                                     ) : (
                                         <Link
                                             href={item.url}
+                                            prefetch={false}
                                             className="px-4 py-2 text-gray-700 hover:text-primary-600 hover:bg-primary-50 rounded-md transition-colors font-medium text-[15px]"
                                         >
                                             {item.title}
@@ -135,6 +136,7 @@ export default function Header() {
                                                     <Link
                                                         key={child.title}
                                                         href={child.url}
+                                                        prefetch={false}
                                                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-600 transition-colors"
                                                     >
                                                         {child.title}
@@ -151,8 +153,9 @@ export default function Header() {
                         <div className="hidden lg:flex items-center gap-3 ml-4">
                             {isLoggedIn ? (
                                 <>
-                                    <Link 
+                                    <Link
                                         href={isAdmin ? "/admin" : "/dashboard"} 
+                                        prefetch={false}
                                         className="flex items-center gap-2 text-gray-600 hover:text-primary-600 text-sm font-medium"
                                     >
                                         <FaUser className="w-3.5 h-3.5" />
@@ -167,11 +170,11 @@ export default function Header() {
                                 </>
                             ) : (
                                 <>
-                                    <Link href="/login" className="flex items-center gap-2 text-gray-600 hover:text-primary-600 text-sm font-medium">
+                                    <Link href="/login" prefetch={false} className="flex items-center gap-2 text-gray-600 hover:text-primary-600 text-sm font-medium">
                                         <FaUser className="w-3.5 h-3.5" />
                                         <span>Login</span>
                                     </Link>
-                                    <Link href="/register" className="bg-primary-500 hover:bg-primary-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                                    <Link href="/register" prefetch={false} className="bg-primary-500 hover:bg-primary-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
                                         Register
                                     </Link>
                                 </>
@@ -229,6 +232,7 @@ export default function Header() {
                                 ) : (
                                     <Link
                                         href={item.url}
+                                        prefetch={false}
                                         className="block px-4 py-2 text-gray-700 hover:bg-primary-50 hover:text-primary-600 rounded-md font-medium"
                                         onClick={() => setMobileMenuOpen(false)}
                                     >
@@ -246,6 +250,7 @@ export default function Header() {
                                                 <Link
                                                     key={child.title}
                                                     href={child.url}
+                                                    prefetch={false}
                                                     className="block px-4 py-2 text-sm text-gray-600 hover:bg-primary-50 hover:text-primary-600 rounded-md"
                                                     onClick={() => setMobileMenuOpen(false)}
                                                 >
@@ -264,6 +269,7 @@ export default function Header() {
                                 <>
                                     <Link
                                         href={isAdmin ? "/admin" : "/dashboard"}
+                                        prefetch={false}
                                         onClick={() => setMobileMenuOpen(false)}
                                         className="block px-4 py-2 text-gray-700 hover:bg-primary-50 hover:text-primary-600 rounded-md font-medium"
                                     >
@@ -283,6 +289,7 @@ export default function Header() {
                                 <>
                                     <Link
                                         href="/login"
+                                        prefetch={false}
                                         onClick={() => setMobileMenuOpen(false)}
                                         className="block px-4 py-2 text-gray-700 hover:bg-primary-50 hover:text-primary-600 rounded-md font-medium"
                                     >
@@ -290,6 +297,7 @@ export default function Header() {
                                     </Link>
                                     <Link
                                         href="/register"
+                                        prefetch={false}
                                         onClick={() => setMobileMenuOpen(false)}
                                         className="block mx-4 my-2 text-center bg-primary-500 hover:bg-primary-600 text-white py-2 rounded-lg font-medium transition-colors"
                                     >

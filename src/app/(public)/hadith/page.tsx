@@ -4,9 +4,12 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { FaArrowRight, FaBookOpen, FaEye, FaQuoteRight, FaSearch, FaSpinner } from "react-icons/fa";
 import Breadcrumbs from "@/components/ui/Breadcrumbs";
+import Pagination from "@/components/ui/Pagination";
 import PageHero from "@/components/ui/PageHero";
 import { API_URL } from "@/lib/api";
-import { HadithCollection, HadithGrade, HadithListItem, HadithTopic, listFromResponse } from "@/lib/hadith";
+import { ApiList, HadithCollection, HadithGrade, HadithListItem, HadithTopic, listFromResponse } from "@/lib/hadith";
+
+const PAGE_SIZE = 15;
 
 export default function HadithArchivePage() {
   const [hadiths, setHadiths] = useState<HadithListItem[]>([]);
@@ -18,6 +21,8 @@ export default function HadithArchivePage() {
   const [grade, setGrade] = useState("");
   const [topic, setTopic] = useState("");
   const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [count, setCount] = useState(0);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -50,9 +55,13 @@ export default function HadithArchivePage() {
         if (grade) params.set("grade", grade);
         if (topic) params.set("topic", topic);
         if (search.trim()) params.set("search", search.trim());
+        params.set("page", String(page));
+        params.set("page_size", String(PAGE_SIZE));
         const res = await fetch(`${API_URL}/hadith/list/${params.toString() ? `?${params.toString()}` : ""}`);
         if (res.ok) {
-          setHadiths(listFromResponse(await res.json()));
+          const data = (await res.json()) as HadithListItem[] | ApiList<HadithListItem>;
+          setHadiths(listFromResponse(data));
+          setCount(Array.isArray(data) ? data.length : data.count || 0);
         }
       } finally {
         setLoading(false);
@@ -63,7 +72,16 @@ export default function HadithArchivePage() {
       void load();
     }, 250);
     return () => window.clearTimeout(timer);
+  }, [collection, grade, topic, search, page]);
+
+  useEffect(() => {
+    setPage(1);
   }, [collection, grade, topic, search]);
+
+  const totalPages = Math.max(1, Math.ceil(count / PAGE_SIZE));
+  const goToPage = (nextPage: number) => {
+    setPage(Math.min(totalPages, Math.max(1, nextPage)));
+  };
 
   return (
     <div className="min-h-screen bg-gray-50/30 pb-20">
@@ -142,6 +160,10 @@ export default function HadithArchivePage() {
                 </div>
               </Link>
             ))}
+            <div className="flex flex-col items-center gap-3 bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-5">
+              <p className="text-sm text-gray-500">মোট {count}টি হাদিস · পৃষ্ঠা {page} / {totalPages}</p>
+              <Pagination page={page} totalPages={totalPages} onPageChange={goToPage} />
+            </div>
           </div>
         )}
       </div>
