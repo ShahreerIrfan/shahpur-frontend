@@ -206,9 +206,10 @@ export default function AppearanceSlidesPage() {
             <div>
               <label className="block text-xs font-medium text-gray-600 mb-1.5">ব্যাকগ্রাউন্ড ছবি</label>
               <input type="file" accept="image/*" onChange={(e) => setImageFile(e.target.files?.[0] || null)} className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm" />
+              <p className="text-[11px] text-gray-400 mt-1">সেরা ফলাফলের জন্য 2400 x 900px ছবি ব্যবহার করুন (ratio 8:3)। Minimum 1920 x 720px.</p>
               {(imageFile || currentImage) && (
-                <div className="mt-3 h-32 rounded-xl overflow-hidden border border-gray-100 bg-gray-50">
-                  <img src={imageFile ? URL.createObjectURL(imageFile) : currentImage} alt="Slide preview" className="w-full h-full object-cover" />
+                <div className="mt-3 aspect-[8/3] rounded-xl overflow-hidden border border-gray-100 bg-gray-950">
+                  <img src={imageFile ? URL.createObjectURL(imageFile) : currentImage} alt="Slide preview" className="w-full h-full object-contain" />
                 </div>
               )}
             </div>
@@ -250,8 +251,8 @@ export default function AppearanceSlidesPage() {
                     <tr key={slide.id} className="hover:bg-gray-50/50 transition-colors">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-16 h-12 rounded-xl overflow-hidden bg-primary-50 flex-shrink-0">
-                            {(slide.background_image || slide.image) ? <img src={mediaUrl(slide.background_image || slide.image)} alt={slide.title} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-primary-500"><FaImage /></div>}
+                          <div className="w-20 h-10 rounded-xl overflow-hidden bg-gray-950 flex-shrink-0">
+                            {(slide.background_image || slide.image) ? <img src={mediaUrl(slide.background_image || slide.image)} alt={slide.title} className="w-full h-full object-contain" /> : <div className="w-full h-full flex items-center justify-center text-primary-500"><FaImage /></div>}
                           </div>
                           <div>
                             <p className="text-sm font-bold text-gray-800 line-clamp-1">{slide.title}</p>
