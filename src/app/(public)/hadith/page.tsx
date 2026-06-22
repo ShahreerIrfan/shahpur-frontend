@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { FaArrowRight, FaBookOpen, FaEye, FaQuoteRight, FaSearch, FaSpinner } from "react-icons/fa";
 import Breadcrumbs from "@/components/ui/Breadcrumbs";
+import Pagination from "@/components/ui/Pagination";
 import PageHero from "@/components/ui/PageHero";
 import { API_URL } from "@/lib/api";
 import { ApiList, HadithCollection, HadithGrade, HadithListItem, HadithTopic, listFromResponse } from "@/lib/hadith";
@@ -78,6 +79,9 @@ export default function HadithArchivePage() {
   }, [collection, grade, topic, search]);
 
   const totalPages = Math.max(1, Math.ceil(count / PAGE_SIZE));
+  const goToPage = (nextPage: number) => {
+    setPage(Math.min(totalPages, Math.max(1, nextPage)));
+  };
 
   return (
     <div className="min-h-screen bg-gray-50/30 pb-20">
@@ -156,26 +160,9 @@ export default function HadithArchivePage() {
                 </div>
               </Link>
             ))}
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-4">
+            <div className="flex flex-col items-center gap-3 bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-5">
               <p className="text-sm text-gray-500">মোট {count}টি হাদিস · পৃষ্ঠা {page} / {totalPages}</p>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => setPage((current) => Math.max(1, current - 1))}
-                  disabled={page <= 1}
-                  className="px-4 py-2 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50"
-                >
-                  আগের পৃষ্ঠা
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
-                  disabled={page >= totalPages}
-                  className="px-4 py-2 rounded-xl bg-primary-600 text-white text-sm font-semibold disabled:opacity-40 disabled:cursor-not-allowed hover:bg-primary-700"
-                >
-                  পরের পৃষ্ঠা
-                </button>
-              </div>
+              <Pagination page={page} totalPages={totalPages} onPageChange={goToPage} />
             </div>
           </div>
         )}

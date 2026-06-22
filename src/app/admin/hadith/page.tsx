@@ -5,6 +5,7 @@ import Link from "next/link";
 import { FaBookOpen, FaEdit, FaEye, FaPlus, FaSearch, FaSpinner, FaTrash } from "react-icons/fa";
 import { authFetch } from "@/lib/api";
 import { ApiList, HadithListItem, listFromResponse } from "@/lib/hadith";
+import Pagination from "@/components/ui/Pagination";
 
 const PAGE_SIZE = 15;
 
@@ -68,6 +69,9 @@ export default function AdminHadithPage() {
   };
 
   const totalPages = Math.max(1, Math.ceil(count / PAGE_SIZE));
+  const goToPage = (nextPage: number) => {
+    setPage(Math.min(totalPages, Math.max(1, nextPage)));
+  };
 
   return (
     <div>
@@ -159,26 +163,9 @@ export default function AdminHadithPage() {
               </tbody>
             </table>
           </div>
-          <div className="px-6 py-3 border-t border-gray-100 bg-gray-50/50 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="px-6 py-4 border-t border-gray-100 bg-gray-50/50 flex flex-col items-center gap-3">
             <p className="text-xs text-gray-500">মোট {count}টি হাদিস · পৃষ্ঠা {page} / {totalPages}</p>
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => setPage((current) => Math.max(1, current - 1))}
-                disabled={page <= 1}
-                className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-semibold text-gray-600 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-white"
-              >
-                আগের পৃষ্ঠা
-              </button>
-              <button
-                type="button"
-                onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
-                disabled={page >= totalPages}
-                className="px-3 py-1.5 rounded-lg bg-primary-600 text-white text-xs font-semibold disabled:opacity-40 disabled:cursor-not-allowed hover:bg-primary-700"
-              >
-                পরের পৃষ্ঠা
-              </button>
-            </div>
+            <Pagination page={page} totalPages={totalPages} onPageChange={goToPage} />
           </div>
         </div>
       )}
