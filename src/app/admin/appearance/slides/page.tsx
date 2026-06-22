@@ -206,7 +206,7 @@ export default function AppearanceSlidesPage() {
             <div>
               <label className="block text-xs font-medium text-gray-600 mb-1.5">ব্যাকগ্রাউন্ড ছবি</label>
               <input type="file" accept="image/*" onChange={(e) => setImageFile(e.target.files?.[0] || null)} className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm" />
-              <p className="text-[11px] text-gray-400 mt-1">সেরা ফলাফলের জন্য 2400 x 900px ছবি ব্যবহার করুন (ratio 8:3)। Minimum 1920 x 720px.</p>
+              <p className="text-[11px] text-gray-400 mt-1">সেরা ফলাফলের জন্য 2400 x 900px ছবি ব্যবহার করুন (ratio 8:3)। একই ratio হলে hero section এ পুরো ছবি clean দেখাবে। Minimum 1920 x 720px.</p>
               {(imageFile || currentImage) && (
                 <div className="mt-3 aspect-[8/3] rounded-xl overflow-hidden border border-gray-100 bg-gray-950">
                   <img src={imageFile ? URL.createObjectURL(imageFile) : currentImage} alt="Slide preview" className="w-full h-full object-contain" />

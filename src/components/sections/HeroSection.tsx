@@ -78,19 +78,13 @@ export default function HeroSection() {
           <img
             src={slideImageUrl(slide)}
             alt=""
-            className="absolute inset-0 h-full w-full scale-110 object-cover blur-xl"
-            aria-hidden="true"
-          />
-          <img
-            src={slideImageUrl(slide)}
-            alt=""
-            className="absolute inset-0 h-full w-full object-contain"
+            className="absolute inset-0 h-full w-full object-fill"
             aria-hidden="true"
           />
         </div>
       ))}
-      <div className="absolute inset-0 bg-gradient-to-r from-primary-950/92 via-primary-900/38 to-black/10" />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/15" />
+      <div className="absolute inset-0 bg-gradient-to-r from-primary-950/90 via-primary-900/34 to-black/8" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/32 via-transparent to-black/10" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_72%_42%,transparent_0%,rgba(0,0,0,0.04)_46%,rgba(3,72,56,0.26)_100%)]" />
       <div className="absolute inset-0 islamic-pattern opacity-[0.06]" />
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary-500 via-primary-400 to-primary-500" />
