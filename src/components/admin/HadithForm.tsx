@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { FaArrowLeft, FaBook, FaSave, FaSpinner } from "react-icons/fa";
-import { authFetch, API_URL } from "@/lib/api";
+import { authFetch } from "@/lib/api";
 import {
   HadithBook,
   HadithChapter,
@@ -37,12 +37,12 @@ export default function HadithForm({ hadithId }: HadithFormProps) {
 
   const fetchOptions = useCallback(async () => {
     const [collRes, bookRes, chapterRes, narratorRes, gradeRes, topicRes] = await Promise.all([
-      fetch(`${API_URL}/hadith/collections/`),
-      fetch(`${API_URL}/hadith/books/`),
-      fetch(`${API_URL}/hadith/chapters/`),
-      fetch(`${API_URL}/hadith/narrators/`),
-      fetch(`${API_URL}/hadith/grades/`),
-      fetch(`${API_URL}/hadith/topics/`),
+      authFetch("/hadith/collections/"),
+      authFetch("/hadith/books/"),
+      authFetch("/hadith/chapters/"),
+      authFetch("/hadith/narrators/"),
+      authFetch("/hadith/grades/"),
+      authFetch("/hadith/topics/"),
     ]);
     if (collRes.ok) setCollections(listFromResponse(await collRes.json()));
     if (bookRes.ok) setBooks(listFromResponse(await bookRes.json()));
@@ -102,12 +102,10 @@ export default function HadithForm({ hadithId }: HadithFormProps) {
       if (!data.get(field)) data.delete(field);
     });
 
-    // Convert selected topics to comma-separated text for topics_text field
-    const topicNames = selectedTopics
-      .map((id) => topics.find((t) => t.id === id)?.name)
-      .filter(Boolean)
-      .join(", ");
-    data.set("topics_text", topicNames);
+    data.delete("topics");
+    selectedTopics.forEach((topicId) => {
+      data.append("topics", String(topicId));
+    });
 
     try {
       const res = await authFetch(isEdit ? `/hadith/list/${hadithId}/` : "/hadith/list/", {
@@ -250,6 +248,7 @@ export default function HadithForm({ hadithId }: HadithFormProps) {
                       })}
                     </div>
                   )}
+                  <p className="text-[11px] text-gray-400 mt-1">বিষয় taxonomy থেকে একাধিক option checkbox দিয়ে নির্বাচন করুন।</p>
                 </div>
               </div>
             </div>

@@ -101,6 +101,7 @@ export interface HadithListItem {
   narrator_name: string;
   grade: number | null;
   grade_name: string;
+  grade_color: string;
   topics: number[];
   topics_display: HadithTopicDisplay[];
   arabic_text: string;
