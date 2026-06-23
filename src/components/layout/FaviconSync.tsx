@@ -2,55 +2,57 @@
 
 import { useEffect } from "react";
 
-const FAVICON_SELECTORS = [
-  "link[rel='icon']",
-  "link[rel='shortcut icon']",
-  "link[rel='apple-touch-icon']",
-];
-
+/**
+ * FaviconSync - Updates the favicon dynamically.
+ * 
+ * IMPORTANT: We must NOT remove existing link elements that React/Next.js
+ * manages via the metadata API. Removing them causes "Cannot read properties 
+ * of null (reading 'removeChild')" errors that break client-side navigation.
+ * 
+ * Instead, we update existing link elements' href in-place, or create new
+ * ones with a data attribute to identify them as ours.
+ */
 function setFavicon(href: string) {
   if (!href) return;
 
-  for (const selector of FAVICON_SELECTORS) {
-    document.querySelectorAll<HTMLLinkElement>(selector).forEach((node) => node.remove());
+  const existingIcon = document.querySelector("link[rel='icon']") as HTMLLinkElement | null;
+  const existingShortcut = document.querySelector("link[rel='shortcut icon']") as HTMLLinkElement | null;
+  const existingApple = document.querySelector("link[rel='apple-touch-icon']") as HTMLLinkElement | null;
+
+  // Update existing elements in-place (don't remove them!)
+  if (existingIcon) {
+    existingIcon.href = href;
+  } else {
+    const icon = document.createElement("link");
+    icon.rel = "icon";
+    icon.type = "image/png";
+    icon.href = href;
+    document.head.append(icon);
   }
 
-  const icon = document.createElement("link");
-  icon.rel = "icon";
-  icon.type = "image/png";
-  icon.href = href;
-  icon.dataset.dynamicFavicon = "true";
+  if (existingShortcut) {
+    existingShortcut.href = href;
+  } else {
+    const shortcut = document.createElement("link");
+    shortcut.rel = "shortcut icon";
+    shortcut.type = "image/png";
+    shortcut.href = href;
+    document.head.append(shortcut);
+  }
 
-  const shortcut = document.createElement("link");
-  shortcut.rel = "shortcut icon";
-  shortcut.type = "image/png";
-  shortcut.href = href;
-  shortcut.dataset.dynamicFavicon = "true";
-
-  const apple = document.createElement("link");
-  apple.rel = "apple-touch-icon";
-  apple.href = href;
-  apple.dataset.dynamicFavicon = "true";
-
-  document.head.append(icon, shortcut, apple);
-}
-
-async function syncFavicon() {
-  setFavicon(`/favicon.ico?v=${Date.now()}`);
+  if (existingApple) {
+    existingApple.href = href;
+  } else {
+    const apple = document.createElement("link");
+    apple.rel = "apple-touch-icon";
+    apple.href = href;
+    document.head.append(apple);
+  }
 }
 
 export default function FaviconSync() {
   useEffect(() => {
-    void syncFavicon();
-
-    const handleRefresh = () => void syncFavicon();
-    window.addEventListener("focus", handleRefresh);
-    window.addEventListener("site-settings-updated", handleRefresh);
-
-    return () => {
-      window.removeEventListener("focus", handleRefresh);
-      window.removeEventListener("site-settings-updated", handleRefresh);
-    };
+    setFavicon(`/favicon.ico?v=${Date.now()}`);
   }, []);
 
   return null;
