@@ -166,7 +166,9 @@ export default function EditKhankahPage() {
                 formData.append("featured_image", featuredImageFile);
             }
 
+            const showOnHomepage = formElement.querySelector('[name="show_on_homepage"]') as HTMLInputElement;
             formData.append("is_published", "true");
+            formData.append("show_on_homepage", showOnHomepage?.checked ? "true" : "false");
 
             // 1. Update basic details
             const res = await authFetch(`/khankah/list/${id}/`, {
@@ -321,6 +323,10 @@ export default function EditKhankahPage() {
                                 <span className="text-xs text-gray-500">স্ট্যাটাস</span>
                                 <span className="text-xs font-medium text-primary-600 bg-primary-50 px-2 py-0.5 rounded-full">Published</span>
                             </div>
+                            <label className="flex items-center justify-between mb-4 text-xs text-gray-600 cursor-pointer">
+                                হোমপেজে দেখান
+                                <input name="show_on_homepage" type="checkbox" defaultChecked={Boolean(khankah.show_on_homepage)} className="w-4 h-4 accent-primary-500" />
+                            </label>
                             <button type="submit" disabled={saving} className="w-full inline-flex items-center justify-center gap-2 bg-primary-500 hover:bg-primary-600 disabled:bg-primary-300 text-white py-2.5 rounded-xl text-sm font-medium transition-all shadow-sm">
                                 <FaSave className="w-3.5 h-3.5" />
                                 {saving ? "আপডেট হচ্ছে..." : "আপডেট করুন"}
