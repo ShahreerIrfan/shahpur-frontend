@@ -125,7 +125,7 @@ export default async function HomeFeaturedContent() {
     <section className="py-20 bg-gray-50/70">
       <div className="max-w-7xl mx-auto px-4">
         {madrashas.length > 0 && (
-          <SectionShell title="নির্বাচিত মাদ্রাসা" subtitle="হোমপেজের জন্য নির্বাচিত মাদ্রাসা সমূহ" href="/madrasha" buttonLabel="সব মাদ্রাসা দেখুন">
+          <SectionShell title="আমাদের মাদ্রাসা সমূহ" subtitle="শাহপুর দরবার শরীফের তত্ত্বাবধানে পরিচালিত মাদ্রাসা" href="/madrasha" buttonLabel="সব মাদ্রাসা দেখুন">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {madrashas.map((item) => (
                 <Link key={item.id} href={`/madrasha/${item.id}`} className="group bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all">
@@ -149,7 +149,7 @@ export default async function HomeFeaturedContent() {
         )}
 
         {khankahs.length > 0 && (
-          <SectionShell title="নির্বাচিত খানকাহ" subtitle="হোমপেজের জন্য নির্বাচিত খানকাহ শরীফ সমূহ" href="/khankah" buttonLabel="সব খানকাহ দেখুন">
+          <SectionShell title="খানকাহ শরীফ সমূহ" subtitle="আধ্যাত্মিক সাধনা ও তরিকার সেবায় প্রতিষ্ঠিত খানকাহ শরীফ" href="/khankah" buttonLabel="সব খানকাহ দেখুন">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {khankahs.map((item) => (
                 <Link key={item.id} href={`/khankah/${item.id}`} className="group bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all">
@@ -170,7 +170,7 @@ export default async function HomeFeaturedContent() {
         )}
 
         {events.length > 0 && (
-          <SectionShell title="নির্বাচিত ইভেন্ট / মাহফিল" subtitle="হোমপেজের জন্য নির্বাচিত মাহফিল ও অনুষ্ঠানসমূহ" href="/events" buttonLabel="সব ইভেন্ট দেখুন">
+          <SectionShell title="আসন্ন মাহফিল ও ইভেন্ট" subtitle="দরবার শরীফের গুরুত্বপূর্ণ মাহফিল, দোয়া ও অনুষ্ঠানসমূহ" href="/events" buttonLabel="সব ইভেন্ট দেখুন">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {events.map((item) => (
                 <Link key={item.id} href={`/events/${item.id}`} className="group bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all">
