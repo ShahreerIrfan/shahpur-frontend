@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { FaHome, FaMosque, FaBookOpen, FaCog, FaSignOutAlt, FaChevronRight, FaChevronDown, FaChevronUp, FaUserTie, FaCalendarAlt, FaFilePdf, FaPalette, FaQuoteRight } from "react-icons/fa";
 import { fetchSiteSettings, SiteSettings } from "@/lib/appearance";
 import { mediaUrl } from "@/lib/media";
@@ -76,8 +76,16 @@ interface AdminSidebarProps {
 
 export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
     const pathname = usePathname();
+    const router = useRouter();
     const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
     const [settings, setSettings] = useState<SiteSettings | null>(null);
+
+    // Navigate programmatically - this bypasses stale RSC cache
+    const navigateTo = (href: string, e: React.MouseEvent) => {
+        e.preventDefault();
+        if (pathname === href) return;
+        router.push(href);
+    };
 
     useEffect(() => {
         fetchSiteSettings().then(setSettings).catch(() => undefined);
@@ -145,8 +153,8 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
                                 <button
                                     onClick={() => toggleMenu(item.title)}
                                     className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${isActive
-                                            ? "bg-primary-50 text-primary-700 border border-primary-100"
-                                            : "text-gray-600 hover:bg-gray-50 hover:text-gray-800"
+                                        ? "bg-primary-50 text-primary-700 border border-primary-100"
+                                        : "text-gray-600 hover:bg-gray-50 hover:text-gray-800"
                                         }`}
                                 >
                                     <div className="flex items-center gap-3">
@@ -168,9 +176,10 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
                                                     key={child.href}
                                                     href={child.href}
                                                     prefetch={false}
+                                                    onClick={(e) => navigateTo(child.href, e)}
                                                     className={`block px-3 py-2 rounded-lg text-xs font-medium transition-all ${isChildItemActive
-                                                            ? "bg-primary-50 text-primary-700"
-                                                            : "text-gray-500 hover:bg-gray-50 hover:text-gray-700"
+                                                        ? "bg-primary-50 text-primary-700"
+                                                        : "text-gray-500 hover:bg-gray-50 hover:text-gray-700"
                                                         }`}
                                                 >
                                                     {child.title}
@@ -190,9 +199,10 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
                             key={item.href}
                             href={item.href!}
                             prefetch={false}
+                            onClick={(e) => navigateTo(item.href!, e)}
                             className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${isActive
-                                    ? "bg-primary-50 text-primary-700 shadow-sm border border-primary-100"
-                                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-800"
+                                ? "bg-primary-50 text-primary-700 shadow-sm border border-primary-100"
+                                : "text-gray-600 hover:bg-gray-50 hover:text-gray-800"
                                 }`}
                         >
                             <div className="flex items-center gap-3">
