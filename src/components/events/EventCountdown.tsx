@@ -108,12 +108,23 @@ export default function EventCountdown({ startDate, startTime, status, compact =
   if (compact) {
     if (!remaining) {
       return (
-        <div className={`my-5 rounded-2xl border px-3 py-3 text-xs font-bold shadow-sm ${info.softTone}`}>
-          <div className="flex items-start gap-2">
-            <Icon className="w-4 h-4 mt-0.5 shrink-0" />
-            <div>
-              <p className="font-extrabold leading-none">{info.title}</p>
-              <p className="mt-1 font-medium leading-relaxed opacity-85">{info.message}</p>
+        <div className={`my-5 overflow-hidden rounded-2xl bg-gradient-to-br ${info.tone} p-[1px] shadow-md shadow-primary-900/10`}>
+          <div className="relative min-h-[116px] rounded-2xl bg-white/95 p-3 flex items-center overflow-hidden">
+            <div className="absolute -right-6 -top-6 w-20 h-20 rounded-full bg-primary-50"></div>
+            <div className="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-amber-300 via-primary-400 to-amber-300"></div>
+            <div className="relative flex items-center gap-3">
+              <span className={`w-11 h-11 rounded-2xl bg-gradient-to-br ${info.tone} text-white flex items-center justify-center shadow-md shrink-0`}>
+                <Icon className="w-5 h-5" />
+              </span>
+              <div>
+                <p className="text-sm font-black text-primary-900 leading-tight">{info.title}</p>
+                <p className="mt-1.5 text-[11px] font-semibold leading-relaxed text-gray-500">{info.message}</p>
+                <div className="mt-2 flex items-center gap-1.5">
+                  <span className="h-1.5 w-8 rounded-full bg-amber-300"></span>
+                  <span className="h-1.5 w-1.5 rounded-full bg-primary-300"></span>
+                  <span className="h-1.5 w-1.5 rounded-full bg-primary-300"></span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -129,7 +140,7 @@ export default function EventCountdown({ startDate, startTime, status, compact =
 
     return (
       <div className={`my-5 overflow-hidden rounded-2xl bg-gradient-to-br ${info.tone} p-[1px] shadow-md shadow-primary-900/10`}>
-        <div className="rounded-2xl bg-white/95 p-3">
+        <div className="min-h-[116px] rounded-2xl bg-white/95 p-3">
           <div className="flex items-center gap-2 text-[11px] font-extrabold text-primary-800">
             <span className={`w-7 h-7 rounded-xl bg-gradient-to-br ${info.tone} text-white flex items-center justify-center shadow-sm`}>
               <Icon className="w-3 h-3" />
