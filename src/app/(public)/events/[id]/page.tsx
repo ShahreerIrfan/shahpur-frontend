@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { FaArrowLeft, FaCalendarAlt, FaClock, FaExternalLinkAlt, FaMapMarkerAlt, FaSpinner, FaUserTie } from "react-icons/fa";
+import EventCountdown from "@/components/events/EventCountdown";
 import Breadcrumbs from "@/components/ui/Breadcrumbs";
 import { API_URL } from "@/lib/api";
 import { EventDetail, eventStatusLabel, formatDateBn, formatTime, mediaUrl } from "@/lib/events";
@@ -71,6 +72,7 @@ export default function EventDetailPage() {
                   </span>
                 )}
               </div>
+              <EventCountdown startDate={event.start_date} startTime={event.start_time} status={event.status} />
             </div>
             <div className="relative h-64 lg:h-80 rounded-3xl overflow-hidden bg-primary-100 shadow-xl border border-primary-100">
               {event.poster ? (

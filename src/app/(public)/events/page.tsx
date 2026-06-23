@@ -6,6 +6,7 @@ import Link from "next/link";
 import { FaArrowRight, FaCalendarAlt, FaClock, FaMapMarkerAlt, FaSpinner } from "react-icons/fa";
 import Breadcrumbs from "@/components/ui/Breadcrumbs";
 import PageHero from "@/components/ui/PageHero";
+import EventCountdown from "@/components/events/EventCountdown";
 import { API_URL } from "@/lib/api";
 import { EVENT_CATEGORIES, EventListItem, eventStatusLabel, formatDateBn, formatTime, mediaUrl } from "@/lib/events";
 
@@ -88,6 +89,7 @@ export default function EventsArchivePage() {
                 <div className="p-5 flex-1 flex flex-col">
                   <h3 className="font-extrabold text-gray-800 mb-2 leading-snug group-hover:text-primary-700 transition-colors line-clamp-2">{event.title}</h3>
                   {event.short_description && <p className="text-sm text-gray-500 line-clamp-2 mb-4">{event.short_description}</p>}
+                  <EventCountdown startDate={event.start_date} startTime={event.start_time} status={event.status} compact />
                   <div className="space-y-2 text-xs text-gray-500 mt-auto">
                     <div className="flex items-center gap-2">
                       <FaCalendarAlt className="w-3.5 h-3.5 text-primary-500" />
