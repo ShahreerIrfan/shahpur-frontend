@@ -108,7 +108,7 @@ export default function EventCountdown({ startDate, startTime, status, compact =
   if (compact) {
     if (!remaining) {
       return (
-        <div className={`mt-4 rounded-2xl border px-3 py-3 text-xs font-bold shadow-sm ${info.softTone}`}>
+        <div className={`my-5 rounded-2xl border px-3 py-3 text-xs font-bold shadow-sm ${info.softTone}`}>
           <div className="flex items-start gap-2">
             <Icon className="w-4 h-4 mt-0.5 shrink-0" />
             <div>
@@ -128,7 +128,7 @@ export default function EventCountdown({ startDate, startTime, status, compact =
     ] as const;
 
     return (
-      <div className={`mt-4 overflow-hidden rounded-2xl bg-gradient-to-br ${info.tone} p-[1px] shadow-md shadow-primary-900/10`}>
+      <div className={`my-5 overflow-hidden rounded-2xl bg-gradient-to-br ${info.tone} p-[1px] shadow-md shadow-primary-900/10`}>
         <div className="rounded-2xl bg-white/95 p-3">
           <div className="flex items-center gap-2 text-[11px] font-extrabold text-primary-800">
             <span className={`w-7 h-7 rounded-xl bg-gradient-to-br ${info.tone} text-white flex items-center justify-center shadow-sm`}>

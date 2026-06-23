@@ -176,18 +176,27 @@ export default async function HomeFeaturedContent() {
           <SectionShell title="আসন্ন মাহফিল ও ইভেন্ট" subtitle="দরবার শরীফের গুরুত্বপূর্ণ মাহফিল, দোয়া ও অনুষ্ঠানসমূহ" href="/events" buttonLabel="সব ইভেন্ট দেখুন">
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
               {events.map((item) => (
-                <Link key={item.id} href={`/events/${item.id}`} className="group bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all">
-                  <CardImage src={item.poster} alt={item.title} icon={<FaCalendarAlt className="w-12 h-12" />} />
-                  <div className="p-5">
-                    <div className="flex items-center gap-2 text-[11px] font-bold text-primary-700 mb-3">
-                      <span className="bg-primary-50 border border-primary-100 rounded-full px-2.5 py-1">{item.category_display || eventCategoryLabel(item.category)}</span>
-                      {item.start_date && <span>{formatDateBn(item.start_date)}</span>}
+                <Link key={item.id} href={`/events/${item.id}`} className="group relative bg-white rounded-[28px] border border-primary-100/80 overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-primary-950/10 hover:-translate-y-1 transition-all">
+                  <div className="absolute inset-2 rounded-[22px] border border-amber-100/80 pointer-events-none z-10"></div>
+                  <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-primary-600 via-amber-300 to-primary-600 z-20"></div>
+                  <div className="relative">
+                    <CardImage src={item.poster} alt={item.title} icon={<FaCalendarAlt className="w-12 h-12" />} />
+                    <div className="absolute inset-0 bg-gradient-to-t from-primary-950/45 via-transparent to-primary-950/10"></div>
+                    <div className="absolute top-4 left-4 right-4 flex flex-wrap gap-2">
+                      <span className="bg-white/95 border border-primary-100 rounded-full px-2.5 py-1 text-[10px] font-extrabold text-primary-750 shadow-sm">{item.category_display || eventCategoryLabel(item.category)}</span>
+                      {item.start_date && <span className="bg-primary-600 text-white rounded-full px-2.5 py-1 text-[10px] font-extrabold shadow-sm">{formatDateBn(item.start_date)}</span>}
                     </div>
-                    <h3 className="font-extrabold text-gray-800 group-hover:text-primary-700 line-clamp-2">{item.title}</h3>
-                    <p className="text-sm text-gray-500 line-clamp-2 mt-3">{item.short_description}</p>
+                  </div>
+                  <div className="relative p-5">
+                    <div className="absolute top-0 right-0 w-20 h-20 rounded-full bg-primary-50 -translate-y-8 translate-x-8"></div>
+                    <div className="relative">
+                      <p className="text-[10px] font-extrabold uppercase tracking-[0.22em] text-amber-600 mb-2">দাওয়াতনামা</p>
+                      <h3 className="font-extrabold text-gray-900 group-hover:text-primary-700 line-clamp-2">{item.title}</h3>
+                      <p className="text-sm text-gray-500 line-clamp-2 mt-3">{item.short_description}</p>
+                    </div>
                     <EventCountdown startDate={item.start_date} startTime={item.start_time} status={item.status} compact />
-                    <p className="flex items-center gap-1 text-xs text-gray-400 mt-4">
-                      <FaMapMarkerAlt className="w-3 h-3 text-primary-400" />
+                    <p className="flex items-center gap-2 text-xs text-gray-500 mt-4 bg-gray-50/90 border border-gray-100 rounded-2xl p-3">
+                      <span className="w-7 h-7 rounded-xl bg-primary-100 text-primary-700 flex items-center justify-center shrink-0"><FaMapMarkerAlt className="w-3 h-3" /></span>
                       {item.venue_name || item.district_name || "শাহপুর দরবার শরীফ"}
                     </p>
                   </div>

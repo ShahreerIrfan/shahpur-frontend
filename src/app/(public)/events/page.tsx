@@ -68,49 +68,58 @@ export default function EventsArchivePage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
             {events.map((event) => (
-              <Link key={event.id} href={`/events/${event.id}`} className="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col">
-                <div className="relative h-48 bg-gradient-to-br from-primary-50 to-primary-100/50">
+              <Link key={event.id} href={`/events/${event.id}`} className="group relative bg-white rounded-[28px] border border-primary-100/80 overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-primary-950/10 transition-all duration-300 hover:-translate-y-1 flex flex-col">
+                <div className="absolute inset-2 rounded-[22px] border border-amber-100/80 pointer-events-none z-10"></div>
+                <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-primary-600 via-amber-300 to-primary-600 z-20"></div>
+                <div className="relative h-48 bg-gradient-to-br from-primary-50 to-primary-100/50 overflow-hidden">
                   {event.poster ? (
-                    <Image src={mediaUrl(event.poster)} alt={event.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" unoptimized />
+                    <Image src={mediaUrl(event.poster)} alt={event.title} fill className="object-cover group-hover:scale-110 transition-transform duration-700" unoptimized />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
                       <FaCalendarAlt className="w-14 h-14 text-primary-300" />
                     </div>
                   )}
-                  <div className="absolute top-3 left-3 flex gap-2">
-                    <span className="bg-white/95 text-primary-700 border border-primary-100 px-2.5 py-1 rounded-full text-[10px] font-bold shadow-sm">
+                  <div className="absolute inset-0 bg-gradient-to-t from-primary-950/45 via-transparent to-primary-950/10"></div>
+                  <div className="absolute top-4 left-4 right-4 flex flex-wrap gap-2">
+                    <span className="bg-white/95 text-primary-750 border border-primary-100 px-2.5 py-1 rounded-full text-[10px] font-extrabold shadow-sm">
                       {event.category_display}
                     </span>
-                    <span className="bg-primary-600 text-white px-2.5 py-1 rounded-full text-[10px] font-bold shadow-sm">
+                    <span className="bg-primary-600 text-white px-2.5 py-1 rounded-full text-[10px] font-extrabold shadow-sm">
                       {eventStatusLabel(event.status)}
                     </span>
                   </div>
                 </div>
-                <div className="p-5 flex-1 flex flex-col">
-                  <h3 className="font-extrabold text-gray-800 mb-2 leading-snug group-hover:text-primary-700 transition-colors line-clamp-2">{event.title}</h3>
-                  {event.short_description && <p className="text-sm text-gray-500 line-clamp-2 mb-4">{event.short_description}</p>}
+                <div className="relative p-5 flex-1 flex flex-col">
+                  <div className="absolute top-0 right-0 w-20 h-20 rounded-full bg-primary-50 -translate-y-8 translate-x-8"></div>
+                  <div className="relative">
+                    <p className="text-[10px] font-extrabold uppercase tracking-[0.22em] text-amber-600 mb-2">দাওয়াতনামা</p>
+                    <h3 className="font-extrabold text-gray-900 mb-2 leading-snug group-hover:text-primary-700 transition-colors line-clamp-2">{event.title}</h3>
+                    {event.short_description && <p className="text-sm text-gray-500 line-clamp-2">{event.short_description}</p>}
+                  </div>
                   <EventCountdown startDate={event.start_date} startTime={event.start_time} status={event.status} compact />
-                  <div className="space-y-2 text-xs text-gray-500 mt-auto">
+                  <div className="space-y-2 text-xs text-gray-600 mt-auto bg-gray-50/90 border border-gray-100 rounded-2xl p-3">
                     <div className="flex items-center gap-2">
-                      <FaCalendarAlt className="w-3.5 h-3.5 text-primary-500" />
+                      <span className="w-7 h-7 rounded-xl bg-primary-100 text-primary-700 flex items-center justify-center shrink-0"><FaCalendarAlt className="w-3 h-3" /></span>
                       <span>{formatDateBn(event.start_date)}{event.end_date ? ` - ${formatDateBn(event.end_date)}` : ""}</span>
                     </div>
                     {event.start_time && (
                       <div className="flex items-center gap-2">
-                        <FaClock className="w-3.5 h-3.5 text-primary-500" />
+                        <span className="w-7 h-7 rounded-xl bg-primary-100 text-primary-700 flex items-center justify-center shrink-0"><FaClock className="w-3 h-3" /></span>
                         <span>{formatTime(event.start_time)}{event.end_time ? ` - ${formatTime(event.end_time)}` : ""}</span>
                       </div>
                     )}
                     {(event.venue_name || event.district_name) && (
                       <div className="flex items-center gap-2">
-                        <FaMapMarkerAlt className="w-3.5 h-3.5 text-primary-500" />
+                        <span className="w-7 h-7 rounded-xl bg-primary-100 text-primary-700 flex items-center justify-center shrink-0"><FaMapMarkerAlt className="w-3 h-3" /></span>
                         <span>{event.venue_name || event.district_name}</span>
                       </div>
                     )}
                   </div>
-                  <div className="pt-4 mt-4 border-t border-gray-50 flex items-center justify-between">
-                    <span className="text-xs font-bold text-primary-600">বিস্তারিত দেখুন</span>
-                    <FaArrowRight className="w-3 h-3 text-primary-500 group-hover:translate-x-1 transition-transform" />
+                  <div className="pt-4 mt-4 border-t border-dashed border-amber-100 flex items-center justify-between">
+                    <span className="text-xs font-extrabold text-primary-700">বিস্তারিত দেখুন</span>
+                    <span className="w-8 h-8 rounded-full bg-primary-50 text-primary-600 flex items-center justify-center group-hover:bg-primary-600 group-hover:text-white transition-colors">
+                      <FaArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                    </span>
                   </div>
                 </div>
               </Link>
