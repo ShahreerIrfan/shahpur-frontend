@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import SpaLink from "@/components/SpaLink";
+import Link from "next/link";
 import { FaUser, FaBell, FaBars, FaExternalLinkAlt } from "react-icons/fa";
 
 interface AdminHeaderProps {
@@ -28,7 +28,7 @@ export default function AdminHeader({ onMenuToggle }: AdminHeaderProps) {
                 <h2 className="text-sm font-medium text-gray-550 truncate">অ্যাডমিন ড্যাশবোর্ড</h2>
             </div>
             <div className="flex items-center gap-2 md:gap-4">
-                <SpaLink
+                <Link
                     href="https://shahpurdarbarsharif.org/"
                     target="_blank"
                     rel="noreferrer"
@@ -37,7 +37,7 @@ export default function AdminHeader({ onMenuToggle }: AdminHeaderProps) {
                     className="w-9 h-9 bg-gray-50 rounded-xl flex items-center justify-center hover:bg-primary-50 hover:text-primary-600 text-gray-400 transition-colors"
                 >
                     <FaExternalLinkAlt className="w-4 h-4" />
-                </SpaLink>
+                </Link>
                 <button className="w-9 h-9 bg-gray-50 rounded-xl flex items-center justify-center hover:bg-gray-100 transition-colors relative">
                     <FaBell className="text-gray-400 w-4 h-4" />
                     <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-primary-500 rounded-full"></span>

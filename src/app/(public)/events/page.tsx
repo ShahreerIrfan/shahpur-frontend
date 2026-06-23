@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import SpaLink from "@/components/SpaLink";
+import Link from "next/link";
 import { FaArrowRight, FaCalendarAlt, FaClock, FaMapMarkerAlt, FaSpinner } from "react-icons/fa";
 import Breadcrumbs from "@/components/ui/Breadcrumbs";
 import PageHero from "@/components/ui/PageHero";
@@ -67,7 +67,7 @@ export default function EventsArchivePage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {events.map((event) => (
-              <SpaLink key={event.id} href={`/events/${event.id}`} className="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col">
+              <Link key={event.id} href={`/events/${event.id}`} className="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col">
                 <div className="relative h-48 bg-gradient-to-br from-primary-50 to-primary-100/50">
                   {event.poster ? (
                     <Image src={mediaUrl(event.poster)} alt={event.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" unoptimized />
@@ -111,7 +111,7 @@ export default function EventsArchivePage() {
                     <FaArrowRight className="w-3 h-3 text-primary-500 group-hover:translate-x-1 transition-transform" />
                   </div>
                 </div>
-              </SpaLink>
+              </Link>
             ))}
           </div>
         )}

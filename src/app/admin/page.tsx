@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import SpaLink from "@/components/SpaLink";
+import Link from "next/link";
 import { 
     FaBookOpen, 
     FaMosque, 
@@ -234,39 +234,39 @@ export default function AdminDashboard() {
                             </div>
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <SpaLink href="/admin/madrasha/create" className="flex flex-col p-5 bg-gradient-to-br from-emerald-50/50 to-white hover:from-emerald-50 rounded-2xl border border-emerald-100/70 hover:border-emerald-200 transition-all group shadow-sm hover:shadow-md">
+                            <Link href="/admin/madrasha/create" className="flex flex-col p-5 bg-gradient-to-br from-emerald-50/50 to-white hover:from-emerald-50 rounded-2xl border border-emerald-100/70 hover:border-emerald-200 transition-all group shadow-sm hover:shadow-md">
                                 <div className="w-9 h-9 bg-emerald-100 text-emerald-700 rounded-xl flex items-center justify-center mb-3">
                                     <FaPlus className="w-3.5 h-3.5" />
                                 </div>
                                 <span className="text-sm font-bold text-gray-800">নতুন মাদ্রাসা</span>
                                 <span className="text-xs text-gray-400 mt-1">লিস্টে নতুন মাদ্রাসা যোগ করুন</span>
-                            </SpaLink>
+                            </Link>
 
-                            <SpaLink href="/admin/khankah/create" className="flex flex-col p-5 bg-gradient-to-br from-blue-50/50 to-white hover:from-blue-50 rounded-2xl border border-blue-100/70 hover:border-blue-200 transition-all group shadow-sm hover:shadow-md">
+                            <Link href="/admin/khankah/create" className="flex flex-col p-5 bg-gradient-to-br from-blue-50/50 to-white hover:from-blue-50 rounded-2xl border border-blue-100/70 hover:border-blue-200 transition-all group shadow-sm hover:shadow-md">
                                 <div className="w-9 h-9 bg-blue-100 text-blue-700 rounded-xl flex items-center justify-center mb-3">
                                     <FaPlus className="w-3.5 h-3.5" />
                                 </div>
                                 <span className="text-sm font-bold text-gray-800">নতুন খানকাহ</span>
                                 <span className="text-xs text-gray-400 mt-1">নতুন খানকাহ শরীফ যোগ করুন</span>
-                            </SpaLink>
+                            </Link>
 
-                            <SpaLink href="/admin/events/create" className="flex flex-col p-5 bg-gradient-to-br from-amber-50/50 to-white hover:from-amber-50 rounded-2xl border border-amber-100/70 hover:border-amber-200 transition-all group shadow-sm hover:shadow-md">
+                            <Link href="/admin/events/create" className="flex flex-col p-5 bg-gradient-to-br from-amber-50/50 to-white hover:from-amber-50 rounded-2xl border border-amber-100/70 hover:border-amber-200 transition-all group shadow-sm hover:shadow-md">
                                 <div className="w-9 h-9 bg-amber-100 text-amber-700 rounded-xl flex items-center justify-center mb-3">
                                     <FaPlus className="w-3.5 h-3.5" />
                                 </div>
                                 <span className="text-sm font-bold text-gray-800">নতুন ইভেন্ট</span>
                                 <span className="text-xs text-gray-400 mt-1">মাহফিল বা ওরশের তথ্য যোগ করুন</span>
-                            </SpaLink>
+                            </Link>
 
-                            <SpaLink href="/admin/books/create" className="flex flex-col p-5 bg-gradient-to-br from-red-50/50 to-white hover:from-red-50 rounded-2xl border border-red-100/70 hover:border-red-200 transition-all group shadow-sm hover:shadow-md">
+                            <Link href="/admin/books/create" className="flex flex-col p-5 bg-gradient-to-br from-red-50/50 to-white hover:from-red-50 rounded-2xl border border-red-100/70 hover:border-red-200 transition-all group shadow-sm hover:shadow-md">
                                 <div className="w-9 h-9 bg-red-100 text-red-700 rounded-xl flex items-center justify-center mb-3">
                                     <FaPlus className="w-3.5 h-3.5" />
                                 </div>
                                 <span className="text-sm font-bold text-gray-800">নতুন বই / PDF</span>
                                 <span className="text-xs text-gray-400 mt-1">লাইব্রেরিতে নতুন বই যোগ করুন</span>
-                            </SpaLink>
+                            </Link>
 
-                            <SpaLink href="/admin/madrasha" className="flex items-center gap-3 p-4 bg-gray-50/50 hover:bg-gray-50 rounded-2xl border border-gray-150 transition-all group">
+                            <Link href="/admin/madrasha" className="flex items-center gap-3 p-4 bg-gray-50/50 hover:bg-gray-50 rounded-2xl border border-gray-150 transition-all group">
                                 <div className="w-8 h-8 bg-white border border-gray-200 text-gray-600 rounded-xl flex items-center justify-center shadow-sm">
                                     <FaBookOpen className="w-3.5 h-3.5" />
                                 </div>
@@ -275,9 +275,9 @@ export default function AdminDashboard() {
                                     <p className="text-[10px] text-gray-400">সকল মাদ্রাসা তালিকা</p>
                                 </div>
                                 <FaArrowRight className="w-3.5 h-3.5 text-gray-300 group-hover:text-gray-600 ml-auto transition-transform group-hover:translate-x-0.5" />
-                            </SpaLink>
+                            </Link>
 
-                            <SpaLink href="/admin/khankah" className="flex items-center gap-3 p-4 bg-gray-50/50 hover:bg-gray-50 rounded-2xl border border-gray-150 transition-all group">
+                            <Link href="/admin/khankah" className="flex items-center gap-3 p-4 bg-gray-50/50 hover:bg-gray-50 rounded-2xl border border-gray-150 transition-all group">
                                 <div className="w-8 h-8 bg-white border border-gray-200 text-gray-600 rounded-xl flex items-center justify-center shadow-sm">
                                     <FaMosque className="w-3.5 h-3.5" />
                                 </div>
@@ -286,9 +286,9 @@ export default function AdminDashboard() {
                                     <p className="text-[10px] text-gray-400">সকল খানকাহ তালিকা</p>
                                 </div>
                                 <FaArrowRight className="w-3.5 h-3.5 text-gray-300 group-hover:text-gray-600 ml-auto transition-transform group-hover:translate-x-0.5" />
-                            </SpaLink>
+                            </Link>
 
-                            <SpaLink href="/admin/events" className="flex items-center gap-3 p-4 bg-gray-50/50 hover:bg-gray-50 rounded-2xl border border-gray-150 transition-all group">
+                            <Link href="/admin/events" className="flex items-center gap-3 p-4 bg-gray-50/50 hover:bg-gray-50 rounded-2xl border border-gray-150 transition-all group">
                                 <div className="w-8 h-8 bg-white border border-gray-200 text-gray-600 rounded-xl flex items-center justify-center shadow-sm">
                                     <FaCalendarAlt className="w-3.5 h-3.5" />
                                 </div>
@@ -297,9 +297,9 @@ export default function AdminDashboard() {
                                     <p className="text-[10px] text-gray-400">সকল মাহফিল তালিকা</p>
                                 </div>
                                 <FaArrowRight className="w-3.5 h-3.5 text-gray-300 group-hover:text-gray-600 ml-auto transition-transform group-hover:translate-x-0.5" />
-                            </SpaLink>
+                            </Link>
 
-                            <SpaLink href="/admin/books" className="flex items-center gap-3 p-4 bg-gray-50/50 hover:bg-gray-50 rounded-2xl border border-gray-150 transition-all group">
+                            <Link href="/admin/books" className="flex items-center gap-3 p-4 bg-gray-50/50 hover:bg-gray-50 rounded-2xl border border-gray-150 transition-all group">
                                 <div className="w-8 h-8 bg-white border border-gray-200 text-gray-600 rounded-xl flex items-center justify-center shadow-sm">
                                     <FaFilePdf className="w-3.5 h-3.5" />
                                 </div>
@@ -308,13 +308,13 @@ export default function AdminDashboard() {
                                     <p className="text-[10px] text-gray-400">সকল PDF বই তালিকা</p>
                                 </div>
                                 <FaArrowRight className="w-3.5 h-3.5 text-gray-300 group-hover:text-gray-600 ml-auto transition-transform group-hover:translate-x-0.5" />
-                            </SpaLink>
+                            </Link>
                         </div>
                     </div>
                     <div className="mt-6 pt-5 border-t border-gray-50">
-                        <SpaLink href="/admin/settings" className="w-full inline-flex items-center justify-center gap-2 bg-gray-900 hover:bg-black text-white py-3 rounded-2xl text-sm font-semibold transition-colors shadow-sm">
+                        <Link href="/admin/settings" className="w-full inline-flex items-center justify-center gap-2 bg-gray-900 hover:bg-black text-white py-3 rounded-2xl text-sm font-semibold transition-colors shadow-sm">
                             প্যানেল সেটিংস দেখুন
-                        </SpaLink>
+                        </Link>
                     </div>
                 </div>
 
@@ -357,9 +357,9 @@ export default function AdminDashboard() {
                                             </span>
                                         </div>
                                     </div>
-                                    <SpaLink href={act.link} className="w-8 h-8 bg-white border border-gray-200 text-gray-500 hover:text-primary-600 rounded-xl flex items-center justify-center shadow-sm transition-colors">
+                                    <Link href={act.link} className="w-8 h-8 bg-white border border-gray-200 text-gray-500 hover:text-primary-600 rounded-xl flex items-center justify-center shadow-sm transition-colors">
                                         <FaEye size={12} />
-                                    </SpaLink>
+                                    </Link>
                                 </div>
                             ))}
                         </div>

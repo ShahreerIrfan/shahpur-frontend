@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { FaUserTie, FaTrash, FaSpinner, FaChevronLeft, FaChevronRight, FaPlus } from "react-icons/fa";
 import { authFetch } from "@/lib/api";
 import { mediaUrl } from "@/lib/media";
-import SpaLink from "@/components/SpaLink";
+import Link from "next/link";
 
 interface Teacher {
     id: number;

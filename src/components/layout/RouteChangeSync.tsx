@@ -3,11 +3,6 @@
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 
-/**
- * Simple route change handler - scrolls to top on navigation.
- * Navigation reliability is handled by SpaLink component which uses
- * router.push() directly instead of Next.js Link prefetch mechanism.
- */
 export default function RouteChangeSync() {
   const pathname = usePathname();
 

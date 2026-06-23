@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import SpaLink from "@/components/SpaLink";
+import Link from "next/link";
 import { FaBook, FaEdit, FaPlus, FaSpinner, FaTrash } from "react-icons/fa";
 import { authFetch, API_URL } from "@/lib/api";
 import { HadithListItem } from "@/lib/hadiths";
@@ -38,9 +38,9 @@ export default function AdminHadithsPage() {
                     <h1 className="text-xl font-bold text-gray-800">হাদিস সমূহ</h1>
                     <p className="text-xs text-gray-400 mt-0.5">সকল হাদিস পরিচালনা করুন</p>
                 </div>
-                <SpaLink href="/admin/hadiths/create" className="inline-flex items-center gap-2 bg-primary-500 hover:bg-primary-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium shadow-sm">
+                <Link href="/admin/hadiths/create" className="inline-flex items-center gap-2 bg-primary-500 hover:bg-primary-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium shadow-sm">
                     <FaPlus className="w-3 h-3" /> নতুন হাদিস
-                </SpaLink>
+                </Link>
             </div>
 
             {loading ? (
@@ -72,7 +72,7 @@ export default function AdminHadithsPage() {
                                     </td>
                                     <td className="px-4 py-3 text-right">
                                         <div className="flex items-center justify-end gap-2">
-                                            <SpaLink href={`/admin/hadiths/edit/${h.id}`} className="w-8 h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center hover:bg-blue-100"><FaEdit className="w-3 h-3" /></SpaLink>
+                                            <Link href={`/admin/hadiths/edit/${h.id}`} className="w-8 h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center hover:bg-blue-100"><FaEdit className="w-3 h-3" /></Link>
                                             <button onClick={() => handleDelete(h.id)} className="w-8 h-8 bg-red-50 text-red-500 rounded-lg flex items-center justify-center hover:bg-red-100"><FaTrash className="w-3 h-3" /></button>
                                         </div>
                                     </td>

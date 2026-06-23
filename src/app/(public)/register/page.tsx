@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import SpaLink from "@/components/SpaLink";
+import Link from "next/link";
 import { FaUserPlus, FaEye, FaEyeSlash } from "react-icons/fa";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
@@ -341,9 +341,9 @@ export default function RegisterPage() {
                         </button>
                         <p className="text-center text-xs text-gray-500">
                             ইতিমধ্যে একটি অ্যাকাউন্ট আছে?{" "}
-                            <SpaLink href="/login" className="text-primary-600 hover:underline font-semibold">
+                            <Link href="/login" className="text-primary-600 hover:underline font-semibold">
                                 লগইন করুন
-                            </SpaLink>
+                            </Link>
                         </p>
                     </div>
                 </form>
