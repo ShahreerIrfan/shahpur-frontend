@@ -66,7 +66,7 @@ export default function EventsArchivePage() {
             <p className="text-gray-500 font-medium">কোনো ইভেন্ট পাওয়া যায়নি</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
             {events.map((event) => (
               <Link key={event.id} href={`/events/${event.id}`} className="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col">
                 <div className="relative h-48 bg-gradient-to-br from-primary-50 to-primary-100/50">

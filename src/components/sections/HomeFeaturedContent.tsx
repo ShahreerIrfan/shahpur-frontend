@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { FaArrowRight, FaBookOpen, FaCalendarAlt, FaMapMarkerAlt, FaMosque } from "react-icons/fa";
+import EventCountdown from "@/components/events/EventCountdown";
 import { API_URL } from "@/lib/api";
 import { eventCategoryLabel, formatDateBn } from "@/lib/events";
 import { mediaUrl } from "@/lib/media";
@@ -37,6 +38,8 @@ interface EventItem {
   short_description: string;
   poster: string | null;
   start_date: string;
+  start_time: string | null;
+  status: string;
   venue_name: string;
   district_name: string;
 }
@@ -50,7 +53,7 @@ async function getHomepageItems<T>(endpoint: string): Promise<T[]> {
     const res = await fetch(`${API_URL}${endpoint}?homepage=true`, { cache: "no-store" });
     if (!res.ok) return [];
     const data = (await res.json()) as ApiList<T>;
-    return listFromResponse(data).slice(0, 3);
+    return listFromResponse(data).slice(0, 4);
   } catch {
     return [];
   }
@@ -126,7 +129,7 @@ export default async function HomeFeaturedContent() {
       <div className="max-w-7xl mx-auto px-4">
         {madrashas.length > 0 && (
           <SectionShell title="আমাদের মাদ্রাসা সমূহ" subtitle="শাহপুর দরবার শরীফের তত্ত্বাবধানে পরিচালিত মাদ্রাসা" href="/madrasha" buttonLabel="সব মাদ্রাসা দেখুন">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
               {madrashas.map((item) => (
                 <Link key={item.id} href={`/madrasha/${item.id}`} className="group bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all">
                   <CardImage src={item.featured_image} alt={item.madrasha_name} icon={<FaBookOpen className="w-12 h-12" />} />
@@ -150,7 +153,7 @@ export default async function HomeFeaturedContent() {
 
         {khankahs.length > 0 && (
           <SectionShell title="খানকাহ শরীফ সমূহ" subtitle="আধ্যাত্মিক সাধনা ও তরিকার সেবায় প্রতিষ্ঠিত খানকাহ শরীফ" href="/khankah" buttonLabel="সব খানকাহ দেখুন">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
               {khankahs.map((item) => (
                 <Link key={item.id} href={`/khankah/${item.id}`} className="group bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all">
                   <CardImage src={item.featured_image} alt={item.khankah_name} icon={<FaMosque className="w-12 h-12" />} />
@@ -171,7 +174,7 @@ export default async function HomeFeaturedContent() {
 
         {events.length > 0 && (
           <SectionShell title="আসন্ন মাহফিল ও ইভেন্ট" subtitle="দরবার শরীফের গুরুত্বপূর্ণ মাহফিল, দোয়া ও অনুষ্ঠানসমূহ" href="/events" buttonLabel="সব ইভেন্ট দেখুন">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
               {events.map((item) => (
                 <Link key={item.id} href={`/events/${item.id}`} className="group bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all">
                   <CardImage src={item.poster} alt={item.title} icon={<FaCalendarAlt className="w-12 h-12" />} />
@@ -182,6 +185,7 @@ export default async function HomeFeaturedContent() {
                     </div>
                     <h3 className="font-extrabold text-gray-800 group-hover:text-primary-700 line-clamp-2">{item.title}</h3>
                     <p className="text-sm text-gray-500 line-clamp-2 mt-3">{item.short_description}</p>
+                    <EventCountdown startDate={item.start_date} startTime={item.start_time} status={item.status} compact />
                     <p className="flex items-center gap-1 text-xs text-gray-400 mt-4">
                       <FaMapMarkerAlt className="w-3 h-3 text-primary-400" />
                       {item.venue_name || item.district_name || "শাহপুর দরবার শরীফ"}
