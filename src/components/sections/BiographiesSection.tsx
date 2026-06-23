@@ -1,4 +1,4 @@
-import Link from "next/link";
+import SpaLink from "@/components/SpaLink";
 import Image from "next/image";
 import { FaArrowRight } from "react-icons/fa";
 import SectionTitle from "@/components/ui/SectionTitle";
@@ -31,12 +31,12 @@ export default function BiographiesSection() {
                             <p className="text-gray-600 text-sm leading-relaxed mb-5">
                                 আন্তর্জাতিক ইসলাম প্রচারক, বহু ইসলামী গ্রন্থের প্রণেতা, ভাষাবিদ ও বিজ্ঞানী। চেকোস্লোভাকিয়ার Academy of Science থেকে Radiation Biology বিষয়ে পিএইচ.ডি অর্জন করে বিশ্ব রেকর্ড স্থাপন করেন।
                             </p>
-                            <Link
+                            <SpaLink
                                 href="/biography/baghdadi"
                                 className="inline-flex items-center gap-2 text-primary-600 hover:text-primary-700 font-medium text-sm group-hover:gap-3 transition-all"
                             >
                                 বিস্তারিত পড়ুন <FaArrowRight className="w-3 h-3" />
-                            </Link>
+                            </SpaLink>
                         </div>
                     </article>
 
@@ -55,12 +55,12 @@ export default function BiographiesSection() {
                             <p className="text-gray-600 text-sm leading-relaxed mb-5">
                                 শাহপুর দরবার শরীফের প্রতিষ্ঠাতা। ইসলামী শরীয়াতের অনুশীলন ও কাদেরীয়া তরিকার প্রচারের মাধ্যমে আত্মশুদ্ধি ও আধ্যাত্মিক সাধনার কেন্দ্র হিসেবে দরবার শরীফ প্রতিষ্ঠা করেন।
                             </p>
-                            <Link
+                            <SpaLink
                                 href="/biography/subhan"
                                 className="inline-flex items-center gap-2 text-primary-600 hover:text-primary-700 font-medium text-sm group-hover:gap-3 transition-all"
                             >
                                 বিস্তারিত পড়ুন <FaArrowRight className="w-3 h-3" />
-                            </Link>
+                            </SpaLink>
                         </div>
                     </article>
                 </div>

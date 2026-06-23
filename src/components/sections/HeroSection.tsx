@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import SpaLink from "@/components/SpaLink";
 import { useEffect, useMemo, useState } from "react";
 import { FaBookOpen, FaChevronLeft, FaChevronRight, FaMosque } from "react-icons/fa";
 import { fetchHomeSlides, HomeSlide, slideImageUrl } from "@/lib/appearance";
@@ -106,21 +106,21 @@ export default function HeroSection() {
 
           <div className="flex flex-wrap gap-4 pt-2">
             {activeSlide.primary_button_text && activeSlide.primary_button_url && (
-              <Link
+              <SpaLink
                 href={activeSlide.primary_button_url}
                 className="inline-flex items-center gap-2 bg-primary-500 hover:bg-primary-400 text-white px-6 py-3 rounded-lg font-medium transition-all hover:scale-105 shadow-xl shadow-primary-950/25"
               >
                 <FaBookOpen />
                 {activeSlide.primary_button_text}
-              </Link>
+              </SpaLink>
             )}
             {activeSlide.secondary_button_text && activeSlide.secondary_button_url && (
-              <Link
+              <SpaLink
                 href={activeSlide.secondary_button_url}
                 className="inline-flex items-center gap-2 border-2 border-white/45 bg-white/10 hover:bg-white/20 text-white px-6 py-3 rounded-lg font-medium transition-all backdrop-blur-sm"
               >
                 {activeSlide.secondary_button_text}
-              </Link>
+              </SpaLink>
             )}
           </div>
 

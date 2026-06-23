@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
+import SpaLink from "@/components/SpaLink";
 import { useParams } from "next/navigation";
 import { FaArrowLeft, FaBookOpen, FaCalendarAlt, FaDownload, FaEye, FaFeatherAlt, FaFilePdf, FaLanguage, FaSpinner } from "react-icons/fa";
 import Breadcrumbs from "@/components/ui/Breadcrumbs";
@@ -54,7 +54,7 @@ export default function BookDetailsPage() {
         <div className="text-center">
           <FaBookOpen className="w-14 h-14 text-gray-300 mx-auto mb-4" />
           <p className="text-gray-500 font-medium">বইটি পাওয়া যায়নি</p>
-          <Link href="/books" className="inline-block mt-4 text-primary-600 text-sm font-semibold">লাইব্রেরিতে ফিরে যান</Link>
+          <SpaLink href="/books" className="inline-block mt-4 text-primary-600 text-sm font-semibold">লাইব্রেরিতে ফিরে যান</SpaLink>
         </div>
       </div>
     );
@@ -67,9 +67,9 @@ export default function BookDetailsPage() {
       <section className="relative bg-gradient-to-br from-primary-50 via-white to-gold-light/40 py-14 overflow-hidden">
         <div className="absolute inset-0 islamic-pattern opacity-80 pointer-events-none"></div>
         <div className="relative max-w-7xl mx-auto px-4">
-          <Link href="/books" className="inline-flex items-center gap-2 text-primary-800 text-xs font-semibold uppercase tracking-wider mb-6 bg-white/85 hover:bg-white px-4 py-2 rounded-full border border-primary-100 shadow-sm">
+          <SpaLink href="/books" className="inline-flex items-center gap-2 text-primary-800 text-xs font-semibold uppercase tracking-wider mb-6 bg-white/85 hover:bg-white px-4 py-2 rounded-full border border-primary-100 shadow-sm">
             <FaArrowLeft className="w-3 h-3" /> লাইব্রেরিতে ফিরে যান
-          </Link>
+          </SpaLink>
           <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-10 items-start">
             <div className="relative">
               <div className="absolute -bottom-5 left-8 right-8 h-8 bg-primary-950/20 blur-2xl rounded-full"></div>

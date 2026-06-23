@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
+import SpaLink from "@/components/SpaLink";
 import { FaArrowRight, FaBookOpen, FaDownload, FaFilePdf, FaLanguage, FaSearch, FaSpinner } from "react-icons/fa";
 import Breadcrumbs from "@/components/ui/Breadcrumbs";
 import PageHero from "@/components/ui/PageHero";
@@ -94,7 +94,7 @@ export default function BooksArchivePage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {books.map((book) => (
-              <Link key={book.id} href={`/books/${book.id}`} className="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col">
+              <SpaLink key={book.id} href={`/books/${book.id}`} className="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col">
                 <div className="relative h-64 bg-gradient-to-br from-primary-50 to-gold-light/30">
                   {book.cover_image ? (
                     <Image src={mediaUrl(book.cover_image)} alt={book.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" unoptimized />
@@ -128,7 +128,7 @@ export default function BooksArchivePage() {
                     <FaArrowRight className="w-3 h-3 text-primary-500 group-hover:translate-x-1 transition-transform" />
                   </div>
                 </div>
-              </Link>
+              </SpaLink>
             ))}
           </div>
         )}

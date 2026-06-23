@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
+import SpaLink from "@/components/SpaLink";
 import Image from "next/image";
 import { FaBookOpen, FaMapMarkerAlt, FaUsers, FaSpinner, FaUserTie, FaCalendar } from "react-icons/fa";
 import PageHero from "@/components/ui/PageHero";
@@ -53,7 +53,7 @@ export default function MadrashaListPage() {
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {madrashas.map((m) => (
-                            <Link key={m.id} href={`/madrasha/${m.id}`} className="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl transition-all hover:-translate-y-1">
+                            <SpaLink key={m.id} href={`/madrasha/${m.id}`} className="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl transition-all hover:-translate-y-1">
                                 <div className="relative h-48 bg-gray-100">
                                     {m.featured_image ? (
                                         <Image src={mediaUrl(m.featured_image)} alt={m.madrasha_name} fill className="object-cover group-hover:scale-105 transition-transform duration-300" unoptimized />
@@ -81,7 +81,7 @@ export default function MadrashaListPage() {
                                         <span className="text-xs font-medium text-primary-600 group-hover:underline">বিস্তারিত দেখুন →</span>
                                     </div>
                                 </div>
-                            </Link>
+                            </SpaLink>
                         ))}
                     </div>
                 )}

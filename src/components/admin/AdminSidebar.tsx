@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { FaHome, FaMosque, FaBookOpen, FaCog, FaSignOutAlt, FaChevronRight, FaChevronDown, FaChevronUp, FaUserTie, FaCalendarAlt, FaFilePdf, FaPalette, FaQuoteRight } from "react-icons/fa";
 import { fetchSiteSettings, SiteSettings } from "@/lib/appearance";
 import { mediaUrl } from "@/lib/media";
+import SpaLink from "@/components/SpaLink";
 
 interface MenuItem {
     title: string;
@@ -76,16 +76,8 @@ interface AdminSidebarProps {
 
 export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
     const pathname = usePathname();
-    const router = useRouter();
     const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
     const [settings, setSettings] = useState<SiteSettings | null>(null);
-
-    // Navigate programmatically - this bypasses stale RSC cache
-    const navigateTo = (href: string, e: React.MouseEvent) => {
-        e.preventDefault();
-        if (pathname === href) return;
-        router.push(href);
-    };
 
     useEffect(() => {
         fetchSiteSettings().then(setSettings).catch(() => undefined);
@@ -125,7 +117,7 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
         <aside className={`w-[260px] bg-white border-r border-gray-100 min-h-screen flex flex-col shadow-sm fixed lg:static top-0 bottom-0 left-0 z-[999] transition-transform duration-300 transform lg:translate-x-0 ${isOpen ? "translate-x-0" : "-translate-x-full"}`}>
             {/* Logo */}
             <div className="p-5 border-b border-gray-100">
-                <Link href="/admin" prefetch={false} className="flex items-center gap-3">
+                <SpaLink href="/admin" className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex items-center justify-center shadow-sm overflow-hidden">
                         {settings?.logo ? (
                             <img src={mediaUrl(settings.logo)} alt={settings.site_name} className="w-full h-full object-cover" />
@@ -137,7 +129,7 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
                         <h2 className="font-bold text-gray-800 text-sm leading-tight">{settings?.site_name || "শাহপুর দরবার শরীফ"}</h2>
                         <p className="text-[11px] text-gray-400">অ্যাডমিন প্যানেল</p>
                     </div>
-                </Link>
+                </SpaLink>
             </div>
 
             {/* Menu */}
@@ -172,18 +164,16 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
                                         {item.children.map((child) => {
                                             const isChildItemActive = pathname === child.href;
                                             return (
-                                                <Link
+                                                <SpaLink
                                                     key={child.href}
                                                     href={child.href}
-                                                    prefetch={false}
-                                                    onClick={(e) => navigateTo(child.href, e)}
                                                     className={`block px-3 py-2 rounded-lg text-xs font-medium transition-all ${isChildItemActive
                                                         ? "bg-primary-50 text-primary-700"
                                                         : "text-gray-500 hover:bg-gray-50 hover:text-gray-700"
                                                         }`}
                                                 >
                                                     {child.title}
-                                                </Link>
+                                                </SpaLink>
                                             );
                                         })}
                                     </div>
@@ -195,11 +185,9 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
                     // Simple menu item
                     const isActive = pathname === item.href || (item.href !== "/admin" && pathname.startsWith(item.href!));
                     return (
-                        <Link
+                        <SpaLink
                             key={item.href}
                             href={item.href!}
-                            prefetch={false}
-                            onClick={(e) => navigateTo(item.href!, e)}
                             className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${isActive
                                 ? "bg-primary-50 text-primary-700 shadow-sm border border-primary-100"
                                 : "text-gray-600 hover:bg-gray-50 hover:text-gray-800"
@@ -210,7 +198,7 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
                                 {item.title}
                             </div>
                             {isActive && <FaChevronRight className="w-2.5 h-2.5 text-primary-400" />}
-                        </Link>
+                        </SpaLink>
                     );
                 })}
             </nav>

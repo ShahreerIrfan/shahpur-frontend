@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
+import SpaLink from "@/components/SpaLink";
 import Image from "next/image";
 import { FaMosque, FaMapMarkerAlt, FaSpinner, FaUserTie, FaArrowRight } from "react-icons/fa";
 import PageHero from "@/components/ui/PageHero";
@@ -54,7 +54,7 @@ export default function KhankahListPage() {
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {khankahs.map((k) => (
-                            <Link key={k.id} href={`/khankah/${k.id}`} className="group bg-white rounded-2xl border border-gray-150 overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between">
+                            <SpaLink key={k.id} href={`/khankah/${k.id}`} className="group bg-white rounded-2xl border border-gray-150 overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between">
                                 <div>
                                     {/* Primary Image Area */}
                                     <div className="relative h-48 bg-gray-100 overflow-hidden">
@@ -109,7 +109,7 @@ export default function KhankahListPage() {
                                         বিস্তারিত <FaArrowRight className="w-2.5 h-2.5 group-hover:translate-x-0.5 transition-transform" />
                                     </span>
                                 </div>
-                            </Link>
+                            </SpaLink>
                         ))}
                     </div>
                 )}

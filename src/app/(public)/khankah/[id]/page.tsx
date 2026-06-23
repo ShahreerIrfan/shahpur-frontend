@@ -2,7 +2,7 @@
 
 import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
-import Link from "next/link";
+import SpaLink from "@/components/SpaLink";
 import { 
     FaSpinner, 
     FaMapMarkerAlt, 
@@ -120,9 +120,9 @@ export default function KhankahDetail() {
                 <div className="absolute top-0 right-0 w-64 h-64 bg-primary-100/10 rounded-full -translate-y-20 translate-x-20 blur-2xl"></div>
                 <div className="absolute bottom-0 left-10 w-96 h-96 bg-primary-100/10 rounded-full translate-y-40 blur-3xl"></div>
                 <div className="max-w-6xl mx-auto px-4 relative z-10">
-                    <Link href="/khankah" className="inline-flex items-center gap-2 text-primary-900 text-xs font-semibold uppercase tracking-wider mb-6 bg-white hover:bg-primary-50/70 px-3.5 py-1.5 rounded-full transition-all border border-primary-100/60 shadow-sm">
+                    <SpaLink href="/khankah" className="inline-flex items-center gap-2 text-primary-900 text-xs font-semibold uppercase tracking-wider mb-6 bg-white hover:bg-primary-50/70 px-3.5 py-1.5 rounded-full transition-all border border-primary-100/60 shadow-sm">
                         <FaArrowLeft className="w-2.5 h-2.5" /> সকল খানকাহ
-                    </Link>
+                    </SpaLink>
                     <h1 className="text-2xl md:text-4xl font-extrabold tracking-tight leading-tight mb-4 text-primary-950">{v("khankah_name")}</h1>
                     <div className="flex flex-wrap items-center gap-4 text-xs md:text-sm text-primary-900/90">
                         {v("village") && (

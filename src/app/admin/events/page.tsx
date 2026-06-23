@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import Link from "next/link";
+import SpaLink from "@/components/SpaLink";
 import { FaCalendarAlt, FaEdit, FaEye, FaPlus, FaSearch, FaSpinner, FaTrash } from "react-icons/fa";
 import { authFetch } from "@/lib/api";
 import { EventListItem, eventStatusLabel, formatDateBn } from "@/lib/events";
@@ -77,10 +77,10 @@ export default function AdminEventsPage() {
           <h1 className="text-2xl font-bold text-gray-800">ইভেন্ট / মাহফিল পরিচালনা</h1>
           <p className="text-sm text-gray-500 mt-1">মাহফিল, ওরশ, মিলাদ ও অন্যান্য অনুষ্ঠানের তথ্য পরিচালনা করুন</p>
         </div>
-        <Link href="/admin/events/create" className="inline-flex items-center justify-center gap-2 bg-primary-500 hover:bg-primary-600 text-white px-5 py-2.5 rounded-xl text-sm font-medium transition-all shadow-sm hover:shadow-md w-full sm:w-auto">
+        <SpaLink href="/admin/events/create" className="inline-flex items-center justify-center gap-2 bg-primary-500 hover:bg-primary-600 text-white px-5 py-2.5 rounded-xl text-sm font-medium transition-all shadow-sm hover:shadow-md w-full sm:w-auto">
           <FaPlus className="w-3 h-3" />
           নতুন ইভেন্ট
-        </Link>
+        </SpaLink>
       </div>
 
       <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm mb-6">
@@ -104,10 +104,10 @@ export default function AdminEventsPage() {
           </div>
           <h3 className="text-xl font-semibold text-gray-800 mb-2">কোনো ইভেন্ট যোগ করা হয়নি</h3>
           <p className="text-gray-500 text-sm mb-6">প্রথম মাহফিল বা ওরশের তথ্য যোগ করুন।</p>
-          <Link href="/admin/events/create" className="inline-flex items-center gap-2 bg-primary-500 hover:bg-primary-600 text-white px-6 py-3 rounded-xl text-sm font-medium">
+          <SpaLink href="/admin/events/create" className="inline-flex items-center gap-2 bg-primary-500 hover:bg-primary-600 text-white px-6 py-3 rounded-xl text-sm font-medium">
             <FaPlus className="w-3 h-3" />
             ইভেন্ট যোগ করুন
-          </Link>
+          </SpaLink>
         </div>
       ) : (
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
@@ -148,12 +148,12 @@ export default function AdminEventsPage() {
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <Link href={`/events/${event.id}`} target="_blank" className="w-8 h-8 bg-green-50 hover:bg-green-100 text-green-600 rounded-lg flex items-center justify-center transition-colors" title="প্রিভিউ">
+                        <SpaLink href={`/events/${event.id}`} target="_blank" className="w-8 h-8 bg-green-50 hover:bg-green-100 text-green-600 rounded-lg flex items-center justify-center transition-colors" title="প্রিভিউ">
                           <FaEye className="w-3 h-3" />
-                        </Link>
-                        <Link href={`/admin/events/edit/${event.id}`} className="w-8 h-8 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center transition-colors" title="এডিট">
+                        </SpaLink>
+                        <SpaLink href={`/admin/events/edit/${event.id}`} className="w-8 h-8 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center transition-colors" title="এডিট">
                           <FaEdit className="w-3 h-3" />
-                        </Link>
+                        </SpaLink>
                         <button onClick={() => setDeleteId(event.id)} className="w-8 h-8 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg flex items-center justify-center transition-colors">
                           <FaTrash className="w-3 h-3" />
                         </button>

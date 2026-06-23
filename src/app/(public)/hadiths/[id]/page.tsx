@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import Link from "next/link";
+import SpaLink from "@/components/SpaLink";
 import { FaArrowLeft, FaBook, FaEye, FaHashtag, FaSpinner, FaStar, FaTag } from "react-icons/fa";
 import { API_URL } from "@/lib/api";
 import { HadithDetail, gradeLabel } from "@/lib/hadiths";
@@ -41,9 +41,9 @@ export default function HadithDetailPage() {
             <section className="relative overflow-hidden bg-gradient-to-br from-primary-50 via-white to-primary-50/60 border-b border-primary-100 py-14 md:py-20">
                 <div className="absolute inset-0 islamic-pattern opacity-90 pointer-events-none"></div>
                 <div className="max-w-6xl mx-auto px-4 relative z-10">
-                    <Link href="/hadiths" className="inline-flex items-center gap-2 text-primary-800 text-xs font-semibold uppercase tracking-wider mb-6 bg-white/85 hover:bg-white px-4 py-2 rounded-full border border-primary-100 shadow-sm">
+                    <SpaLink href="/hadiths" className="inline-flex items-center gap-2 text-primary-800 text-xs font-semibold uppercase tracking-wider mb-6 bg-white/85 hover:bg-white px-4 py-2 rounded-full border border-primary-100 shadow-sm">
                         <FaArrowLeft className="w-2.5 h-2.5" /> সকল হাদিস
-                    </Link>
+                    </SpaLink>
                     <div className="flex flex-wrap gap-2 mb-4">
                         <span className="bg-primary-600 text-white px-3 py-1 rounded-full text-xs font-bold">#{hadith.hadith_number}</span>
                         <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-bold">{hadith.grade_display}</span>

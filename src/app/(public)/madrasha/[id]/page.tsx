@@ -2,7 +2,7 @@
 
 import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
-import Link from "next/link";
+import SpaLink from "@/components/SpaLink";
 import { FaSpinner, FaMapMarkerAlt, FaUsers, FaUserTie, FaPhone, FaCalendar, FaArrowLeft, FaUserEdit, FaAward, FaCoins, FaGraduationCap, FaComments, FaLaptopCode, FaMapMarkedAlt, FaTree, FaBuilding, FaEnvelope } from "react-icons/fa";
 import Breadcrumbs from "@/components/ui/Breadcrumbs";
 import { mediaUrl } from "@/lib/media";
@@ -153,9 +153,9 @@ export default function MadrashaDetail() {
 
                 {/* Content */}
                 <div className="max-w-6xl mx-auto px-4 relative z-10">
-                    <Link href="/madrasha" className="inline-flex items-center gap-2 text-primary-800 text-xs font-semibold uppercase tracking-wider mb-8 bg-white/80 backdrop-blur-sm hover:bg-white px-4 py-2 rounded-full transition-all border border-primary-100/60 shadow-sm hover:shadow-md group">
+                    <SpaLink href="/madrasha" className="inline-flex items-center gap-2 text-primary-800 text-xs font-semibold uppercase tracking-wider mb-8 bg-white/80 backdrop-blur-sm hover:bg-white px-4 py-2 rounded-full transition-all border border-primary-100/60 shadow-sm hover:shadow-md group">
                         <FaArrowLeft className="w-2.5 h-2.5 group-hover:-translate-x-0.5 transition-transform" /> সকল মাদ্রাসা
-                    </Link>
+                    </SpaLink>
                     
                     {/* Bismillah */}
                     <p className="arabic-text text-primary-600/70 text-base md:text-lg mb-3">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</p>

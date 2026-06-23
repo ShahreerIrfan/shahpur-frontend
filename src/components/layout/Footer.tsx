@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import SpaLink from "@/components/SpaLink";
 
 export default function Footer() {
     return (
@@ -29,34 +29,34 @@ export default function Footer() {
                         <h3 className="text-white font-semibold mb-4 text-lg">দ্রুত লিংক</h3>
                         <ul className="space-y-2">
                             <li>
-                                <Link href="/" className="text-sm hover:text-primary-400 transition-colors">
+                                <SpaLink href="/" className="text-sm hover:text-primary-400 transition-colors">
                                     হোম
-                                </Link>
+                                </SpaLink>
                             </li>
                             <li>
-                                <Link href="/biography/baghdadi" className="text-sm hover:text-primary-400 transition-colors">
+                                <SpaLink href="/biography/baghdadi" className="text-sm hover:text-primary-400 transition-colors">
                                     আল্লামা ড. বাগদাদী (রাঃ) এঁর জীবনী
-                                </Link>
+                                </SpaLink>
                             </li>
                             <li>
-                                <Link href="/biography/subhan" className="text-sm hover:text-primary-400 transition-colors">
+                                <SpaLink href="/biography/subhan" className="text-sm hover:text-primary-400 transition-colors">
                                     মাও. আব্দুস সুবহান (রাঃ) এঁর জীবনী
-                                </Link>
+                                </SpaLink>
                             </li>
                             <li>
-                                <Link href="/madrasha" className="text-sm hover:text-primary-400 transition-colors">
+                                <SpaLink href="/madrasha" className="text-sm hover:text-primary-400 transition-colors">
                                     মাদ্রাসা
-                                </Link>
+                                </SpaLink>
                             </li>
                             <li>
-                                <Link href="/events" className="text-sm hover:text-primary-400 transition-colors">
+                                <SpaLink href="/events" className="text-sm hover:text-primary-400 transition-colors">
                                     ইভেন্ট ও মাহফিল
-                                </Link>
+                                </SpaLink>
                             </li>
                             <li>
-                                <Link href="/seva" className="text-sm hover:text-primary-400 transition-colors">
+                                <SpaLink href="/seva" className="text-sm hover:text-primary-400 transition-colors">
                                     সেবা কার্যক্রম
-                                </Link>
+                                </SpaLink>
                             </li>
                         </ul>
                     </div>

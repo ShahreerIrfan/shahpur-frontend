@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
+import SpaLink from "@/components/SpaLink";
 import { useParams } from "next/navigation";
 import { FaArrowLeft, FaBookOpen, FaEye, FaQuoteRight, FaSpinner, FaUserEdit } from "react-icons/fa";
 import Breadcrumbs from "@/components/ui/Breadcrumbs";
@@ -40,7 +40,7 @@ export default function HadithDetailsPage() {
         <div className="text-center">
           <FaQuoteRight className="w-14 h-14 text-gray-300 mx-auto mb-4" />
           <p className="text-gray-500 font-medium">হাদিসটি পাওয়া যায়নি</p>
-          <Link href="/hadith" className="inline-block mt-4 text-primary-600 text-sm font-semibold">হাদিসে ফিরে যান</Link>
+          <SpaLink href="/hadith" className="inline-block mt-4 text-primary-600 text-sm font-semibold">হাদিসে ফিরে যান</SpaLink>
         </div>
       </div>
     );
@@ -97,9 +97,9 @@ export default function HadithDetailsPage() {
       <section className="relative bg-gradient-to-br from-primary-950 via-primary-900 to-emerald-900 text-white py-14 overflow-hidden">
         <div className="absolute inset-0 islamic-pattern opacity-10 pointer-events-none"></div>
         <div className="relative max-w-7xl mx-auto px-4">
-          <Link href="/hadith" className="inline-flex items-center gap-2 text-white/90 text-xs font-semibold uppercase tracking-wider mb-6 bg-white/10 hover:bg-white/15 px-4 py-2 rounded-full border border-white/20">
+          <SpaLink href="/hadith" className="inline-flex items-center gap-2 text-white/90 text-xs font-semibold uppercase tracking-wider mb-6 bg-white/10 hover:bg-white/15 px-4 py-2 rounded-full border border-white/20">
             <FaArrowLeft className="w-3 h-3" /> হাদিস তালিকায় ফিরে যান
-          </Link>
+          </SpaLink>
           <div className="max-w-4xl">
             <div className="flex flex-wrap gap-2 mb-4">
               <span className="bg-primary-500 text-white px-3 py-1 rounded-full text-xs font-bold">হাদিস {hadith.hadith_number}</span>
@@ -188,9 +188,9 @@ export default function HadithDetailsPage() {
             <p className="text-xs text-gray-400 mb-3">বিষয়</p>
             <div className="flex flex-wrap gap-2">
               {hadith.topics_display.length > 0 ? hadith.topics_display.map((topic) => (
-                <Link key={topic.id} href={`/hadith?topic=${topic.id}`} className="bg-primary-50 text-primary-700 border border-primary-100 px-3 py-1.5 rounded-full text-xs font-bold">
+                <SpaLink key={topic.id} href={`/hadith?topic=${topic.id}`} className="bg-primary-50 text-primary-700 border border-primary-100 px-3 py-1.5 rounded-full text-xs font-bold">
                   {topic.name}
-                </Link>
+                </SpaLink>
               )) : <span className="text-sm text-gray-400">কোনো বিষয় যুক্ত নেই</span>}
             </div>
           </div>

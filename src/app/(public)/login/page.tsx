@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import Link from "next/link";
+import SpaLink from "@/components/SpaLink";
 import { FaMosque, FaEye, FaEyeSlash } from "react-icons/fa";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
@@ -150,9 +150,9 @@ function LoginForm() {
                     {/* Redirect to Register */}
                     <p className="text-center text-xs text-gray-500 mt-6">
                         কোনো অ্যাকাউন্ট নেই?{" "}
-                        <Link href="/register" className="text-primary-600 hover:underline font-semibold">
+                        <SpaLink href="/register" className="text-primary-600 hover:underline font-semibold">
                             নিবন্ধন করুন
-                        </Link>
+                        </SpaLink>
                     </p>
                 </div>
             </div>

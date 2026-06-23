@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
+import SpaLink from "@/components/SpaLink";
 import { FaArrowRight, FaBookOpen, FaEye, FaQuoteRight, FaSearch, FaSpinner } from "react-icons/fa";
 import Breadcrumbs from "@/components/ui/Breadcrumbs";
 import Pagination from "@/components/ui/Pagination";
@@ -120,7 +120,7 @@ export default function HadithArchivePage() {
         ) : (
           <div className="space-y-5">
             {hadiths.map((item) => (
-              <Link key={item.id} href={`/hadith/${item.id}`} className="group block bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-primary-100 transition-all overflow-hidden">
+              <SpaLink key={item.id} href={`/hadith/${item.id}`} className="group block bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-primary-100 transition-all overflow-hidden">
                 <div className="px-5 py-3 bg-gradient-to-r from-primary-50 to-white border-b border-gray-100 flex flex-wrap items-center justify-between gap-3">
                   <div className="flex items-center gap-3">
                     <span className="inline-flex items-center gap-2 bg-primary-600 text-white px-3.5 py-1.5 rounded-full text-xs font-bold shadow-sm">
@@ -158,7 +158,7 @@ export default function HadithArchivePage() {
                     </span>
                   </div>
                 </div>
-              </Link>
+              </SpaLink>
             ))}
             <div className="flex flex-col items-center gap-3 bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-5">
               <p className="text-sm text-gray-500">মোট {count}টি হাদিস · পৃষ্ঠা {page} / {totalPages}</p>

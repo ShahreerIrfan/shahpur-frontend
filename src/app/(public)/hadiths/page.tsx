@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
+import SpaLink from "@/components/SpaLink";
 import { FaBook, FaSearch, FaSpinner } from "react-icons/fa";
 import { API_URL } from "@/lib/api";
 import { HadithListItem } from "@/lib/hadiths";
@@ -55,7 +55,7 @@ export default function HadithsPage() {
                 ) : (
                     <div className="grid gap-4">
                         {hadiths.map((h) => (
-                            <Link key={h.id} href={`/hadiths/${h.id}`} className="block bg-white rounded-2xl border border-gray-100 shadow-sm p-6 hover:shadow-md transition-shadow">
+                            <SpaLink key={h.id} href={`/hadiths/${h.id}`} className="block bg-white rounded-2xl border border-gray-100 shadow-sm p-6 hover:shadow-md transition-shadow">
                                 <div className="flex items-start justify-between gap-4">
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-center gap-2 mb-2">
@@ -72,7 +72,7 @@ export default function HadithsPage() {
                                     </div>
                                     <FaBook className="w-8 h-8 text-primary-200 shrink-0" />
                                 </div>
-                            </Link>
+                            </SpaLink>
                         ))}
                     </div>
                 )}
