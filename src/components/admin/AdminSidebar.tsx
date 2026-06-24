@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FaHome, FaMosque, FaBookOpen, FaCog, FaSignOutAlt, FaChevronRight, FaChevronDown, FaChevronUp, FaUserTie, FaCalendarAlt, FaFilePdf, FaPalette, FaQuoteRight } from "react-icons/fa";
+import { FaHome, FaMosque, FaBookOpen, FaCog, FaSignOutAlt, FaChevronRight, FaChevronDown, FaChevronUp, FaUserTie, FaCalendarAlt, FaFilePdf, FaPalette, FaQuoteRight, FaEdit } from "react-icons/fa";
 import { fetchSiteSettings, SiteSettings } from "@/lib/appearance";
 import { mediaUrl } from "@/lib/media";
 
@@ -56,6 +56,15 @@ const menuItems: MenuItem[] = [
             { title: "নতুন বই যোগ", href: "/admin/books/create" },
             { title: "ক্যাটাগরি", href: "/admin/books/categories" },
             { title: "লেখক", href: "/admin/books/authors" },
+        ],
+    },
+    {
+        title: "ব্লগ",
+        icon: <FaEdit className="w-4 h-4" />,
+        children: [
+            { title: "সকল পোস্ট", href: "/admin/blog" },
+            { title: "নতুন পোস্ট যোগ", href: "/admin/blog/create" },
+            { title: "ক্যাটাগরি", href: "/admin/blog/categories" },
         ],
     },
     {
