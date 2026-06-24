@@ -69,9 +69,9 @@ export default function HadithDetailsPage() {
       {hadith.grade_name}
     </span>
   ) : null;
+  const isShortArabic = hadith.arabic_text.trim().length < 140;
   const metaItems = [
     ["শিরোনাম", hadith.title],
-    ["স্লাগ", hadith.slug],
     ["হাদিস নম্বর", hadith.hadith_number],
     ["রেফারেন্স", hadith.reference],
     ["সংকলন", hadith.collection_name],
@@ -82,7 +82,6 @@ export default function HadithDetailsPage() {
     ["রাবী", hadith.narrator_name],
     ["মান/গ্রেড", hadith.grade_name],
     ["উৎস নোট", hadith.source_note],
-    ["কীওয়ার্ড", hadith.keywords],
     ["ভিউ সংখ্যা", String(hadith.view_count)],
     ["আপলোড করা হয়েছে", formatDate(hadith.created_at)],
     ["সর্বশেষ হালনাগাদ", formatDate(hadith.updated_at)],
@@ -117,13 +116,13 @@ export default function HadithDetailsPage() {
           <div className="relative overflow-hidden border-b border-primary-100 bg-gradient-to-r from-emerald-50 via-white to-amber-50 px-5 py-4">
             <div className="absolute right-8 top-1/2 h-28 w-28 -translate-y-1/2 rounded-full bg-primary-100/40 blur-2xl" />
             <div className="relative flex flex-wrap items-center justify-between gap-3">
-            <span className="inline-flex items-center gap-2 bg-primary-700 text-white px-3.5 py-1.5 rounded-full text-xs font-bold shadow-sm">
-              <FaQuoteRight className="w-3 h-3" /> {hadith.hadith_number}
-            </span>
-            <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500">
-              {hadith.reference && <span>{hadith.reference}</span>}
-              <span className="inline-flex items-center gap-1"><FaEye className="w-3 h-3" /> {hadith.view_count} পাঠ</span>
-            </div>
+              <span className="inline-flex items-center gap-2 bg-primary-700 text-white px-3.5 py-1.5 rounded-full text-xs font-bold shadow-sm">
+                <FaQuoteRight className="w-3 h-3" /> {hadith.hadith_number}
+              </span>
+              <div className="flex flex-wrap items-center gap-3 text-sm font-semibold text-gray-600 md:text-base">
+                {hadith.reference && <span>{hadith.reference}</span>}
+                <span className="inline-flex items-center gap-1.5 text-gray-500"><FaEye className="w-3.5 h-3.5" /> {hadith.view_count} পাঠ</span>
+              </div>
             </div>
           </div>
 
@@ -140,7 +139,7 @@ export default function HadithDetailsPage() {
               </div>
 
               {hadith.arabic_text && (
-                <div className="relative overflow-hidden rounded-3xl border border-amber-100 bg-[linear-gradient(135deg,#fffbeb,#ecfdf5)] p-5 md:p-6 shadow-inner">
+                <div className={`relative overflow-hidden rounded-3xl border border-amber-100 bg-[linear-gradient(135deg,#fffbeb,#ecfdf5)] p-5 shadow-inner md:p-7 ${isShortArabic ? "flex min-h-[300px] flex-col justify-center" : ""}`}>
                   <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full border border-amber-200/60" />
                   <div className="relative flex items-center gap-2 mb-4 justify-end">
                     <h2 className="text-xl font-bold text-gray-900">النص العربي</h2>
@@ -148,7 +147,7 @@ export default function HadithDetailsPage() {
                       <FaQuoteRight className="w-4 h-4" />
                     </div>
                   </div>
-                  <p dir="rtl" className="relative text-2xl md:text-3xl text-gray-950 leading-loose whitespace-pre-line font-serif">{hadith.arabic_text}</p>
+                  <p dir="rtl" className={`relative text-gray-950 whitespace-pre-line font-serif ${isShortArabic ? "text-center text-4xl leading-loose md:text-5xl" : "text-2xl leading-loose md:text-3xl"}`}>{hadith.arabic_text}</p>
                 </div>
               )}
             </div>
@@ -171,25 +170,33 @@ export default function HadithDetailsPage() {
           </div>
         </article>
 
-        <section className="mt-8 overflow-hidden rounded-[2rem] border border-primary-100 bg-white shadow-sm">
-          <div className="px-5 py-4 border-b border-primary-100 bg-gradient-to-r from-white to-emerald-50 flex items-center gap-2">
-            <FaUserEdit className="w-4 h-4 text-primary-600" />
-            <h2 className="text-lg font-bold text-gray-900">হাদিসের পরিচিতি</h2>
+        <section className="mt-8 overflow-hidden rounded-[2rem] border border-primary-100 bg-gradient-to-br from-white via-white to-emerald-50/50 shadow-sm">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-primary-100 bg-gradient-to-r from-emerald-50 to-amber-50/50 px-5 py-5">
+            <div className="flex items-center gap-3">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary-700 text-white shadow-sm">
+                <FaUserEdit className="w-4 h-4" />
+              </div>
+              <div>
+                <h2 className="text-xl font-extrabold text-gray-950">হাদিসের পরিচিতি</h2>
+                <p className="text-sm text-gray-500">সংকলন, রাবী, মান ও প্রাসঙ্গিক তথ্য</p>
+              </div>
+            </div>
+            {gradeBadge}
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 p-5 md:grid-cols-2 xl:grid-cols-3">
             {metaItems.map(([label, text]) => (
-              <div key={label} className="p-5 border-b border-r border-gray-50">
-                <p className="text-xs font-semibold text-gray-400 mb-1">{label}</p>
+              <div key={label} className="rounded-2xl border border-primary-50 bg-white/90 p-4 shadow-sm transition hover:border-primary-100 hover:shadow-md">
+                <p className="mb-2 text-xs font-bold uppercase tracking-wide text-gray-400">{label}</p>
                 {label === "মান/গ্রেড" && gradeBadge ? (
                   gradeBadge
                 ) : (
-                  <p className="font-bold text-gray-800 whitespace-pre-line break-words">{text || "উল্লেখ নেই"}</p>
+                  <p className="text-base font-extrabold leading-relaxed text-gray-900 whitespace-pre-line break-words">{text || "উল্লেখ নেই"}</p>
                 )}
               </div>
             ))}
           </div>
-          <div className="p-5 border-t border-gray-100">
-            <p className="text-xs text-gray-400 mb-3">বিষয়</p>
+          <div className="border-t border-primary-100 bg-white/70 p-5">
+            <p className="text-xs font-bold uppercase tracking-wide text-gray-400 mb-3">বিষয়</p>
             <div className="flex flex-wrap gap-2">
               {hadith.topics_display.length > 0 ? hadith.topics_display.map((topic) => (
                 <Link key={topic.id} href={`/hadith?topic=${topic.id}`} className="bg-primary-50 text-primary-700 border border-primary-100 px-3 py-1.5 rounded-full text-xs font-bold">
