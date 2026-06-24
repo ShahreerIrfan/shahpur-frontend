@@ -121,7 +121,17 @@ export default function EditMadrashaPage() {
 
     const handleFeaturedImage = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
-        if (file) { setFeaturedFile(file); const r = new FileReader(); r.onloadend = () => setFeaturedPreview(r.result as string); r.readAsDataURL(file); }
+        if (file) {
+            if (file.size > 5 * 1024 * 1024) {
+                alert("ফিচার ইমেজের সাইজ ৫ মেগাবাইটের বেশি হতে পারবে না।");
+                e.target.value = "";
+                return;
+            }
+            setFeaturedFile(file);
+            const r = new FileReader();
+            r.onloadend = () => setFeaturedPreview(r.result as string);
+            r.readAsDataURL(file);
+        }
     };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -237,7 +247,19 @@ export default function EditMadrashaPage() {
                                             <div><label className="block text-[10px] text-gray-500 mb-1">ফোন</label><input value={t.teacher_phone_number} onChange={e => updateTeacher(i, "teacher_phone_number", e.target.value)} className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm outline-none" /></div>
                                             <div>
                                                 <label className="block text-[10px] text-gray-500 mb-1">শিক্ষকের ছবি</label>
-                                                <input type="file" accept="image/*" data-teacher-image={t.key} className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded-lg text-xs outline-none file:mr-2 file:py-0.5 file:px-2 file:rounded file:border-0 file:text-[10px] file:bg-primary-50 file:text-primary-700" />
+                                                <input 
+                                                    type="file" 
+                                                    accept="image/*" 
+                                                    data-teacher-image={t.key} 
+                                                    className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded-lg text-xs outline-none file:mr-2 file:py-0.5 file:px-2 file:rounded file:border-0 file:text-[10px] file:bg-primary-50 file:text-primary-700" 
+                                                    onChange={(e) => {
+                                                        const file = e.target.files?.[0];
+                                                        if (file && file.size > 5 * 1024 * 1024) {
+                                                            alert("শিক্ষকের ছবির সাইজ ৫ মেগাবাইটের বেশি হতে পারবে না।");
+                                                            e.target.value = "";
+                                                        }
+                                                    }}
+                                                />
                                                 {t.teacher_image && (
                                                     <div className="flex items-center gap-2 mt-1">
                                                         <img src={mediaUrl(t.teacher_image)} alt={t.teacher_name} className="w-8 h-8 rounded-full object-cover border border-gray-200" />

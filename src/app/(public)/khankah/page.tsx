@@ -64,7 +64,7 @@ export default function KhankahListPage() {
                                                 alt={k.khankah_name} 
                                                 fill 
                                                 className="object-cover group-hover:scale-105 transition-transform duration-500" 
-                                                unoptimized 
+                                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                             />
                                         ) : (
                                             <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary-50 to-primary-100/40">

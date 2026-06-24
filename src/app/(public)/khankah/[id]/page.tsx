@@ -3,6 +3,7 @@
 import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { 
     FaSpinner, 
     FaMapMarkerAlt, 
@@ -165,10 +166,13 @@ export default function KhankahDetail() {
                                         photos.length > 0 ? "md:col-span-2" : "md:col-span-3"
                                     } h-[280px] sm:h-[350px] md:h-[400px] rounded-2xl overflow-hidden cursor-pointer relative group border border-gray-200/85 shadow-sm transition-all duration-300 hover:shadow-md hover:scale-[1.005] bg-gray-100`}
                                 >
-                                    <img 
+                                    <Image 
                                         src={img(data.featured_image as string)} 
                                         alt={v("khankah_name")} 
-                                        className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500" 
+                                        fill
+                                        className="object-cover group-hover:scale-[1.02] transition-transform duration-500" 
+                                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 66vw, 800px"
+                                        priority
                                     />
                                     <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
                                         <div className="bg-black/60 text-white text-xs font-semibold px-4 py-2 rounded-xl backdrop-blur-sm border border-white/10 flex items-center gap-2 shadow-lg">
@@ -191,7 +195,7 @@ export default function KhankahDetail() {
                                             }}
                                             className="h-[280px] sm:h-[350px] md:h-[400px] rounded-2xl overflow-hidden cursor-pointer relative group border border-gray-200/85 shadow-sm transition-all duration-300 hover:shadow-md hover:scale-[1.01] bg-gray-100"
                                         >
-                                            <img src={img(photos[0].image)} alt="" className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500" />
+                                            <Image src={img(photos[0].image)} alt="" fill className="object-cover group-hover:scale-[1.02] transition-transform duration-500" sizes="(max-width: 768px) 100vw, 400px" />
                                             <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
                                                 <div className="bg-black/60 text-white text-xs font-semibold px-4 py-2 rounded-xl backdrop-blur-sm border border-white/10 flex items-center gap-2 shadow-lg">
                                                     <span>🔍 জুম করে দেখুন</span>
@@ -215,7 +219,7 @@ export default function KhankahDetail() {
                                                         }}
                                                         className="h-[134px] sm:h-[168px] md:h-[194px] rounded-2xl overflow-hidden cursor-pointer relative group border border-gray-200/85 shadow-sm transition-all duration-300 hover:shadow-md hover:scale-[1.01] bg-gray-100"
                                                     >
-                                                        <img src={img(p.image)} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                                        <Image src={img(p.image)} alt="" fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 768px) 50vw, 250px" />
                                                         <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
                                                             <div className="bg-black/60 text-white text-xs font-semibold px-3 py-1.5 rounded-lg backdrop-blur-sm border border-white/5 flex items-center gap-1.5 shadow-md">
                                                                 <span>🔍 জুম</span>
@@ -245,7 +249,7 @@ export default function KhankahDetail() {
                                                             isLast ? "col-span-2" : "col-span-1"
                                                         } h-[134px] sm:h-[168px] md:h-[194px] rounded-2xl overflow-hidden cursor-pointer relative group border border-gray-200/85 shadow-sm transition-all duration-300 hover:shadow-md hover:scale-[1.01] bg-gray-100`}
                                                     >
-                                                        <img src={img(p.image)} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                                        <Image src={img(p.image)} alt="" fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 768px) 50vw, 250px" />
                                                         <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
                                                             <div className="bg-black/60 text-white text-xs font-semibold px-3 py-1.5 rounded-lg backdrop-blur-sm border border-white/5 flex items-center gap-1.5 shadow-md">
                                                                 <span>🔍 জুম</span>
@@ -274,7 +278,7 @@ export default function KhankahDetail() {
                                                         }}
                                                         className="h-[134px] sm:h-[168px] md:h-[194px] rounded-2xl overflow-hidden cursor-pointer relative group border border-gray-200/85 shadow-sm transition-all duration-300 hover:shadow-md hover:scale-[1.01] bg-gray-100"
                                                     >
-                                                        <img src={img(p.image)} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                                        <Image src={img(p.image)} alt="" fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 768px) 50vw, 250px" />
                                                         {isFourth && hasMore ? (
                                                             <div className="absolute inset-0 bg-black/75 backdrop-blur-[2px] flex flex-col items-center justify-center text-white font-bold text-sm">
                                                                 <span className="text-xl">+{photos.length - 3}</span>

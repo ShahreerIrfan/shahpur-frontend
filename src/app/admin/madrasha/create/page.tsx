@@ -78,6 +78,11 @@ export default function CreateMadrashaPage() {
     const handleFeaturedImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
+            if (file.size > 5 * 1024 * 1024) {
+                alert("ফিচার ইমেজের সাইজ ৫ মেগাবাইটের বেশি হতে পারবে না।");
+                e.target.value = "";
+                return;
+            }
             setFeaturedImageFile(file);
             const reader = new FileReader();
             reader.onloadend = () => {
@@ -313,7 +318,19 @@ export default function CreateMadrashaPage() {
                                                     </div>
                                                     <div>
                                                         <label className="block text-[10px] font-medium text-gray-500 mb-1">শিক্ষকের ছবি</label>
-                                                        <input type="file" accept="image/*" data-teacher-image={index} className="w-full px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs outline-none file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:bg-primary-50 file:text-primary-700" />
+                                                        <input 
+                                                            type="file" 
+                                                            accept="image/*" 
+                                                            data-teacher-image={index} 
+                                                            className="w-full px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs outline-none file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:bg-primary-50 file:text-primary-700" 
+                                                            onChange={(e) => {
+                                                                const file = e.target.files?.[0];
+                                                                if (file && file.size > 5 * 1024 * 1024) {
+                                                                    alert("শিক্ষকের ছবির সাইজ ৫ মেগাবাইটের বেশি হতে পারবে না।");
+                                                                    e.target.value = "";
+                                                                }
+                                                            }}
+                                                        />
                                                     </div>
                                                 </div>
                                             </div>

@@ -73,6 +73,11 @@ export default function BookAuthorsPage() {
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      alert("ছবি ফাইলের আকার ৫ মেগাবাইটের বেশি হতে পারবে না।");
+      e.target.value = "";
+      return;
+    }
     setPhotoFile(file);
     const reader = new FileReader();
     reader.onloadend = () => setPhotoPreview(reader.result as string);

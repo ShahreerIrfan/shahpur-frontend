@@ -74,7 +74,7 @@ export default function EventDetailPage() {
             </div>
             <div className="relative h-64 lg:h-80 rounded-3xl overflow-hidden bg-primary-100 shadow-xl border border-primary-100">
               {event.poster ? (
-                <Image src={mediaUrl(event.poster)} alt={event.title} fill className="object-cover" unoptimized priority />
+                <Image src={mediaUrl(event.poster)} alt={event.title} fill className="object-cover" sizes="(max-width: 1024px) 100vw, 800px" priority />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
                   <FaCalendarAlt className="w-20 h-20 text-primary-300" />
@@ -132,7 +132,7 @@ export default function EventDetailPage() {
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   {allPhotos.map((photo) => (
                     <div key={photo.id} className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-gray-100 border border-gray-100">
-                      <Image src={mediaUrl(photo.image)} alt={photo.caption || event.title} fill className="object-cover" unoptimized />
+                      <Image src={mediaUrl(photo.image)} alt={photo.caption || event.title} fill className="object-cover" sizes="(max-width: 768px) 50vw, 33vw" />
                     </div>
                   ))}
                 </div>

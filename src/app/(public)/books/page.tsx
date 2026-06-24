@@ -97,7 +97,7 @@ export default function BooksArchivePage() {
               <Link key={book.id} href={`/books/${book.id}`} className="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col">
                 <div className="relative h-64 bg-gradient-to-br from-primary-50 to-gold-light/30">
                   {book.cover_image ? (
-                    <Image src={mediaUrl(book.cover_image)} alt={book.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" unoptimized />
+                    <Image src={mediaUrl(book.cover_image)} alt={book.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
                       <FaFilePdf className="w-16 h-16 text-primary-300" />

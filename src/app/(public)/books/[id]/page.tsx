@@ -76,7 +76,7 @@ export default function BookDetailsPage() {
               <div className="relative h-[430px] bg-white rounded-[28px] border border-primary-100 shadow-2xl overflow-hidden rotate-[-1deg]">
                 <div className="absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-black/12 to-transparent z-10 pointer-events-none"></div>
                 {book.cover_image ? (
-                  <Image src={mediaUrl(book.cover_image)} alt={book.title} fill className="object-cover" unoptimized priority />
+                  <Image src={mediaUrl(book.cover_image)} alt={book.title} fill className="object-cover" sizes="(max-width: 1024px) 100vw, 320px" priority />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center bg-primary-50">
                     <FaFilePdf className="w-20 h-20 text-primary-300" />

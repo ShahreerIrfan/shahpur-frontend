@@ -27,6 +27,13 @@ export default function ImageGalleryUpload({
         const selectedFiles = Array.from(e.target.files || []);
         if (selectedFiles.length === 0) return;
 
+        const invalidFile = selectedFiles.find(file => file.size > 5 * 1024 * 1024);
+        if (invalidFile) {
+            alert(`ফাইলের সাইজ ৫ মেগাবাইটের বেশি হতে পারবে না। (ভুল ফাইল: ${invalidFile.name})`);
+            e.target.value = "";
+            return;
+        }
+
         const newFiles = [...files, ...selectedFiles];
         setFiles(newFiles);
         onFilesChange(newFiles);

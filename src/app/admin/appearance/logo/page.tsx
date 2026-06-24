@@ -155,7 +155,16 @@ export default function AppearanceLogoPage() {
                 <div className="h-36 rounded-2xl bg-gray-50 border border-dashed border-gray-200 flex items-center justify-center overflow-hidden">
                   {logoPreview ? <img src={logoPreview} alt="Logo preview" className="max-h-full max-w-full object-contain p-4" /> : <FaImage className="w-9 h-9 text-gray-300" />}
                 </div>
-                <input type="file" accept="image/*" onChange={(e) => setLogoFile(e.target.files?.[0] || null)} className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm" />
+                <input type="file" accept="image/*" onChange={(e) => {
+                  const file = e.target.files?.[0] || null;
+                  if (file && file.size > 5 * 1024 * 1024) {
+                    alert("লোগো ফাইলের আকার ৫ মেগাবাইটের বেশি হতে পারবে না।");
+                    e.target.value = "";
+                    setLogoFile(null);
+                    return;
+                  }
+                  setLogoFile(file);
+                }} className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm" />
               </div>
             </div>
 
@@ -168,7 +177,16 @@ export default function AppearanceLogoPage() {
                   </div>
                 </div>
                 <p className="text-xs text-gray-400">ব্রাউজার ট্যাব আইকন এখানে গোল ও transparent preview হিসেবে দেখাবে</p>
-                <input type="file" accept="image/*" onChange={(e) => setFaviconFile(e.target.files?.[0] || null)} className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm" />
+                <input type="file" accept="image/*" onChange={(e) => {
+                  const file = e.target.files?.[0] || null;
+                  if (file && file.size > 5 * 1024 * 1024) {
+                    alert("ফ্যাভিকন ফাইলের আকার ৫ মেগাবাইটের বেশি হতে পারবে না।");
+                    e.target.value = "";
+                    setFaviconFile(null);
+                    return;
+                  }
+                  setFaviconFile(file);
+                }} className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm" />
               </div>
             </div>
 

@@ -70,7 +70,7 @@ export default function EventsArchivePage() {
               <Link key={event.id} href={`/events/${event.id}`} className="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col">
                 <div className="relative h-48 bg-gradient-to-br from-primary-50 to-primary-100/50">
                   {event.poster ? (
-                    <Image src={mediaUrl(event.poster)} alt={event.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" unoptimized />
+                    <Image src={mediaUrl(event.poster)} alt={event.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
                       <FaCalendarAlt className="w-14 h-14 text-primary-300" />

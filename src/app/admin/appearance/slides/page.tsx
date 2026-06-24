@@ -205,7 +205,16 @@ export default function AppearanceSlidesPage() {
 
             <div>
               <label className="block text-xs font-medium text-gray-600 mb-1.5">ব্যাকগ্রাউন্ড ছবি</label>
-              <input type="file" accept="image/*" onChange={(e) => setImageFile(e.target.files?.[0] || null)} className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm" />
+              <input type="file" accept="image/*" onChange={(e) => {
+                const file = e.target.files?.[0] || null;
+                if (file && file.size > 5 * 1024 * 1024) {
+                  alert("ফাইলের আকার ৫ মেগাবাইটের বেশি হতে পারবে না।");
+                  e.target.value = "";
+                  setImageFile(null);
+                  return;
+                }
+                setImageFile(file);
+              }} className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm" />
               <p className="text-[11px] text-gray-400 mt-1">সেরা ফলাফলের জন্য 2400 x 900px ছবি ব্যবহার করুন (ratio 8:3)। একই ratio হলে hero section এ পুরো ছবি clean দেখাবে। Minimum 1920 x 720px.</p>
               {(imageFile || currentImage) && (
                 <div className="mt-3 aspect-[8/3] rounded-xl overflow-hidden border border-gray-100 bg-gray-950">

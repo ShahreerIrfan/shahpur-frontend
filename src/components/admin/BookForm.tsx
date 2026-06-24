@@ -77,6 +77,11 @@ export default function BookForm({ bookId }: BookFormProps) {
   const handleCoverChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      alert("ফাইলের আকার ৫ মেগাবাইটের বেশি হতে পারবে না।");
+      e.target.value = "";
+      return;
+    }
     setCoverFile(file);
     const reader = new FileReader();
     reader.onloadend = () => setCoverPreview(reader.result as string);
@@ -86,6 +91,11 @@ export default function BookForm({ bookId }: BookFormProps) {
   const handlePdfChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      alert("পিডিএফ ফাইলের আকার ৫ মেগাবাইটের বেশি হতে পারবে না।");
+      e.target.value = "";
+      return;
+    }
     setPdfFile(file);
   };
 

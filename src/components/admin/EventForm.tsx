@@ -135,6 +135,11 @@ export default function EventForm({ eventId }: EventFormProps) {
   const handlePosterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      alert("পোস্টার ফাইলের আকার ৫ মেগাবাইটের বেশি হতে পারবে না।");
+      e.target.value = "";
+      return;
+    }
     setPosterFile(file);
     const reader = new FileReader();
     reader.onloadend = () => setPosterPreview(reader.result as string);

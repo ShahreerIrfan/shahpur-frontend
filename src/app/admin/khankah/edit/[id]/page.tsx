@@ -113,6 +113,11 @@ export default function EditKhankahPage() {
     const handleFeaturedImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
+            if (file.size > 5 * 1024 * 1024) {
+                alert("ফিচার ইমেজের সাইজ ৫ মেগাবাইটের বেশি হতে পারবে না।");
+                e.target.value = "";
+                return;
+            }
             setFeaturedImageFile(file);
             const reader = new FileReader();
             reader.onloadend = () => {
