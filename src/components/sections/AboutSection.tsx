@@ -58,16 +58,15 @@ export default function AboutSection() {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         {features.map((item, i) => (
-                            <div key={item.title} className="group relative rounded-3xl bg-gradient-to-br from-white via-primary-50/40 to-white border border-primary-100 p-6 overflow-hidden hover:shadow-xl hover:shadow-primary-900/10 hover:-translate-y-1 transition-all">
-                                <div className="absolute -right-8 -top-8 w-24 h-24 rounded-full bg-primary-100/60 group-hover:scale-125 transition-transform"></div>
+                            <div key={item.title} className="group relative rounded-2xl bg-white border border-primary-100 p-6 overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all">
                                 <div className="relative">
-                                    <div className="w-12 h-12 rounded-2xl bg-primary-600 text-white flex items-center justify-center shadow-lg shadow-primary-700/20 mb-5">
+                                    <div className="w-12 h-12 rounded-xl bg-primary-600 text-white flex items-center justify-center shadow-sm mb-5">
                                         {item.icon}
                                     </div>
                                     <h4 className="font-extrabold text-gray-900 mb-2">{item.title}</h4>
                                     <p className="text-sm text-gray-500 leading-relaxed">{item.desc}</p>
                                 </div>
-                                <span className="absolute bottom-4 right-5 text-4xl font-black text-primary-100">0{i + 1}</span>
+                                <span className="absolute bottom-5 right-5 text-xs font-black text-primary-200">0{i + 1}</span>
                             </div>
                         ))}
 

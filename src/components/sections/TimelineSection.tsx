@@ -39,10 +39,9 @@ export default function TimelineSection() {
                                 </div>
 
                                 <div className={`order-2 ${i % 2 === 0 ? "md:order-3" : "md:order-1"}`}>
-                                    <div className="group relative rounded-3xl bg-white border border-primary-100 p-[1px] shadow-sm hover:shadow-xl hover:shadow-primary-950/10 transition-all overflow-hidden">
+                                    <div className="group relative rounded-3xl bg-white border border-primary-100 p-[1px] shadow-sm hover:shadow-lg transition-all overflow-hidden">
                                         <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-primary-600 via-amber-300 to-primary-600"></div>
                                         <div className="relative rounded-3xl p-5 md:p-6 overflow-hidden">
-                                            <div className="absolute -right-8 -top-8 w-24 h-24 rounded-full bg-primary-50 group-hover:scale-125 transition-transform"></div>
                                             <span className="relative inline-flex items-center bg-primary-600 text-white px-3 py-1 rounded-full text-xs font-black shadow-sm mb-3">
                                                 {item.year}
                                             </span>
