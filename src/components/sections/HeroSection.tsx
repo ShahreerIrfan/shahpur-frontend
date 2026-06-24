@@ -1,10 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { FaBookOpen, FaChevronLeft, FaChevronRight, FaMosque } from "react-icons/fa";
-import { HomeSlide, slideImageUrl } from "@/lib/appearance";
+import { fetchHomeSlides, HomeSlide, slideImageUrl } from "@/lib/appearance";
 
 const fallbackSlide: HomeSlide = {
   id: 0,
@@ -28,15 +27,24 @@ const fallbackSlide: HomeSlide = {
   is_active: true,
 };
 
-interface HeroSectionProps {
-  initialSlides?: HomeSlide[];
-}
-
-export default function HeroSection({ initialSlides }: HeroSectionProps) {
-  const [slides] = useState<HomeSlide[]>(
-    initialSlides && initialSlides.length > 0 ? initialSlides : [fallbackSlide]
-  );
+export default function HeroSection() {
+  const [slides, setSlides] = useState<HomeSlide[]>([fallbackSlide]);
   const [activeIndex, setActiveIndex] = useState(0);
+
+  useEffect(() => {
+    let mounted = true;
+    fetchHomeSlides()
+      .then((items) => {
+        if (mounted && items.length > 0) {
+          setSlides(items);
+          setActiveIndex(0);
+        }
+      })
+      .catch(() => undefined);
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   useEffect(() => {
     if (slides.length <= 1) return;
@@ -70,15 +78,12 @@ export default function HeroSection({ initialSlides }: HeroSectionProps) {
         return (
           <div key={slide.id} className={`absolute inset-0 transition-opacity duration-700 ${index === activeIndex ? "opacity-100" : "opacity-0"}`}>
             {imgSrc && (
-              <Image
+              <img
                 src={imgSrc}
                 alt=""
-                fill
-                sizes="100vw"
-                className="object-fill"
-                priority={index === 0}
+                className="absolute inset-0 h-full w-full object-fill"
                 loading={index === 0 ? "eager" : "lazy"}
-                quality={60}
+                fetchPriority={index === 0 ? "high" : "low"}
                 aria-hidden="true"
               />
             )}

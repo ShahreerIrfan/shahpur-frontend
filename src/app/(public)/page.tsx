@@ -1,5 +1,4 @@
 import dynamic from "next/dynamic";
-import { fetchSlidesServer } from "@/lib/server-api";
 import HeroSection from "@/components/sections/HeroSection";
 import AboutSection from "@/components/sections/AboutSection";
 
@@ -10,12 +9,10 @@ const BiographiesSection = dynamic(() => import("@/components/sections/Biographi
 const TimelineSection = dynamic(() => import("@/components/sections/TimelineSection"));
 const BooksSection = dynamic(() => import("@/components/sections/BooksSection"));
 
-export default async function Home() {
-  const slides = await fetchSlidesServer();
-
+export default function Home() {
   return (
     <>
-      <HeroSection initialSlides={slides} />
+      <HeroSection />
       <AboutSection />
       <QuoteSection />
       <ActivitiesSection />

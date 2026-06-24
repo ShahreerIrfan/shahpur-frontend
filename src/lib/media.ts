@@ -1,34 +1,27 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 const MEDIA_PREFIX = "/media/";
-const SECURE_MEDIA_PREFIX = "/secure-media/";
 
-export function mediaUrl(path: string | null | undefined) {
+/**
+ * Convert backend media paths to direct backend URLs.
+ * No more proxying through Next.js - images load directly from the backend.
+ */
+export function mediaUrl(path: string | null | undefined): string {
   if (!path) return "";
   if (path.startsWith("data:") || path.startsWith("blob:")) return path;
 
-  let pathname = path;
-  let search = "";
-
-  try {
-    if (path.startsWith("http://") || path.startsWith("https://")) {
-      const parsed = new URL(path);
-      pathname = parsed.pathname;
-      search = parsed.search;
-    }
-  } catch {
-    return "";
+  // Already a full URL pointing to the backend
+  if (path.startsWith("http://") || path.startsWith("https://")) {
+    return path;
   }
 
+  // Relative path - prepend the backend origin
+  let pathname = path;
   if (!pathname.startsWith("/")) {
     pathname = `/${pathname}`;
   }
 
-  if (!pathname.startsWith(MEDIA_PREFIX)) {
-    return path;
-  }
-
-  const relativeMediaPath = pathname.slice(MEDIA_PREFIX.length);
-  return `${SECURE_MEDIA_PREFIX}${relativeMediaPath}${search}`;
+  const apiOrigin = API_URL.replace(/\/api\/?$/, "");
+  return `${apiOrigin}${pathname}`;
 }
 
 export function backendMediaUrl(pathSegments: string[]) {
