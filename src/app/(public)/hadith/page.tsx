@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { FaArrowRight, FaBookOpen, FaEye, FaQuoteRight, FaSearch, FaSpinner } from "react-icons/fa";
+import { FaArrowRight, FaBookOpen, FaEye, FaFilter, FaQuoteRight, FaSearch, FaSpinner } from "react-icons/fa";
 import Breadcrumbs from "@/components/ui/Breadcrumbs";
 import Pagination from "@/components/ui/Pagination";
 import PageHero from "@/components/ui/PageHero";
@@ -11,26 +11,23 @@ import { ApiList, HadithCollection, HadithGrade, HadithListItem, HadithTopic, li
 
 const PAGE_SIZE = 15;
 
+const initialQueryValue = (key: string) => {
+  if (typeof window === "undefined") return "";
+  return new URLSearchParams(window.location.search).get(key) || "";
+};
+
 export default function HadithArchivePage() {
   const [hadiths, setHadiths] = useState<HadithListItem[]>([]);
   const [collections, setCollections] = useState<HadithCollection[]>([]);
   const [grades, setGrades] = useState<HadithGrade[]>([]);
   const [topics, setTopics] = useState<HadithTopic[]>([]);
   const [loading, setLoading] = useState(true);
-  const [collection, setCollection] = useState("");
-  const [grade, setGrade] = useState("");
-  const [topic, setTopic] = useState("");
-  const [search, setSearch] = useState("");
+  const [collection, setCollection] = useState(() => initialQueryValue("collection"));
+  const [grade, setGrade] = useState(() => initialQueryValue("grade"));
+  const [topic, setTopic] = useState(() => initialQueryValue("topic"));
+  const [search, setSearch] = useState(() => initialQueryValue("search"));
   const [page, setPage] = useState(1);
   const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    setCollection(params.get("collection") || "");
-    setGrade(params.get("grade") || "");
-    setTopic(params.get("topic") || "");
-    setSearch(params.get("search") || "");
-  }, []);
 
   useEffect(() => {
     const loadTaxonomies = async () => {
@@ -74,13 +71,13 @@ export default function HadithArchivePage() {
     return () => window.clearTimeout(timer);
   }, [collection, grade, topic, search, page]);
 
-  useEffect(() => {
-    setPage(1);
-  }, [collection, grade, topic, search]);
-
   const totalPages = Math.max(1, Math.ceil(count / PAGE_SIZE));
   const goToPage = (nextPage: number) => {
     setPage(Math.min(totalPages, Math.max(1, nextPage)));
+  };
+  const updateFilter = (setter: (value: string) => void) => (value: string) => {
+    setter(value);
+    setPage(1);
   };
 
   return (
@@ -89,23 +86,34 @@ export default function HadithArchivePage() {
       <Breadcrumbs items={[{ label: "হাদিস" }]} />
 
       <div className="max-w-7xl mx-auto px-4 py-6">
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 mb-8 grid grid-cols-1 lg:grid-cols-[1fr_210px_180px_180px] gap-3">
+        <div className="mb-8 rounded-[2rem] border border-primary-100 bg-gradient-to-br from-white via-emerald-50/45 to-amber-50/30 p-4 md:p-5 shadow-sm">
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-primary-100/70 pb-4">
+            <div>
+              <p className="inline-flex items-center gap-2 rounded-full bg-primary-50 px-3 py-1 text-xs font-bold text-primary-700 ring-1 ring-primary-100">
+                <FaFilter className="h-3 w-3" /> হাদিস অনুসন্ধান
+              </p>
+              <h2 className="mt-2 text-xl font-extrabold text-gray-950">সিহাহ সিত্তাহ ও নির্বাচিত সহীহ হাদিস</h2>
+            </div>
+            <p className="text-sm font-medium text-gray-500">মোট {count}টি হাদিস</p>
+          </div>
+          <div className="grid grid-cols-1 gap-3 lg:grid-cols-[1fr_210px_180px_180px]">
           <div className="relative">
             <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
-            <input value={search} onChange={(e) => setSearch(e.target.value)} className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary-500 bg-gray-50" placeholder="হাদিস নম্বর, বিষয় বা অনুবাদ খুঁজুন..." />
+            <input value={search} onChange={(e) => updateFilter(setSearch)(e.target.value)} className="w-full rounded-2xl border border-primary-100 bg-white px-4 py-3 pl-10 text-sm outline-none transition focus:border-primary-400 focus:ring-4 focus:ring-primary-100" placeholder="হাদিস নম্বর, বিষয় বা অনুবাদ খুঁজুন..." />
           </div>
-          <select value={collection} onChange={(e) => setCollection(e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary-500 bg-gray-50">
+          <select value={collection} onChange={(e) => updateFilter(setCollection)(e.target.value)} className="w-full rounded-2xl border border-primary-100 bg-white px-4 py-3 text-sm outline-none transition focus:border-primary-400 focus:ring-4 focus:ring-primary-100">
             <option value="">সকল সংকলন</option>
             {collections.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}
           </select>
-          <select value={grade} onChange={(e) => setGrade(e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary-500 bg-gray-50">
+          <select value={grade} onChange={(e) => updateFilter(setGrade)(e.target.value)} className="w-full rounded-2xl border border-primary-100 bg-white px-4 py-3 text-sm outline-none transition focus:border-primary-400 focus:ring-4 focus:ring-primary-100">
             <option value="">সকল মান</option>
             {grades.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}
           </select>
-          <select value={topic} onChange={(e) => setTopic(e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary-500 bg-gray-50">
+          <select value={topic} onChange={(e) => updateFilter(setTopic)(e.target.value)} className="w-full rounded-2xl border border-primary-100 bg-white px-4 py-3 text-sm outline-none transition focus:border-primary-400 focus:ring-4 focus:ring-primary-100">
             <option value="">সকল বিষয়</option>
             {topics.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}
           </select>
+          </div>
         </div>
 
         {loading ? (
@@ -118,12 +126,14 @@ export default function HadithArchivePage() {
             <p className="text-gray-500 font-medium">কোনো হাদিস পাওয়া যায়নি</p>
           </div>
         ) : (
-          <div className="space-y-5">
+          <div className="space-y-6">
             {hadiths.map((item) => (
-              <Link key={item.id} href={`/hadith/${item.id}`} className="group block bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-primary-100 transition-all overflow-hidden">
-                <div className="px-5 py-3 bg-gradient-to-r from-primary-50 to-white border-b border-gray-100 flex flex-wrap items-center justify-between gap-3">
+              <Link key={item.id} href={`/hadith/${item.id}`} className="group relative block overflow-hidden rounded-[2rem] border border-primary-100/70 bg-white shadow-sm transition-all hover:-translate-y-1 hover:border-primary-200 hover:shadow-xl">
+                <div className="absolute inset-y-0 left-0 w-1.5 bg-gradient-to-b from-primary-600 via-emerald-400 to-amber-300" />
+                <div className="absolute right-6 top-6 h-24 w-24 rounded-full bg-primary-50/80 blur-2xl transition group-hover:bg-amber-100/70" />
+                <div className="relative px-5 py-3 bg-gradient-to-r from-emerald-50 via-white to-amber-50/80 border-b border-primary-100/70 flex flex-wrap items-center justify-between gap-3">
                   <div className="flex items-center gap-3">
-                    <span className="inline-flex items-center gap-2 bg-primary-600 text-white px-3.5 py-1.5 rounded-full text-xs font-bold shadow-sm">
+                    <span className="inline-flex items-center gap-2 bg-primary-700 text-white px-3.5 py-1.5 rounded-full text-xs font-bold shadow-sm">
                       <FaQuoteRight className="w-3 h-3" /> {item.hadith_number}
                     </span>
                     {item.topics_display && item.topics_display.length > 0 && (
@@ -140,15 +150,21 @@ export default function HadithArchivePage() {
                     <span className="inline-flex items-center gap-1 text-gray-400"><FaEye className="w-3 h-3" /> {item.view_count}</span>
                   </div>
                 </div>
-                <div className="p-5 md:p-6">
-                  <h3 className="text-xl font-extrabold text-gray-900 mb-1 group-hover:text-primary-700 transition-colors">{item.title}</h3>
-                  {item.chapter_title && <p className="text-sm text-primary-700 font-semibold mb-3">{item.chapter_title}</p>}
-                  {item.narrator_name && <p className="text-xs text-gray-500 mb-3 flex items-center gap-1"><FaBookOpen className="w-3 h-3 text-primary-400" /> রাবী: {item.narrator_name}</p>}
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <p className="text-gray-700 leading-loose line-clamp-4 text-justify">{item.bangla_text}</p>
-                    {item.arabic_text && <p dir="rtl" className="text-2xl text-gray-900 leading-loose line-clamp-3 font-serif text-right">{item.arabic_text}</p>}
+                <div className="relative p-5 md:p-7">
+                  <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_420px]">
+                    <div>
+                      <h3 className="text-2xl font-extrabold text-gray-950 mb-1 group-hover:text-primary-700 transition-colors">{item.title}</h3>
+                      {item.chapter_title && <p className="text-sm text-primary-700 font-semibold mb-3">{item.chapter_title}</p>}
+                      {item.narrator_name && <p className="text-xs text-gray-500 mb-4 flex items-center gap-1.5"><FaBookOpen className="w-3.5 h-3.5 text-primary-500" /> রাবী: {item.narrator_name}</p>}
+                      <p className="text-gray-700 leading-loose line-clamp-5 text-justify">{item.bangla_text}</p>
+                    </div>
+                    {item.arabic_text && (
+                      <div className="rounded-3xl border border-amber-100 bg-[linear-gradient(135deg,#fffaf0,#f0fdf4)] p-5 shadow-inner">
+                        <p dir="rtl" className="text-2xl md:text-3xl text-gray-950 leading-loose line-clamp-4 font-serif text-right">{item.arabic_text}</p>
+                      </div>
+                    )}
                   </div>
-                  <div className="pt-4 mt-4 border-t border-gray-50 flex items-center justify-between">
+                  <div className="pt-5 mt-5 border-t border-dashed border-primary-100 flex items-center justify-between">
                     <span className="inline-flex items-center gap-2 text-xs text-gray-500">
                       <FaBookOpen className="w-3.5 h-3.5 text-primary-500" />
                       {item.book_name || item.reference || "বিস্তারিত"}
