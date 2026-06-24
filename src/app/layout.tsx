@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import Script from "next/script";
 import FaviconSync from "@/components/layout/FaviconSync";
 import RouteChangeSync from "@/components/layout/RouteChangeSync";
 import "./globals.css";
@@ -25,15 +26,6 @@ export default function RootLayout({
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          rel="preload"
-          as="style"
-          href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Noto+Naskh+Arabic:wght@400;600&display=swap"
-        />
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Noto+Naskh+Arabic:wght@400;600&display=swap"
-        />
       </head>
       <body suppressHydrationWarning className="min-h-screen flex flex-col bg-gray-50">
         <FaviconSync />
@@ -41,6 +33,14 @@ export default function RootLayout({
           <RouteChangeSync />
         </Suspense>
         {children}
+        <Script id="load-fonts" strategy="afterInteractive">
+          {`
+            var link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = 'https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=Noto+Naskh+Arabic:wght@400;600&display=swap';
+            document.head.appendChild(link);
+          `}
+        </Script>
       </body>
     </html>
   );

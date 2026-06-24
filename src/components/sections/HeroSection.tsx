@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { FaBookOpen, FaChevronLeft, FaChevronRight, FaMosque } from "react-icons/fa";
-import { fetchHomeSlides, HomeSlide, slideImageUrl } from "@/lib/appearance";
+import { HomeSlide, slideImageUrl } from "@/lib/appearance";
 
 const fallbackSlide: HomeSlide = {
   id: 0,
@@ -28,24 +28,15 @@ const fallbackSlide: HomeSlide = {
   is_active: true,
 };
 
-export default function HeroSection() {
-  const [slides, setSlides] = useState<HomeSlide[]>([fallbackSlide]);
-  const [activeIndex, setActiveIndex] = useState(0);
+interface HeroSectionProps {
+  initialSlides?: HomeSlide[];
+}
 
-  useEffect(() => {
-    let mounted = true;
-    fetchHomeSlides()
-      .then((items) => {
-        if (mounted && items.length > 0) {
-          setSlides(items);
-          setActiveIndex(0);
-        }
-      })
-      .catch(() => undefined);
-    return () => {
-      mounted = false;
-    };
-  }, []);
+export default function HeroSection({ initialSlides }: HeroSectionProps) {
+  const [slides] = useState<HomeSlide[]>(
+    initialSlides && initialSlides.length > 0 ? initialSlides : [fallbackSlide]
+  );
+  const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
     if (slides.length <= 1) return;
@@ -87,7 +78,7 @@ export default function HeroSection() {
                 className="object-fill"
                 priority={index === 0}
                 loading={index === 0 ? "eager" : "lazy"}
-                quality={75}
+                quality={60}
                 aria-hidden="true"
               />
             )}

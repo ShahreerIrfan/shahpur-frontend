@@ -16,7 +16,7 @@
   --color-gold-light: #F5E6A3;
   --color-dark: #1A1A2E;
   --color-dark-light: #2D2D44;
-  --font-family-bangla: 'Hind Siliguri', 'Noto Sans Bengali', sans-serif;
+  --font-family-bangla: 'Hind Siliguri', system-ui, -apple-system, sans-serif;
   --font-family-arabic: 'Noto Naskh Arabic', serif;
 }
 
@@ -62,8 +62,8 @@ body {
 }
 
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
 @keyframes float {
@@ -76,8 +76,8 @@ body {
 }
 
 .animate-shimmer {
+  animation: shimmer 1.5s infinite ease-in-out;
   background-size: 200% 100%;
-  animation: shimmer 3s infinite linear;
 }
 
 .animate-float {

@@ -57,7 +57,27 @@ export default function MadrashaListPage() {
             <Breadcrumbs items={[{ label: "মাদ্রাসা সমূহ" }]} />
             <div className="max-w-7xl mx-auto px-4 py-6">
                 {loading ? (
-                    <div className="text-center py-16"><FaSpinner className="w-8 h-8 text-primary-500 mx-auto animate-spin" /></div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+                        {Array.from({ length: 8 }).map((_, i) => (
+                            <div key={i} className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+                                <div className="h-48 bg-gray-200 animate-pulse" />
+                                <div className="p-5 space-y-3">
+                                    <div className="h-5 w-3/4 bg-gray-200 animate-pulse rounded" />
+                                    <div className="flex gap-3">
+                                        <div className="h-4 w-20 bg-gray-100 animate-pulse rounded" />
+                                        <div className="h-4 w-24 bg-gray-100 animate-pulse rounded" />
+                                        <div className="h-4 w-16 bg-gray-100 animate-pulse rounded" />
+                                    </div>
+                                    <div className="h-4 w-full bg-gray-100 animate-pulse rounded" />
+                                    <div className="h-4 w-2/3 bg-gray-100 animate-pulse rounded" />
+                                    <div className="flex justify-between pt-2">
+                                        <div className="h-3 w-28 bg-gray-100 animate-pulse rounded" />
+                                        <div className="h-3 w-20 bg-gray-100 animate-pulse rounded" />
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
                 ) : madrashas.length === 0 ? (
                     <div className="text-center py-16 bg-white rounded-2xl border border-gray-100">
                         <FaBookOpen className="w-12 h-12 text-gray-300 mx-auto mb-4" />
