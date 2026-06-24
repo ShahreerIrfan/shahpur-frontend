@@ -47,16 +47,13 @@ export default function Header() {
     const [settings, setSettings] = useState<SiteSettings | null>(null);
 
     useEffect(() => {
-        setIsLoggedIn(!!localStorage.getItem("access_token"));
-        setIsAdmin(localStorage.getItem("is_admin") === "true");
+        const authTimer = window.setTimeout(() => {
+            setIsLoggedIn(!!localStorage.getItem("access_token"));
+            setIsAdmin(localStorage.getItem("is_admin") === "true");
+        }, 0);
         fetchSiteSettings().then(setSettings).catch(() => undefined);
+        return () => window.clearTimeout(authTimer);
     }, []);
-
-    useEffect(() => {
-        if (!mobileMenuOpen) {
-            setOpenMobileSubmenu(null);
-        }
-    }, [mobileMenuOpen]);
 
     const handleLogout = () => {
         localStorage.removeItem("access_token");
@@ -68,19 +65,19 @@ export default function Header() {
     };
 
     return (
-        <header className="w-full">
+        <header className="sticky top-0 z-[950] w-full">
             {/* Top bar with Islamic greeting */}
-            <div className="bg-primary-900 text-white text-center py-1.5 text-sm">
+            <div className="bg-primary-900 text-white text-center py-1.5 text-sm shadow-sm">
                 <p className="arabic-text inline-block ml-2 text-gold-light">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</p>
             </div>
 
             {/* Main header */}
-            <div className="bg-white shadow-md border-b-2 border-primary-500">
-                <div className="max-w-7xl mx-auto px-4">
-                    <div className="flex items-center justify-between h-20">
+            <div className="bg-gradient-to-b from-black/10 to-transparent px-3 py-2 lg:px-6 lg:py-3">
+                <div className="max-w-7xl mx-auto rounded-2xl border border-white/70 bg-white/95 px-3 shadow-[0_18px_45px_rgba(15,23,42,0.14)] backdrop-blur-xl ring-1 ring-primary-100/70 lg:px-5">
+                    <div className="flex items-center justify-between h-16 lg:h-[72px]">
                         {/* Logo / Site Name */}
                         <Link href="/" prefetch={false} className="flex items-center gap-3">
-                            <div className="w-12 h-12 bg-primary-500 rounded-full flex items-center justify-center overflow-hidden">
+                            <div className="w-11 h-11 lg:w-12 lg:h-12 bg-primary-500 rounded-full flex items-center justify-center overflow-hidden shadow-sm ring-2 ring-primary-100">
                                 {settings?.logo ? (
                                     <img src={mediaUrl(settings.logo)} alt={settings.site_name} className="w-full h-full object-cover" />
                                 ) : (
@@ -88,7 +85,7 @@ export default function Header() {
                                 )}
                             </div>
                             <div>
-                                <h1 className="text-xl font-bold text-primary-700 leading-tight">
+                                <h1 className="text-lg lg:text-xl font-bold text-primary-700 leading-tight">
                                     {settings?.site_name || "শাহপুর দরবার শরীফ"}
                                 </h1>
                                 <p className="text-xs text-gray-500">{settings?.site_name_en || "Shahpur Darbar Sharif"}</p>
@@ -105,7 +102,7 @@ export default function Header() {
                                     onMouseLeave={() => setOpenDropdown(null)}
                                 >
                                     {item.comingSoon ? (
-                                        <span className="px-4 py-2 text-gray-400 rounded-md font-medium text-[15px] cursor-default inline-flex items-center gap-1">
+                                        <span className="px-3 py-2 text-gray-400 rounded-xl font-medium text-[15px] cursor-default inline-flex items-center gap-1">
                                             {item.title}
                                             <span className="text-[10px] bg-amber-50 text-amber-700 border border-amber-100 px-1.5 py-0.5 rounded-full">Soon</span>
                                         </span>
@@ -113,7 +110,7 @@ export default function Header() {
                                         <Link
                                             href={item.url}
                                             prefetch={false}
-                                            className="px-4 py-2 text-gray-700 hover:text-primary-600 hover:bg-primary-50 rounded-md transition-colors font-medium text-[15px]"
+                                            className="px-3 py-2 text-gray-700 hover:text-primary-600 hover:bg-primary-50 rounded-xl transition-colors font-medium text-[15px]"
                                         >
                                             {item.title}
                                             {item.children && (
@@ -126,7 +123,7 @@ export default function Header() {
 
                                     {/* Dropdown */}
                                     {item.children && openDropdown === item.title && (
-                                        <div className="absolute top-full left-0 bg-white shadow-lg rounded-md border border-gray-100 py-2 min-w-[320px] z-50">
+                                        <div className="absolute top-full left-0 mt-2 bg-white shadow-xl rounded-2xl border border-gray-100 py-2 min-w-[320px] z-50">
                                             {item.children.map((child) => (
                                                 child.comingSoon ? (
                                                     <span key={child.title} className="block px-4 py-2 text-sm text-gray-400 cursor-default">
@@ -163,7 +160,7 @@ export default function Header() {
                                     </Link>
                                     <button 
                                         onClick={handleLogout} 
-                                        className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                                        className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors shadow-sm"
                                     >
                                         Logout
                                     </button>
@@ -174,7 +171,7 @@ export default function Header() {
                                         <FaUser className="w-3.5 h-3.5" />
                                         <span>Login</span>
                                     </Link>
-                                    <Link href="/register" prefetch={false} className="bg-primary-500 hover:bg-primary-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                                    <Link href="/register" prefetch={false} className="bg-primary-500 hover:bg-primary-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors shadow-sm">
                                         Register
                                     </Link>
                                 </>
@@ -184,7 +181,10 @@ export default function Header() {
                         {/* Mobile menu button */}
                         <button
                             className="lg:hidden p-2 text-gray-700 hover:text-primary-600"
-                            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                            onClick={() => {
+                                if (mobileMenuOpen) setOpenMobileSubmenu(null);
+                                setMobileMenuOpen(!mobileMenuOpen);
+                            }}
                             aria-label="Toggle menu"
                         >
                             {mobileMenuOpen ? (
@@ -203,8 +203,8 @@ export default function Header() {
 
             {/* Mobile Navigation */}
             {mobileMenuOpen && (
-                <div className="lg:hidden bg-white border-b shadow-lg">
-                    <nav className="max-w-7xl mx-auto px-4 py-4 space-y-1">
+                <div className="lg:hidden px-3 pb-3">
+                    <nav className="max-w-7xl mx-auto rounded-2xl border border-primary-100 bg-white px-3 py-4 shadow-xl space-y-1">
                         {menuItems.map((item) => (
                             <div key={item.title}>
                                 {item.children ? (
