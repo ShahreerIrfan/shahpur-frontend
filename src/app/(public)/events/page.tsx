@@ -73,11 +73,7 @@ export default function EventsArchivePage() {
                 <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-primary-600 via-amber-300 to-primary-600 z-20"></div>
                 <div className="relative h-48 bg-gradient-to-br from-primary-50 to-primary-100/50 overflow-hidden">
                   {event.poster ? (
-<<<<<<< HEAD
-                    <Image src={mediaUrl(event.poster)} alt={event.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" />
-=======
-                    <Image src={mediaUrl(event.poster)} alt={event.title} fill className="object-cover group-hover:scale-110 transition-transform duration-700" unoptimized />
->>>>>>> 680e9ca6e2ee053017470ebb30151ee2d14cf82f
+                    <Image src={mediaUrl(event.poster)} alt={event.title} fill className="object-cover group-hover:scale-110 transition-transform duration-700" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
                       <FaCalendarAlt className="w-14 h-14 text-primary-300" />
