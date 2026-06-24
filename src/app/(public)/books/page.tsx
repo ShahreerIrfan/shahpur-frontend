@@ -6,15 +6,13 @@ import Link from "next/link";
 import { FaArrowRight, FaBookOpen, FaDownload, FaFilePdf, FaLanguage, FaSearch, FaSpinner } from "react-icons/fa";
 import Breadcrumbs from "@/components/ui/Breadcrumbs";
 import PageHero from "@/components/ui/PageHero";
+import Pagination from "@/components/ui/Pagination";
 import { API_URL } from "@/lib/api";
 import { BOOK_LANGUAGES, BookCategory, BookListItem, mediaUrl } from "@/lib/books";
 
 interface ApiList<T> {
   results?: T[];
-}
-
-function listFromResponse<T>(data: T[] | ApiList<T>): T[] {
-  return Array.isArray(data) ? data : data.results || [];
+  count?: number;
 }
 
 export default function BooksArchivePage() {
@@ -25,12 +23,17 @@ export default function BooksArchivePage() {
   const [search, setSearch] = useState("");
   const [categories, setCategories] = useState<BookCategory[]>([]);
 
+  const [page, setPage] = useState(1);
+  const [count, setCount] = useState(0);
+  const PAGE_SIZE = 10;
+
   useEffect(() => {
     const loadTaxonomies = async () => {
       const res = await fetch(`${API_URL}/books/categories/`);
       if (res.ok) {
         const data = (await res.json()) as BookCategory[] | ApiList<BookCategory>;
-        setCategories(listFromResponse(data));
+        const list = Array.isArray(data) ? data : data.results || [];
+        setCategories(list);
       }
     };
     void loadTaxonomies();
@@ -41,6 +44,7 @@ export default function BooksArchivePage() {
       setLoading(true);
       try {
         const params = new URLSearchParams();
+        params.set("page", String(page));
         if (category) params.set("category", category);
         if (language) params.set("language", language);
         if (search.trim()) params.set("search", search.trim());
@@ -48,7 +52,13 @@ export default function BooksArchivePage() {
         const res = await fetch(url);
         if (res.ok) {
           const data = (await res.json()) as BookListItem[] | ApiList<BookListItem>;
-          setBooks(listFromResponse(data));
+          if (Array.isArray(data)) {
+            setBooks(data);
+            setCount(data.length);
+          } else {
+            setBooks(data.results || []);
+            setCount(data.count || 0);
+          }
         }
       } finally {
         setLoading(false);
@@ -59,7 +69,14 @@ export default function BooksArchivePage() {
       void load();
     }, 250);
     return () => window.clearTimeout(timer);
-  }, [category, language, search]);
+  }, [category, language, search, page]);
+
+  const handleFilterChange = (setter: (val: string) => void) => (val: string) => {
+    setter(val);
+    setPage(1);
+  };
+
+  const totalPages = Math.ceil(count / PAGE_SIZE);
 
   return (
     <div className="min-h-screen bg-gray-50/30 pb-20">
@@ -70,13 +87,13 @@ export default function BooksArchivePage() {
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 mb-8 grid grid-cols-1 lg:grid-cols-[1fr_220px_220px] gap-3">
           <div className="relative">
             <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
-            <input value={search} onChange={(e) => setSearch(e.target.value)} className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary-500 bg-gray-50" placeholder="বই বা লেখক খুঁজুন..." />
+            <input value={search} onChange={(e) => handleFilterChange(setSearch)(e.target.value)} className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary-500 bg-gray-50" placeholder="বই বা লেখক খুঁজুন..." />
           </div>
-          <select value={category} onChange={(e) => setCategory(e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary-500 bg-gray-50">
+          <select value={category} onChange={(e) => handleFilterChange(setCategory)(e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary-500 bg-gray-50">
             <option value="">সকল ক্যাটাগরি</option>
             {categories.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}
           </select>
-          <select value={language} onChange={(e) => setLanguage(e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary-500 bg-gray-50">
+          <select value={language} onChange={(e) => handleFilterChange(setLanguage)(e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary-500 bg-gray-50">
             <option value="">সকল ভাষা</option>
             {BOOK_LANGUAGES.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
           </select>
@@ -92,45 +109,53 @@ export default function BooksArchivePage() {
             <p className="text-gray-500 font-medium">কোনো বই পাওয়া যায়নি</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {books.map((book) => (
-              <Link key={book.id} href={`/books/${book.id}`} className="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col">
-                <div className="relative h-64 bg-gradient-to-br from-primary-50 to-gold-light/30">
-                  {book.cover_image ? (
-                    <Image src={mediaUrl(book.cover_image)} alt={book.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <FaFilePdf className="w-16 h-16 text-primary-300" />
-                    </div>
-                  )}
-                  <div className="absolute top-3 left-3">
-                    <span className="bg-white/95 text-primary-700 border border-primary-100 px-2.5 py-1 rounded-full text-[10px] font-bold shadow-sm">
-                      {book.category_display}
-                    </span>
-                  </div>
-                </div>
-                <div className="p-5 flex-1 flex flex-col">
-                  <h3 className="font-extrabold text-gray-800 mb-2 leading-snug group-hover:text-primary-700 transition-colors line-clamp-2">{book.title}</h3>
-                  {book.author_name && <p className="text-xs font-semibold text-primary-700 mb-2">{book.author_name}</p>}
-                  {book.short_description && <p className="text-sm text-gray-500 line-clamp-2 mb-4">{book.short_description}</p>}
-                  <div className="space-y-2 text-xs text-gray-500 mt-auto">
-                    <div className="flex items-center gap-2">
-                      <FaLanguage className="w-3.5 h-3.5 text-primary-500" />
-                      <span>{book.language_display}{book.pages ? ` · ${book.pages} পৃষ্ঠা` : ""}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <FaDownload className="w-3.5 h-3.5 text-primary-500" />
-                      <span>{book.download_count} ডাউনলোড</span>
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {books.map((book) => (
+                <Link key={book.id} href={`/books/${book.id}`} className="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col">
+                  <div className="relative h-64 bg-gradient-to-br from-primary-50 to-gold-light/30">
+                    {book.cover_image ? (
+                      <Image src={mediaUrl(book.cover_image)} alt={book.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <FaFilePdf className="w-16 h-16 text-primary-300" />
+                      </div>
+                    )}
+                    <div className="absolute top-3 left-3">
+                      <span className="bg-white/95 text-primary-700 border border-primary-100 px-2.5 py-1 rounded-full text-[10px] font-bold shadow-sm">
+                        {book.category_display}
+                      </span>
                     </div>
                   </div>
-                  <div className="pt-4 mt-4 border-t border-gray-50 flex items-center justify-between">
-                    <span className="text-xs font-bold text-primary-600">পড়ুন</span>
-                    <FaArrowRight className="w-3 h-3 text-primary-500 group-hover:translate-x-1 transition-transform" />
+                  <div className="p-5 flex-1 flex flex-col">
+                    <h3 className="font-extrabold text-gray-800 mb-2 leading-snug group-hover:text-primary-700 transition-colors line-clamp-2">{book.title}</h3>
+                    {book.author_name && <p className="text-xs font-semibold text-primary-700 mb-2">{book.author_name}</p>}
+                    {book.short_description && <p className="text-sm text-gray-500 line-clamp-2 mb-4">{book.short_description}</p>}
+                    <div className="space-y-2 text-xs text-gray-500 mt-auto">
+                      <div className="flex items-center gap-2">
+                        <FaLanguage className="w-3.5 h-3.5 text-primary-500" />
+                        <span>{book.language_display}{book.pages ? ` · ${book.pages} পৃষ্ঠা` : ""}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <FaDownload className="w-3.5 h-3.5 text-primary-500" />
+                        <span>{book.download_count} ডাউনলোড</span>
+                      </div>
+                    </div>
+                    <div className="pt-4 mt-4 border-t border-gray-50 flex items-center justify-between">
+                      <span className="text-xs font-bold text-primary-600">পড়ুন</span>
+                      <FaArrowRight className="w-3 h-3 text-primary-500 group-hover:translate-x-1 transition-transform" />
+                    </div>
                   </div>
-                </div>
-              </Link>
-            ))}
-          </div>
+                </Link>
+              ))}
+            </div>
+            {totalPages > 1 && (
+              <div className="flex flex-col items-center gap-3 bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-5 mt-8">
+                <p className="text-sm text-gray-500">মোট {count}টি বই · পৃষ্ঠা {page} / {totalPages}</p>
+                <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

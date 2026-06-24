@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { FaPlus, FaBookOpen, FaSearch, FaEdit, FaTrash, FaSpinner, FaEye } from "react-icons/fa";
+import Pagination from "@/components/ui/Pagination";
 
 interface Madrasha {
     id: number;
@@ -29,24 +30,35 @@ export default function AdminMadrashaPage() {
     const [deleteId, setDeleteId] = useState<number | null>(null);
     const [deleting, setDeleting] = useState(false);
 
+    const [page, setPage] = useState(1);
+    const [count, setCount] = useState(0);
+    const PAGE_SIZE = 10;
+
     const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
-    useEffect(() => {
-        fetchMadrashas();
-    }, []);
-
-    const fetchMadrashas = async () => {
+    const fetchMadrashas = async (currentPage = page, currentSearch = search, currentType = typeFilter) => {
         setLoading(true);
         try {
             const token = localStorage.getItem("access_token");
-            const res = await fetch(`${API_URL}/madrasha/list/`, {
+            const params = new URLSearchParams();
+            params.set("page", String(currentPage));
+            if (currentSearch.trim()) params.set("search", currentSearch.trim());
+            if (currentType) params.set("type", currentType);
+
+            const res = await fetch(`${API_URL}/madrasha/list/?${params.toString()}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
             if (res.ok) {
                 const data = await res.json();
-                setMadrashas(Array.isArray(data) ? data : data.results || []);
+                if (Array.isArray(data)) {
+                    setMadrashas(data);
+                    setCount(data.length);
+                } else {
+                    setMadrashas(data.results || []);
+                    setCount(data.count || 0);
+                }
             }
         } catch (err) {
             console.error("Failed to fetch madrashas", err);
@@ -54,6 +66,13 @@ export default function AdminMadrashaPage() {
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            fetchMadrashas(page, search, typeFilter);
+        }, 250);
+        return () => clearTimeout(timer);
+    }, [page, search, typeFilter]);
 
     const handleDelete = async () => {
         if (!deleteId) return;
@@ -69,6 +88,7 @@ export default function AdminMadrashaPage() {
             if (res.ok || res.status === 204) {
                 setMadrashas(madrashas.filter((m) => m.id !== deleteId));
                 setDeleteId(null);
+                setCount(prev => Math.max(0, prev - 1));
             }
         } catch (err) {
             console.error("Failed to delete madrasha", err);
@@ -77,13 +97,18 @@ export default function AdminMadrashaPage() {
         }
     };
 
-    const filteredMadrashas = [...madrashas]
-        .sort((a, b) => b.id - a.id)
-        .filter((m) => {
-            const matchesSearch = m.madrasha_name.toLowerCase().includes(search.toLowerCase());
-            const matchesType = !typeFilter || m.type_of_madrasha === typeFilter;
-            return matchesSearch && matchesType;
-        });
+    const handleSearchChange = (val: string) => {
+        setSearch(val);
+        setPage(1);
+    };
+
+    const handleTypeChange = (val: string) => {
+        setTypeFilter(val);
+        setPage(1);
+    };
+
+    const filteredMadrashas = madrashas;
+    const totalPages = Math.ceil(count / PAGE_SIZE);
 
     return (
         <div>
@@ -111,13 +136,13 @@ export default function AdminMadrashaPage() {
                             type="text"
                             placeholder="মাদ্রাসা খুঁজুন..."
                             value={search}
-                            onChange={(e) => setSearch(e.target.value)}
+                            onChange={(e) => handleSearchChange(e.target.value)}
                             className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
                         />
                     </div>
                     <select
                         value={typeFilter}
-                        onChange={(e) => setTypeFilter(e.target.value)}
+                        onChange={(e) => handleTypeChange(e.target.value)}
                         className="border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-600 outline-none focus:ring-2 focus:ring-primary-500"
                     >
                         <option value="">সকল ধরণ</option>
@@ -173,7 +198,7 @@ export default function AdminMadrashaPage() {
                                 {filteredMadrashas.map((madrasha, index) => (
                                     <tr key={madrasha.id} className="hover:bg-gray-50/50 transition-colors">
                                         <td className="px-6 py-4">
-                                            <span className="text-sm font-bold text-gray-500">{index + 1}</span>
+                                            <span className="text-sm font-bold text-gray-500">{(page - 1) * PAGE_SIZE + index + 1}</span>
                                         </td>
                                         <td className="px-6 py-4">
                                             <span className="text-sm font-medium text-gray-800">{madrasha.madrasha_name}</span>
@@ -224,8 +249,13 @@ export default function AdminMadrashaPage() {
                             </tbody>
                         </table>
                     </div>
-                    <div className="px-6 py-3 border-t border-gray-100 bg-gray-50/50">
-                        <p className="text-xs text-gray-500">মোট {filteredMadrashas.length}টি মাদ্রাসা</p>
+                    <div className="px-6 py-4 border-t border-gray-100 bg-gray-50/50 flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <p className="text-xs text-gray-500">
+                            মোট {count}টি মাদ্রাসার মধ্যে {(page - 1) * PAGE_SIZE + 1} - {Math.min(page * PAGE_SIZE, count)}টি দেখানো হচ্ছে
+                        </p>
+                        {totalPages > 1 && (
+                            <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+                        )}
                     </div>
                 </div>
             )}

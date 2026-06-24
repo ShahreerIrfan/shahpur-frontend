@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { FaPlus, FaMosque, FaSearch, FaEdit, FaTrash, FaSpinner, FaEye } from "react-icons/fa";
+import Pagination from "@/components/ui/Pagination";
 
 interface Khankah {
     id: number;
@@ -20,24 +21,34 @@ export default function AdminKhankahPage() {
     const [deleteId, setDeleteId] = useState<number | null>(null);
     const [deleting, setDeleting] = useState(false);
 
+    const [page, setPage] = useState(1);
+    const [count, setCount] = useState(0);
+    const PAGE_SIZE = 10;
+
     const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
-    useEffect(() => {
-        fetchKhankahs();
-    }, []);
-
-    const fetchKhankahs = async () => {
+    const fetchKhankahs = async (currentPage = page, currentSearch = search) => {
         setLoading(true);
         try {
             const token = localStorage.getItem("access_token");
-            const res = await fetch(`${API_URL}/khankah/list/`, {
+            const params = new URLSearchParams();
+            params.set("page", String(currentPage));
+            if (currentSearch.trim()) params.set("search", currentSearch.trim());
+
+            const res = await fetch(`${API_URL}/khankah/list/?${params.toString()}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
             if (res.ok) {
                 const data = await res.json();
-                setKhankahs(Array.isArray(data) ? data : data.results || []);
+                if (Array.isArray(data)) {
+                    setKhankahs(data);
+                    setCount(data.length);
+                } else {
+                    setKhankahs(data.results || []);
+                    setCount(data.count || 0);
+                }
             }
         } catch (err) {
             console.error("Failed to fetch khankahs", err);
@@ -45,6 +56,13 @@ export default function AdminKhankahPage() {
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            fetchKhankahs(page, search);
+        }, 250);
+        return () => clearTimeout(timer);
+    }, [page, search]);
 
     const handleDelete = async () => {
         if (!deleteId) return;
@@ -60,6 +78,7 @@ export default function AdminKhankahPage() {
             if (res.ok || res.status === 204) {
                 setKhankahs(khankahs.filter((k) => k.id !== deleteId));
                 setDeleteId(null);
+                setCount((prev) => Math.max(0, prev - 1));
             }
         } catch (err) {
             console.error("Failed to delete khankah", err);
@@ -68,9 +87,13 @@ export default function AdminKhankahPage() {
         }
     };
 
-    const filteredKhankahs = [...khankahs]
-        .sort((a, b) => b.id - a.id)
-        .filter((k) => k.khankah_name.toLowerCase().includes(search.toLowerCase()));
+    const handleSearchChange = (val: string) => {
+        setSearch(val);
+        setPage(1);
+    };
+
+    const filteredKhankahs = khankahs;
+    const totalPages = Math.ceil(count / PAGE_SIZE);
 
     return (
         <div>
@@ -97,7 +120,7 @@ export default function AdminKhankahPage() {
                             type="text"
                             placeholder="খানকাহ খুঁজুন..."
                             value={search}
-                            onChange={(e) => setSearch(e.target.value)}
+                            onChange={(e) => handleSearchChange(e.target.value)}
                             className="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
                         />
                     </div>
@@ -144,7 +167,7 @@ export default function AdminKhankahPage() {
                                 {filteredKhankahs.map((khankah, index) => (
                                     <tr key={khankah.id} className="hover:bg-gray-50/50 transition-colors">
                                         <td className="px-6 py-4">
-                                            <span className="text-sm font-bold text-gray-500">{index + 1}</span>
+                                            <span className="text-sm font-bold text-gray-500">{(page - 1) * PAGE_SIZE + index + 1}</span>
                                         </td>
                                         <td className="px-6 py-4">
                                             <span className="text-sm font-medium text-gray-800">{khankah.khankah_name}</span>
@@ -188,8 +211,13 @@ export default function AdminKhankahPage() {
                             </tbody>
                         </table>
                     </div>
-                    <div className="px-6 py-3 border-t border-gray-100 bg-gray-50/50">
-                        <p className="text-xs text-gray-500">মোট {filteredKhankahs.length}টি খানকাহ</p>
+                    <div className="px-6 py-4 border-t border-gray-100 bg-gray-50/50 flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <p className="text-xs text-gray-500">
+                            মোট {count}টি খানকাহর মধ্যে {(page - 1) * PAGE_SIZE + 1} - {Math.min(page * PAGE_SIZE, count)}টি দেখানো হচ্ছে
+                        </p>
+                        {totalPages > 1 && (
+                            <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+                        )}
                     </div>
                 </div>
             )}

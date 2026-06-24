@@ -5,14 +5,11 @@ import Link from "next/link";
 import { FaCalendarAlt, FaEdit, FaEye, FaPlus, FaSearch, FaSpinner, FaTrash } from "react-icons/fa";
 import { authFetch } from "@/lib/api";
 import { EventListItem, eventStatusLabel, formatDateBn } from "@/lib/events";
+import Pagination from "@/components/ui/Pagination";
 
 interface ApiList<T> {
   results?: T[];
   count?: number;
-}
-
-function listFromResponse<T>(data: T[] | ApiList<T>): T[] {
-  return Array.isArray(data) ? data : data.results || [];
 }
 
 export default function AdminEventsPage() {
@@ -23,14 +20,28 @@ export default function AdminEventsPage() {
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState("");
 
-  const fetchEvents = useCallback(async () => {
+  const [page, setPage] = useState(1);
+  const [count, setCount] = useState(0);
+  const PAGE_SIZE = 10;
+
+  const fetchEvents = useCallback(async (currentPage: number, currentSearch: string) => {
     try {
-      const res = await authFetch("/events/list/");
+      const params = new URLSearchParams();
+      params.set("page", String(currentPage));
+      if (currentSearch.trim()) params.set("search", currentSearch.trim());
+
+      const res = await authFetch(`/events/list/?${params.toString()}`);
       if (!res.ok) {
         throw new Error("ইভেন্ট তালিকা লোড করতে সমস্যা হয়েছে।");
       }
       const data = (await res.json()) as EventListItem[] | ApiList<EventListItem>;
-      setEvents(listFromResponse(data));
+      if (Array.isArray(data)) {
+        setEvents(data);
+        setCount(data.length);
+      } else {
+        setEvents(data.results || []);
+        setCount(data.count || 0);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "সার্ভারে সমস্যা হয়েছে।");
     } finally {
@@ -39,11 +50,12 @@ export default function AdminEventsPage() {
   }, []);
 
   useEffect(() => {
+    setLoading(true);
     const timer = window.setTimeout(() => {
-      void fetchEvents();
-    }, 0);
+      void fetchEvents(page, search);
+    }, 250);
     return () => window.clearTimeout(timer);
-  }, [fetchEvents]);
+  }, [page, search, fetchEvents]);
 
   const handleDelete = async () => {
     if (!deleteId) return;
@@ -53,6 +65,7 @@ export default function AdminEventsPage() {
       if (res.ok || res.status === 204) {
         setEvents((prev) => prev.filter((event) => event.id !== deleteId));
         setDeleteId(null);
+        setCount((prev) => Math.max(0, prev - 1));
       } else {
         throw new Error("ইভেন্ট মুছে ফেলতে সমস্যা হয়েছে।");
       }
@@ -63,12 +76,13 @@ export default function AdminEventsPage() {
     }
   };
 
-  const filteredEvents = [...events]
-    .sort((a, b) => b.id - a.id)
-    .filter((event) =>
-      event.title.toLowerCase().includes(search.toLowerCase()) ||
-      event.venue_name.toLowerCase().includes(search.toLowerCase())
-    );
+  const handleSearchChange = (val: string) => {
+    setSearch(val);
+    setPage(1);
+  };
+
+  const filteredEvents = events;
+  const totalPages = Math.ceil(count / PAGE_SIZE);
 
   return (
     <div>
@@ -86,7 +100,7 @@ export default function AdminEventsPage() {
       <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm mb-6">
         <div className="relative">
           <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
-          <input value={search} onChange={(e) => setSearch(e.target.value)} className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none" placeholder="ইভেন্ট বা ভেন্যু খুঁজুন..." />
+          <input value={search} onChange={(e) => handleSearchChange(e.target.value)} className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none" placeholder="ইভেন্ট বা ভেন্যু খুঁজুন..." />
         </div>
       </div>
 
@@ -128,7 +142,7 @@ export default function AdminEventsPage() {
                 {filteredEvents.map((event, index) => (
                   <tr key={event.id} className="hover:bg-gray-50/50 transition-colors">
                     <td className="px-6 py-4">
-                      <span className="text-sm font-bold text-gray-500">{index + 1}</span>
+                      <span className="text-sm font-bold text-gray-500">{(page - 1) * PAGE_SIZE + index + 1}</span>
                     </td>
                     <td className="px-6 py-4">
                       <p className="text-sm font-bold text-gray-800">{event.title}</p>
@@ -164,8 +178,13 @@ export default function AdminEventsPage() {
               </tbody>
             </table>
           </div>
-          <div className="px-6 py-3 border-t border-gray-100 bg-gray-50/50">
-            <p className="text-xs text-gray-500">মোট {filteredEvents.length}টি ইভেন্ট</p>
+          <div className="px-6 py-4 border-t border-gray-100 bg-gray-50/50 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p className="text-xs text-gray-500">
+              মোট {count}টি ইভেন্টের মধ্যে {(page - 1) * PAGE_SIZE + 1} - {Math.min(page * PAGE_SIZE, count)}টি দেখানো হচ্ছে
+            </p>
+            {totalPages > 1 && (
+              <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+            )}
           </div>
         </div>
       )}

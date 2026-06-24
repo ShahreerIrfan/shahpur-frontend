@@ -7,6 +7,7 @@ import { FaMosque, FaMapMarkerAlt, FaSpinner, FaUserTie, FaArrowRight } from "re
 import PageHero from "@/components/ui/PageHero";
 import Breadcrumbs from "@/components/ui/Breadcrumbs";
 import { mediaUrl } from "@/lib/media";
+import Pagination from "@/components/ui/Pagination";
 
 interface Khankah {
     id: number;
@@ -26,15 +27,27 @@ export default function KhankahListPage() {
     const [khankahs, setKhankahs] = useState<Khankah[]>([]);
     const [loading, setLoading] = useState(true);
 
+    const [page, setPage] = useState(1);
+    const [count, setCount] = useState(0);
+    const PAGE_SIZE = 10;
+
     useEffect(() => {
-        fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"}/khankah/list/`)
+        setLoading(true);
+        fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"}/khankah/list/?page=${page}`)
             .then(res => res.json())
             .then(data => {
-                const items = Array.isArray(data) ? data : data.results || [];
-                setKhankahs([...items].sort((a, b) => b.id - a.id));
+                if (Array.isArray(data)) {
+                    setKhankahs(data);
+                    setCount(data.length);
+                } else {
+                    setKhankahs(data.results || []);
+                    setCount(data.count || 0);
+                }
             })
             .finally(() => setLoading(false));
-    }, []);
+    }, [page]);
+
+    const totalPages = Math.ceil(count / PAGE_SIZE);
 
     return (
         <div className="min-h-screen bg-gray-50/30 pb-20">
@@ -111,6 +124,12 @@ export default function KhankahListPage() {
                                 </div>
                             </Link>
                         ))}
+                    </div>
+                )}
+                {totalPages > 1 && (
+                    <div className="flex flex-col items-center gap-3 bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-5 mt-8">
+                        <p className="text-sm text-gray-500">মোট {count}টি খানকাহ · পৃষ্ঠা {page} / {totalPages}</p>
+                        <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
                     </div>
                 )}
             </div>

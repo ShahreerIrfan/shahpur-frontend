@@ -46,7 +46,7 @@ export default function Pagination({ page, totalPages, onPageChange }: Paginatio
         type="button"
         onClick={() => onPageChange(page - 1)}
         disabled={page <= 1}
-        className="px-3 py-2 text-sm font-semibold text-gray-500 disabled:text-gray-300 disabled:cursor-not-allowed hover:text-primary-600"
+        className="px-3 py-2 text-sm font-semibold text-primary-700 disabled:text-gray-300 disabled:cursor-not-allowed hover:text-primary-800"
       >
         Previous
       </button>
