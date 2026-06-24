@@ -99,6 +99,11 @@ export const EVENT_STATUSES = [
   { value: "cancelled", label: "বাতিল" },
 ];
 
+export const EVENT_FORM_STATUSES = [
+  { value: "upcoming", label: "স্বয়ংক্রিয় (তারিখ ও সময় অনুযায়ী)" },
+  { value: "cancelled", label: "বাতিল" },
+];
+
 export function mediaUrl(path: string | null) {
   return secureMediaUrl(path);
 }

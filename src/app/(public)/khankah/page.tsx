@@ -52,7 +52,7 @@ export default function KhankahListPage() {
                         <p className="text-gray-500 font-medium">কোনো খানকাহ পাওয়া যায়নি</p>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
                         {khankahs.map((k) => (
                             <Link key={k.id} href={`/khankah/${k.id}`} className="group bg-white rounded-2xl border border-gray-150 overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between">
                                 <div>

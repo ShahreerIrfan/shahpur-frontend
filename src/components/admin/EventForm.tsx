@@ -8,7 +8,7 @@ import { authFetch, API_URL } from "@/lib/api";
 import {
   District,
   EVENT_CATEGORIES,
-  EVENT_STATUSES,
+  EVENT_FORM_STATUSES,
   EventDetail,
   EventPhoto,
   EventScheduleItem,
@@ -247,6 +247,7 @@ export default function EventForm({ eventId }: EventFormProps) {
   }
 
   const value = (field: keyof EventDetail) => event?.[field] ?? "";
+  const statusValue = event?.status === "cancelled" ? "cancelled" : "upcoming";
 
   return (
     <div>
@@ -284,9 +285,10 @@ export default function EventForm({ eventId }: EventFormProps) {
                   </div>
                   <div>
                     <label className="block text-xs font-medium text-gray-600 mb-1.5">স্ট্যাটাস</label>
-                    <select name="status" defaultValue={String(value("status") || "upcoming")} className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-500">
-                      {EVENT_STATUSES.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
+                    <select name="status" defaultValue={statusValue} className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-500">
+                      {EVENT_FORM_STATUSES.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
                     </select>
+                    <p className="text-[11px] text-gray-400 mt-1.5">আসন্ন, চলমান ও সম্পন্ন স্ট্যাটাস তারিখ/সময় অনুযায়ী নিজে নিজে নির্ধারিত হবে।</p>
                   </div>
                 </div>
                 <div>

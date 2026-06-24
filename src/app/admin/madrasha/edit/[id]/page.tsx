@@ -140,6 +140,7 @@ export default function EditMadrashaPage() {
         try {
             // 1. Update madrasha basic info
             const formData = new FormData(e.currentTarget);
+            formData.set("show_on_homepage", formData.get("show_on_homepage") === "on" ? "true" : "false");
             if (featuredFile) formData.append("featured_image", featuredFile);
             const res = await authFetch(`/madrasha/list/${id}/`, { method: "PATCH", body: formData });
             if (!res.ok) throw new Error("মাদ্রাসা আপডেট ব্যর্থ");
@@ -306,6 +307,11 @@ export default function EditMadrashaPage() {
                     {/* RIGHT SIDEBAR */}
                     <div className="space-y-5">
                         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                            <h4 className="text-sm font-semibold text-gray-800 mb-4">প্রকাশনা</h4>
+                            <label className="flex items-center justify-between mb-4 text-xs text-gray-600 cursor-pointer">
+                                হোমপেজে দেখান
+                                <input name="show_on_homepage" type="checkbox" defaultChecked={Boolean(madrasha.show_on_homepage)} className="w-4 h-4 accent-primary-500" />
+                            </label>
                             <button type="submit" disabled={saving} className="w-full inline-flex items-center justify-center gap-2 bg-primary-500 hover:bg-primary-600 disabled:bg-primary-300 text-white py-2.5 rounded-xl text-sm font-medium"><FaSave className="w-3.5 h-3.5" />{saving ? "সংরক্ষণ হচ্ছে..." : "আপডেট করুন"}</button>
                         </div>
                         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">

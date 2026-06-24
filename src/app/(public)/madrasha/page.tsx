@@ -51,7 +51,7 @@ export default function MadrashaListPage() {
                         <p className="text-gray-500">অ্যাডমিন ড্যাশবোর্ড থেকে মাদ্রাসার তথ্য যোগ করলে এখানে প্রদর্শিত হবে।</p>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
                         {madrashas.map((m) => (
                             <Link key={m.id} href={`/madrasha/${m.id}`} className="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl transition-all hover:-translate-y-1">
                                 <div className="relative h-48 bg-gray-100">
