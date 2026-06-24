@@ -4,8 +4,6 @@ const nextConfig: NextConfig = {
   output: "standalone",
   reactStrictMode: true,
   // Disable ALL client-side router caching.
-  // This forces every navigation to fetch fresh data from the server,
-  // eliminating the "first click doesn't work after idle" bug.
   experimental: {
     staleTimes: {
       dynamic: 0,
@@ -21,6 +19,10 @@ const nextConfig: NextConfig = {
     ];
   },
   images: {
+    formats: ["image/avif", "image/webp"],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    minimumCacheTTL: 31536000,
     remotePatterns: [
       {
         protocol: "http",
@@ -31,6 +33,28 @@ const nextConfig: NextConfig = {
         hostname: "**",
       },
     ],
+  },
+  async headers() {
+    return [
+      {
+        source: "/_next/image(.*)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      {
+        source: "/_next/static/(.*)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+    ];
   },
 };
 

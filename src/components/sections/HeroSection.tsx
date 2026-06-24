@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { FaBookOpen, FaChevronLeft, FaChevronRight, FaMosque } from "react-icons/fa";
@@ -73,16 +74,26 @@ export default function HeroSection() {
 
   return (
     <section className="relative min-h-[580px] flex items-center overflow-hidden">
-      {slides.map((slide, index) => (
-        <div key={slide.id} className={`absolute inset-0 transition-opacity duration-700 ${index === activeIndex ? "opacity-100" : "opacity-0"}`}>
-          <img
-            src={slideImageUrl(slide)}
-            alt=""
-            className="absolute inset-0 h-full w-full object-fill"
-            aria-hidden="true"
-          />
-        </div>
-      ))}
+      {slides.map((slide, index) => {
+        const imgSrc = slideImageUrl(slide);
+        return (
+          <div key={slide.id} className={`absolute inset-0 transition-opacity duration-700 ${index === activeIndex ? "opacity-100" : "opacity-0"}`}>
+            {imgSrc && (
+              <Image
+                src={imgSrc}
+                alt=""
+                fill
+                sizes="100vw"
+                className="object-fill"
+                priority={index === 0}
+                loading={index === 0 ? "eager" : "lazy"}
+                quality={75}
+                aria-hidden="true"
+              />
+            )}
+          </div>
+        );
+      })}
       <div className="absolute inset-0 bg-gradient-to-r from-primary-950/90 via-primary-900/34 to-black/8" />
       <div className="absolute inset-0 bg-gradient-to-t from-black/32 via-transparent to-black/10" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_72%_42%,transparent_0%,rgba(0,0,0,0.04)_46%,rgba(3,72,56,0.26)_100%)]" />

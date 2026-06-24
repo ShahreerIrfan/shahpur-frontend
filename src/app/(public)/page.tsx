@@ -1,11 +1,13 @@
+import dynamic from "next/dynamic";
 import HeroSection from "@/components/sections/HeroSection";
 import AboutSection from "@/components/sections/AboutSection";
-import ActivitiesSection from "@/components/sections/ActivitiesSection";
-import QuoteSection from "@/components/sections/QuoteSection";
-import HomeFeaturedContent from "@/components/sections/HomeFeaturedContent";
-import BiographiesSection from "@/components/sections/BiographiesSection";
-import TimelineSection from "@/components/sections/TimelineSection";
-import BooksSection from "@/components/sections/BooksSection";
+
+const ActivitiesSection = dynamic(() => import("@/components/sections/ActivitiesSection"));
+const QuoteSection = dynamic(() => import("@/components/sections/QuoteSection"));
+const HomeFeaturedContent = dynamic(() => import("@/components/sections/HomeFeaturedContent"));
+const BiographiesSection = dynamic(() => import("@/components/sections/BiographiesSection"));
+const TimelineSection = dynamic(() => import("@/components/sections/TimelineSection"));
+const BooksSection = dynamic(() => import("@/components/sections/BooksSection"));
 
 export default function Home() {
   return (

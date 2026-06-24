@@ -22,6 +22,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="bn">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          rel="preload"
+          as="style"
+          href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Noto+Naskh+Arabic:wght@400;600&display=swap"
+        />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Noto+Naskh+Arabic:wght@400;600&display=swap"
+        />
+      </head>
       <body suppressHydrationWarning className="min-h-screen flex flex-col bg-gray-50">
         <FaviconSync />
         <Suspense fallback={null}>
