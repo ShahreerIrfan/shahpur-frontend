@@ -1,0 +1,321 @@
+"use client";
+
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import {
+  FaArrowLeft,
+  FaBold,
+  FaCheck,
+  FaImage,
+  FaItalic,
+  FaLink,
+  FaListOl,
+  FaListUl,
+  FaSave,
+  FaSpinner,
+  FaTrash,
+  FaUnderline,
+} from "react-icons/fa";
+import { authFetch } from "@/lib/api";
+import { mediaUrl } from "@/lib/media";
+import BlogBlockEditor, { BlogBlock } from "./BlogBlockEditor";
+
+interface BlogFormProps {
+  postId?: string;
+}
+
+interface BlogCategory {
+  id: number;
+  name: string;
+}
+
+interface BlogPostDetail {
+  id: number;
+  title: string;
+  slug: string;
+  category: number | null;
+  description: string;
+  featured_image: string | null;
+  content_blocks: BlogBlock[];
+  status: "draft" | "published";
+  is_featured: boolean;
+  seo_title: string;
+  seo_description: string;
+}
+
+function RichTextEditor({ value, onChange }: { value: string; onChange: (value: string) => void }) {
+  const editorRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (editorRef.current && editorRef.current.innerHTML !== value) {
+      editorRef.current.innerHTML = value || "";
+    }
+  }, [value]);
+
+  const command = (cmd: string, arg?: string) => {
+    document.execCommand(cmd, false, arg);
+    onChange(editorRef.current?.innerHTML || "");
+  };
+
+  const addLink = () => {
+    const url = window.prompt("লিংক URL দিন");
+    if (url) command("createLink", url);
+  };
+
+  return (
+    <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
+      <div className="flex flex-wrap gap-1 border-b border-gray-100 bg-gray-50 p-2">
+        {[
+          ["bold", <FaBold key="bold" />],
+          ["italic", <FaItalic key="italic" />],
+          ["underline", <FaUnderline key="underline" />],
+          ["insertUnorderedList", <FaListUl key="ul" />],
+          ["insertOrderedList", <FaListOl key="ol" />],
+        ].map(([cmd, icon]) => (
+          <button key={String(cmd)} type="button" onClick={() => command(String(cmd))} className="rounded-lg p-2 text-gray-600 hover:bg-white hover:text-primary-700">
+            {icon}
+          </button>
+        ))}
+        <button type="button" onClick={addLink} className="rounded-lg p-2 text-gray-600 hover:bg-white hover:text-primary-700">
+          <FaLink />
+        </button>
+      </div>
+      <div
+        ref={editorRef}
+        contentEditable
+        suppressContentEditableWarning
+        onInput={() => onChange(editorRef.current?.innerHTML || "")}
+        className="min-h-[260px] px-4 py-3 text-sm leading-7 text-gray-800 outline-none prose prose-sm max-w-none"
+        data-placeholder="এখানে ব্লগ বর্ণনা লিখুন..."
+      />
+    </div>
+  );
+}
+
+export default function BlogForm({ postId }: BlogFormProps) {
+  const router = useRouter();
+  const isEdit = Boolean(postId);
+
+  const [loading, setLoading] = useState(isEdit);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+  const [categories, setCategories] = useState<BlogCategory[]>([]);
+
+  const [title, setTitle] = useState("");
+  const [slug, setSlug] = useState("");
+  const [category, setCategory] = useState("");
+  const [description, setDescription] = useState("");
+  const [status, setStatus] = useState<"draft" | "published">("draft");
+  const [isFeatured, setIsFeatured] = useState(false);
+  const [seoTitle, setSeoTitle] = useState("");
+  const [seoDescription, setSeoDescription] = useState("");
+  const [blocks, setBlocks] = useState<BlogBlock[]>([]);
+  const [featuredFile, setFeaturedFile] = useState<File | null>(null);
+  const [featuredPreview, setFeaturedPreview] = useState<string | null>(null);
+
+  const fetchCategories = useCallback(async () => {
+    const res = await authFetch("/blog/categories/");
+    if (res.ok) {
+      const data = await res.json();
+      setCategories(Array.isArray(data) ? data : data.results || []);
+    }
+  }, []);
+
+  const fetchPost = useCallback(async () => {
+    if (!postId) return;
+    try {
+      const res = await authFetch(`/blog/posts/${postId}/`);
+      if (!res.ok) throw new Error("ব্লগ পোস্টের তথ্য লোড করতে সমস্যা হয়েছে।");
+      const data = (await res.json()) as BlogPostDetail;
+      setTitle(data.title || "");
+      setSlug(data.slug || "");
+      setCategory(data.category ? String(data.category) : "");
+      setDescription(data.description || "");
+      setStatus(data.status || "draft");
+      setIsFeatured(Boolean(data.is_featured));
+      setSeoTitle(data.seo_title || "");
+      setSeoDescription(data.seo_description || "");
+      setBlocks(data.content_blocks || []);
+      setFeaturedPreview(data.featured_image ? mediaUrl(data.featured_image) : null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "ডাটা লোড করতে সমস্যা হয়েছে।");
+    } finally {
+      setLoading(false);
+    }
+  }, [postId]);
+
+  useEffect(() => {
+    void fetchCategories();
+    if (isEdit) void fetchPost();
+  }, [fetchCategories, fetchPost, isEdit]);
+
+  const handleFeaturedChange = (file?: File) => {
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      alert("ফাইলের আকার ৫ মেগাবাইটের বেশি হতে পারবে না।");
+      return;
+    }
+    setFeaturedFile(file);
+    setFeaturedPreview(URL.createObjectURL(file));
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setSaving(true);
+    setError("");
+
+    const body = new FormData();
+    body.append("title", title);
+    if (slug.trim()) body.append("slug", slug.trim());
+    if (category) body.append("category", category);
+    body.append("description", description);
+    body.append("status", status);
+    body.append("is_featured", isFeatured ? "true" : "false");
+    body.append("seo_title", seoTitle);
+    body.append("seo_description", seoDescription);
+    body.append("content_blocks", JSON.stringify(blocks));
+    if (featuredFile) body.append("featured_image", featuredFile);
+
+    try {
+      const res = await authFetch(isEdit ? `/blog/posts/${postId}/` : "/blog/posts/", {
+        method: isEdit ? "PATCH" : "POST",
+        body,
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        const details = typeof data === "object" ? Object.values(data).flat().join(", ") : "";
+        throw new Error(`ব্লগ পোস্ট সংরক্ষণ করতে সমস্যা হয়েছে। ${details}`);
+      }
+      router.push("/admin/blog");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "সার্ভারে সমস্যা হয়েছে।");
+      setSaving(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex min-h-[400px] items-center justify-center">
+        <FaSpinner className="h-9 w-9 animate-spin text-primary-600" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="mx-auto max-w-7xl">
+      <div className="mb-6 flex items-center gap-3">
+        <button type="button" onClick={() => router.push("/admin/blog")} className="flex h-10 w-10 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-600 shadow-sm hover:bg-gray-50">
+          <FaArrowLeft />
+        </button>
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">{isEdit ? "ব্লগ পোস্ট সম্পাদনা" : "নতুন ব্লগ পোস্ট"}</h1>
+          <p className="text-sm text-gray-500">শিরোনাম, ক্যাটাগরি, বর্ণনা ও কাস্টম উইজেট দিয়ে পোস্ট তৈরি করুন</p>
+        </div>
+      </div>
+
+      {error && <div className="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>}
+
+      <form onSubmit={handleSubmit} className="grid gap-6 xl:grid-cols-[1fr_340px]">
+        <div className="space-y-6">
+          <section className="rounded-3xl border border-gray-100 bg-white p-5 shadow-sm">
+            <div className="mb-5 flex items-center gap-2">
+              <span className="h-2 w-2 rounded-full bg-primary-500" />
+              <h2 className="font-bold text-gray-900">Primary column</h2>
+            </div>
+            <div className="grid gap-4 md:grid-cols-[1fr_280px]">
+              <div>
+                <label className="mb-1.5 block text-xs font-semibold text-gray-600">Title *</label>
+                <input value={title} onChange={(e) => setTitle(e.target.value)} required placeholder="ব্লগ পোস্টের শিরোনাম লিখুন..." className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary-500" />
+              </div>
+              <div>
+                <label className="mb-1.5 block text-xs font-semibold text-gray-600">Category</label>
+                <select value={category} onChange={(e) => setCategory(e.target.value)} className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary-500">
+                  <option value="">ক্যাটাগরি নির্বাচন করুন</option>
+                  {categories.map((item) => (
+                    <option key={item.id} value={item.id}>{item.name}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            <div className="mt-4">
+              <label className="mb-1.5 block text-xs font-semibold text-gray-600">Slug</label>
+              <input value={slug} onChange={(e) => setSlug(e.target.value)} placeholder="ফাঁকা রাখলে title থেকে auto generate হবে" className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary-500" />
+            </div>
+          </section>
+
+          <section className="rounded-3xl border border-gray-100 bg-white p-5 shadow-sm">
+            <div className="mb-4 flex items-center justify-between">
+              <div>
+                <h2 className="font-bold text-gray-900">WYSIWYG Blog Description</h2>
+                <p className="text-xs text-gray-500">মূল ব্লগ বর্ণনা এখানে লিখুন। Bold, italic, list, link ব্যবহার করা যাবে।</p>
+              </div>
+              <FaCheck className="text-primary-600" />
+            </div>
+            <RichTextEditor value={description} onChange={setDescription} />
+          </section>
+
+          <section className="rounded-3xl border border-gray-100 bg-white p-5 shadow-sm">
+            <div className="mb-4">
+              <h2 className="font-bold text-gray-900">Custom Widgets</h2>
+              <p className="text-xs text-gray-500">ছবি, side/resize image, gallery, heading, text button এবং প্রয়োজনীয় widget unlimited যোগ করুন।</p>
+            </div>
+            <BlogBlockEditor blocks={blocks} onChange={setBlocks} />
+          </section>
+
+          <section className="rounded-3xl border border-gray-100 bg-white p-5 shadow-sm">
+            <h2 className="mb-4 font-bold text-gray-900">SEO</h2>
+            <div className="grid gap-4 md:grid-cols-2">
+              <input value={seoTitle} onChange={(e) => setSeoTitle(e.target.value)} placeholder="SEO title" className="rounded-xl border border-gray-200 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary-500" />
+              <input value={seoDescription} onChange={(e) => setSeoDescription(e.target.value)} placeholder="SEO description" className="rounded-xl border border-gray-200 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary-500" />
+            </div>
+          </section>
+        </div>
+
+        <aside className="space-y-6">
+          <section className="sticky top-28 rounded-3xl border border-gray-100 bg-white p-5 shadow-sm">
+            <h2 className="mb-4 font-bold text-gray-900">প্রকাশনা</h2>
+            <div className="space-y-4">
+              <div>
+                <label className="mb-1.5 block text-xs font-semibold text-gray-600">স্ট্যাটাস</label>
+                <select value={status} onChange={(e) => setStatus(e.target.value as "draft" | "published")} className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary-500">
+                  <option value="draft">খসড়া</option>
+                  <option value="published">প্রকাশিত</option>
+                </select>
+              </div>
+              <label className="flex items-center justify-between rounded-xl bg-gray-50 px-4 py-3 text-sm font-semibold text-gray-700">
+                ফিচার্ড পোস্ট
+                <input type="checkbox" checked={isFeatured} onChange={(e) => setIsFeatured(e.target.checked)} className="h-4 w-4 accent-primary-600" />
+              </label>
+              <button type="submit" disabled={saving} className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary-600 px-4 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-primary-700 disabled:bg-primary-300">
+                {saving ? <FaSpinner className="animate-spin" /> : <FaSave />}
+                {saving ? "সংরক্ষণ হচ্ছে..." : "সংরক্ষণ করুন"}
+              </button>
+            </div>
+          </section>
+
+          <section className="rounded-3xl border border-gray-100 bg-white p-5 shadow-sm">
+            <h2 className="mb-4 flex items-center gap-2 font-bold text-gray-900">
+              <FaImage className="text-primary-600" />
+              Featured Image
+            </h2>
+            {featuredPreview ? (
+              <div className="space-y-3">
+                <img src={featuredPreview} alt="Featured preview" className="h-48 w-full rounded-2xl object-cover" />
+                <button type="button" onClick={() => { setFeaturedFile(null); setFeaturedPreview(null); }} className="flex w-full items-center justify-center gap-2 rounded-xl bg-red-50 px-4 py-2 text-sm font-semibold text-red-600">
+                  <FaTrash /> ইমেজ পরিবর্তন করুন
+                </button>
+              </div>
+            ) : (
+              <label className="flex h-44 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-gray-200 bg-gray-50 text-center text-sm text-gray-500 hover:bg-gray-100">
+                <FaImage className="mb-3 text-2xl text-gray-300" />
+                কভার ছবি আপলোড করুন
+                <span className="mt-1 text-xs text-gray-400">সর্বোচ্চ ৫MB</span>
+                <input type="file" accept="image/*" className="hidden" onChange={(e) => handleFeaturedChange(e.target.files?.[0])} />
+              </label>
+            )}
+          </section>
+        </aside>
+      </form>
+    </div>
+  );
+}
