@@ -3,22 +3,33 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
+  FaAlignCenter,
+  FaAlignLeft,
+  FaAlignRight,
   FaArrowLeft,
   FaBold,
   FaCog,
+  FaEraser,
+  FaHeading,
   FaImage,
+  FaIndent,
   FaItalic,
   FaLink,
   FaListOl,
   FaListUl,
+  FaOutdent,
+  FaQuoteRight,
   FaSave,
   FaSpinner,
+  FaStrikethrough,
+  FaSubscript,
+  FaSuperscript,
   FaTrash,
   FaUnderline,
 } from "react-icons/fa";
 import { authFetch } from "@/lib/api";
 import { mediaUrl } from "@/lib/media";
-import BlogBlockEditor, { BlogBlock } from "./BlogBlockEditor";
+import BlogBlockEditor, { BlogBlock, BlogBlockPalette, BlogWidgetOption } from "./BlogBlockEditor";
 
 interface BlogFormProps {
   postId?: string;
@@ -51,9 +62,12 @@ function RichTextEditor({ value, onChange }: { value: string; onChange: (value: 
     }
   }, [value]);
 
+  const sync = () => onChange(editorRef.current?.innerHTML || "");
+
   const command = (cmd: string, arg?: string) => {
+    editorRef.current?.focus();
     document.execCommand(cmd, false, arg);
-    onChange(editorRef.current?.innerHTML || "");
+    sync();
   };
 
   const addLink = () => {
@@ -61,30 +75,74 @@ function RichTextEditor({ value, onChange }: { value: string; onChange: (value: 
     if (url) command("createLink", url);
   };
 
+  const addImage = () => {
+    const url = window.prompt("ছবির URL দিন");
+    if (url) command("insertImage", url);
+  };
+
   return (
     <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
-      <div className="flex flex-wrap gap-1 border-b border-gray-100 bg-gray-50 p-2">
+      <div className="flex flex-wrap items-center gap-1 border-b border-gray-100 bg-gray-50 p-2">
+        <select onChange={(e) => command("fontName", e.target.value)} defaultValue="" className="h-9 rounded-lg border border-gray-200 bg-white px-2 text-xs font-semibold text-gray-600 outline-none">
+          <option value="" disabled>Font</option>
+          <option value="Arial">Sans Serif</option>
+          <option value="Georgia">Serif</option>
+          <option value="Courier New">Mono</option>
+        </select>
+        <select onChange={(e) => command("formatBlock", e.target.value)} defaultValue="p" className="h-9 rounded-lg border border-gray-200 bg-white px-2 text-xs font-semibold text-gray-600 outline-none">
+          <option value="p">Normal</option>
+          <option value="h1">H1</option>
+          <option value="h2">H2</option>
+          <option value="h3">H3</option>
+          <option value="blockquote">Quote</option>
+          <option value="pre">Code</option>
+        </select>
         {[
-          ["bold", <FaBold key="bold" />],
-          ["italic", <FaItalic key="italic" />],
-          ["underline", <FaUnderline key="underline" />],
-          ["insertUnorderedList", <FaListUl key="ul" />],
-          ["insertOrderedList", <FaListOl key="ol" />],
-        ].map(([cmd, icon]) => (
-          <button key={String(cmd)} type="button" onClick={() => command(String(cmd))} className="rounded-lg p-2 text-gray-600 hover:bg-white hover:text-primary-700">
+          ["bold", <FaBold key="bold" />, "Bold"],
+          ["italic", <FaItalic key="italic" />, "Italic"],
+          ["underline", <FaUnderline key="underline" />, "Underline"],
+          ["strikeThrough", <FaStrikethrough key="strike" />, "Strike"],
+          ["superscript", <FaSuperscript key="sup" />, "Superscript"],
+          ["subscript", <FaSubscript key="sub" />, "Subscript"],
+          ["insertUnorderedList", <FaListUl key="ul" />, "Bullet list"],
+          ["insertOrderedList", <FaListOl key="ol" />, "Number list"],
+          ["outdent", <FaOutdent key="outdent" />, "Outdent"],
+          ["indent", <FaIndent key="indent" />, "Indent"],
+          ["justifyLeft", <FaAlignLeft key="left" />, "Left"],
+          ["justifyCenter", <FaAlignCenter key="center" />, "Center"],
+          ["justifyRight", <FaAlignRight key="right" />, "Right"],
+        ].map(([cmd, icon, label]) => (
+          <button key={String(cmd)} title={String(label)} type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => command(String(cmd))} className="rounded-lg p-2 text-gray-600 hover:bg-white hover:text-primary-700">
             {icon}
           </button>
         ))}
-        <button type="button" onClick={addLink} className="rounded-lg p-2 text-gray-600 hover:bg-white hover:text-primary-700">
+        <label className="flex h-9 cursor-pointer items-center rounded-lg px-2 text-xs font-bold text-gray-600 hover:bg-white hover:text-primary-700" title="Text color">
+          A
+          <input type="color" className="h-0 w-0 opacity-0" onChange={(e) => command("foreColor", e.target.value)} />
+        </label>
+        <label className="flex h-9 cursor-pointer items-center rounded-lg px-2 text-xs font-bold text-gray-600 hover:bg-white hover:text-primary-700" title="Highlight">
+          <FaHeading />
+          <input type="color" className="h-0 w-0 opacity-0" onChange={(e) => command("hiliteColor", e.target.value)} />
+        </label>
+        <button type="button" title="Quote" onMouseDown={(e) => e.preventDefault()} onClick={() => command("formatBlock", "blockquote")} className="rounded-lg p-2 text-gray-600 hover:bg-white hover:text-primary-700">
+          <FaQuoteRight />
+        </button>
+        <button type="button" title="Link" onMouseDown={(e) => e.preventDefault()} onClick={addLink} className="rounded-lg p-2 text-gray-600 hover:bg-white hover:text-primary-700">
           <FaLink />
+        </button>
+        <button type="button" title="Image URL" onMouseDown={(e) => e.preventDefault()} onClick={addImage} className="rounded-lg p-2 text-gray-600 hover:bg-white hover:text-primary-700">
+          <FaImage />
+        </button>
+        <button type="button" title="Clear format" onMouseDown={(e) => e.preventDefault()} onClick={() => command("removeFormat")} className="rounded-lg p-2 text-gray-600 hover:bg-white hover:text-primary-700">
+          <FaEraser />
         </button>
       </div>
       <div
         ref={editorRef}
         contentEditable
         suppressContentEditableWarning
-        onInput={() => onChange(editorRef.current?.innerHTML || "")}
-        className="min-h-[260px] px-4 py-3 text-sm leading-7 text-gray-800 outline-none prose prose-sm max-w-none"
+        onInput={sync}
+        className="min-h-[260px] px-4 py-3 text-base leading-8 text-gray-800 outline-none prose prose-sm max-w-none prose-ul:list-disc prose-ol:list-decimal prose-li:my-1"
         data-placeholder="এখানে ব্লগ বর্ণনা লিখুন..."
       />
     </div>
@@ -156,6 +214,10 @@ export default function BlogForm({ postId }: BlogFormProps) {
     setFeaturedPreview(URL.createObjectURL(file));
   };
 
+  const addBlock = useCallback((option: BlogWidgetOption) => {
+    setBlocks((prev) => [...prev, { type: option.type, data: { ...option.data } }]);
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSaving(true);
@@ -224,7 +286,11 @@ export default function BlogForm({ postId }: BlogFormProps) {
 
       {error && <div className="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>}
 
-      <form id="blog-editor-form" onSubmit={handleSubmit} className="grid gap-6 xl:grid-cols-[1fr_360px]">
+      <form id="blog-editor-form" onSubmit={handleSubmit} className="grid gap-6 xl:grid-cols-[250px_minmax(0,1fr)_340px]">
+        <div className="xl:sticky xl:top-24 xl:self-start">
+          <BlogBlockPalette blocksCount={blocks.length} onAdd={addBlock} />
+        </div>
+
         <div className="min-h-[calc(100vh-170px)] rounded-2xl border border-gray-200 bg-white shadow-sm">
           <div className="mx-auto max-w-4xl px-5 py-8 md:px-10 lg:px-14">
             <input
@@ -243,8 +309,8 @@ export default function BlogForm({ postId }: BlogFormProps) {
           </div>
         </div>
 
-        <aside className="space-y-6">
-          <section className="sticky top-24 rounded-2xl border border-gray-200 bg-white shadow-sm">
+        <aside className="space-y-6 xl:self-start">
+          <section className="rounded-2xl border border-gray-200 bg-white shadow-sm">
             <div className="flex items-center gap-2 border-b border-gray-100 px-5 py-4">
               <FaCog className="text-primary-600" />
               <h2 className="font-bold text-gray-900">Post settings</h2>

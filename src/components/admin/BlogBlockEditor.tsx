@@ -34,7 +34,9 @@ interface BlogBlockEditorProps {
   onChange: (blocks: BlogBlock[]) => void;
 }
 
-const widgetOptions: { type: BlogBlock["type"]; label: string; icon: React.ReactNode; data: Record<string, any> }[] = [
+export type BlogWidgetOption = { type: BlogBlock["type"]; label: string; icon: React.ReactNode; data: Record<string, any> };
+
+export const widgetOptions: BlogWidgetOption[] = [
   { type: "heading", label: "হেডিং", icon: <FaHeading />, data: { level: 2, text: "" } },
   { type: "text", label: "টেক্সট", icon: <FaListUl />, data: { text: "" } },
   { type: "image", label: "ছবি", icon: <FaImage />, data: { url: "", alt: "", caption: "", width: 100, align: "center" } },
@@ -46,12 +48,35 @@ const widgetOptions: { type: BlogBlock["type"]; label: string; icon: React.React
   { type: "divider", label: "ডিভাইডার", icon: <FaGripLines />, data: { style: "line" } },
 ];
 
+export function BlogBlockPalette({ blocksCount, onAdd }: { blocksCount: number; onAdd: (option: BlogWidgetOption) => void }) {
+  return (
+    <aside className="h-full min-h-[calc(100vh-120px)] rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+      <div className="mb-4 flex items-start justify-between gap-3">
+        <div>
+          <h3 className="text-sm font-bold text-gray-900">Blocks</h3>
+          <p className="mt-1 text-xs text-gray-500">Click to add a block</p>
+        </div>
+        <span className="rounded-full bg-primary-50 px-2.5 py-1 text-xs font-semibold text-primary-700">{blocksCount}</span>
+      </div>
+      <div className="grid grid-cols-2 gap-2">
+        {widgetOptions.map((option) => (
+          <button
+            key={option.type}
+            type="button"
+            onClick={() => onAdd(option)}
+            className="flex min-h-20 flex-col items-center justify-center gap-2 rounded-xl border border-gray-100 bg-gray-50 px-2 py-3 text-center text-xs font-semibold text-gray-700 transition hover:border-primary-200 hover:bg-primary-50 hover:text-primary-700"
+          >
+            <span className="text-lg text-primary-600">{option.icon}</span>
+            {option.label}
+          </button>
+        ))}
+      </div>
+    </aside>
+  );
+}
+
 export default function BlogBlockEditor({ blocks, onChange }: BlogBlockEditorProps) {
   const [uploading, setUploading] = useState<string | null>(null);
-
-  const addBlock = (option: (typeof widgetOptions)[number]) => {
-    onChange([...blocks, { type: option.type, data: { ...option.data } }]);
-  };
 
   const updateBlock = (index: number, data: Record<string, any>) => {
     const next = [...blocks];
@@ -109,6 +134,23 @@ export default function BlogBlockEditor({ blocks, onChange }: BlogBlockEditorPro
     updateBlock(blockIndex, { images });
   };
 
+  const uploadGalleryImages = async (files: FileList | null, blockIndex: number) => {
+    if (!files?.length) return;
+    const existingImages = [...(blocks[blockIndex].data.images || [])];
+    setUploading(`gallery-${blockIndex}-bulk`);
+    try {
+      for (const file of Array.from(files)) {
+        const path = await uploadImage(file, `gallery-${blockIndex}-bulk`);
+        if (path) {
+          existingImages.push({ url: path, alt: "", caption: "" });
+        }
+      }
+      updateBlock(blockIndex, { images: existingImages });
+    } finally {
+      setUploading(null);
+    }
+  };
+
   const addGalleryItem = (index: number) => {
     const images = [...(blocks[index].data.images || []), { url: "", alt: "", caption: "" }];
     updateBlock(index, { images });
@@ -127,31 +169,7 @@ export default function BlogBlockEditor({ blocks, onChange }: BlogBlockEditorPro
   };
 
   return (
-    <div className="grid gap-5 lg:grid-cols-[250px_1fr]">
-      <aside className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm lg:sticky lg:top-24 lg:self-start">
-        <div className="mb-4 flex items-start justify-between gap-3">
-          <div>
-            <h3 className="text-sm font-bold text-gray-900">Blocks</h3>
-            <p className="mt-1 text-xs text-gray-500">Click to add a block</p>
-          </div>
-          <span className="rounded-full bg-primary-50 px-2.5 py-1 text-xs font-semibold text-primary-700">{blocks.length}</span>
-        </div>
-        <div className="grid grid-cols-2 gap-2">
-          {widgetOptions.map((option) => (
-            <button
-              key={option.type}
-              type="button"
-              onClick={() => addBlock(option)}
-              className="flex min-h-20 flex-col items-center justify-center gap-2 rounded-xl border border-gray-100 bg-gray-50 px-2 py-3 text-center text-xs font-semibold text-gray-700 transition hover:border-primary-200 hover:bg-primary-50 hover:text-primary-700"
-            >
-              <span className="text-lg text-primary-600">{option.icon}</span>
-              {option.label}
-            </button>
-          ))}
-        </div>
-      </aside>
-
-      <div>
+    <div>
         {blocks.length === 0 ? (
           <div className="flex min-h-64 items-center justify-center rounded-2xl border border-dashed border-gray-200 bg-white p-10 text-center text-sm text-gray-400">
             Type / to choose a block, or pick one from the left panel.
@@ -234,9 +252,16 @@ export default function BlogBlockEditor({ blocks, onChange }: BlogBlockEditorPro
 
                 {block.type === "gallery" && (
                   <div className="space-y-3">
-                    <button type="button" onClick={() => addGalleryItem(index)} className="inline-flex items-center gap-2 rounded-xl bg-primary-50 px-4 py-2 text-xs font-bold text-primary-700 hover:bg-primary-100">
-                      <FaPlus /> গ্যালারি ছবি যোগ
-                    </button>
+                    <div className="flex flex-wrap gap-2">
+                      <button type="button" onClick={() => addGalleryItem(index)} className="inline-flex items-center gap-2 rounded-xl bg-primary-50 px-4 py-2 text-xs font-bold text-primary-700 hover:bg-primary-100">
+                        <FaPlus /> খালি ছবি স্লট যোগ
+                      </button>
+                      <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-primary-600 px-4 py-2 text-xs font-bold text-white shadow-sm hover:bg-primary-700">
+                        {uploading === `gallery-${index}-bulk` ? <FaSpinner className="animate-spin" /> : <FaUpload />}
+                        একসাথে একাধিক ছবি আপলোড
+                        <input type="file" accept="image/*" multiple className="hidden" onChange={(e) => uploadGalleryImages(e.target.files, index)} />
+                      </label>
+                    </div>
                     <div className="grid gap-3 md:grid-cols-2">
                       {(block.data.images || []).map((img: any, imageIndex: number) => (
                         <div key={imageIndex} className="rounded-xl border border-gray-100 bg-gray-50 p-3">
@@ -305,7 +330,6 @@ export default function BlogBlockEditor({ blocks, onChange }: BlogBlockEditorPro
             ))}
           </div>
         )}
-      </div>
     </div>
   );
 }
