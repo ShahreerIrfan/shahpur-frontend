@@ -2,13 +2,14 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { FaBookOpen, FaEdit, FaPlus, FaSearch, FaSpinner, FaStar, FaTrash } from "react-icons/fa";
+import { FaBookOpen, FaEdit, FaEye, FaPlus, FaSearch, FaSpinner, FaStar, FaTrash } from "react-icons/fa";
 import Pagination from "@/components/ui/Pagination";
 import { authFetch } from "@/lib/api";
 
 interface BlogPost {
   id: number;
   title: string;
+  slug: string;
   category_name: string;
   description: string;
   status: "draft" | "published";
@@ -190,6 +191,9 @@ export default function AdminBlogPage() {
                     <td className="px-5 py-4 text-sm text-gray-500">{post.view_count}</td>
                     <td className="px-5 py-4 text-right">
                       <div className="flex justify-end gap-2">
+                        <Link href={`/blog/${post.slug}`} target="_blank" className="flex h-8 w-8 items-center justify-center rounded-lg bg-green-50 text-green-600 hover:bg-green-100">
+                          <FaEye className="h-3.5 w-3.5" />
+                        </Link>
                         <Link href={`/admin/blog/edit/${post.id}`} className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100">
                           <FaEdit className="h-3.5 w-3.5" />
                         </Link>

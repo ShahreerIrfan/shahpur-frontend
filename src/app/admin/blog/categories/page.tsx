@@ -7,7 +7,6 @@ import { authFetch } from "@/lib/api";
 interface BlogCategory {
   id: number;
   name: string;
-  slug: string;
   description: string;
   is_active: boolean;
   order: number;
@@ -24,7 +23,6 @@ function listFromResponse<T>(data: T[] | ApiList<T>): T[] {
 
 const emptyForm = {
   name: "",
-  slug: "",
   description: "",
   order: "0",
   is_active: true,
@@ -65,7 +63,6 @@ export default function BlogCategoriesPage() {
     setEditingId(category.id);
     setForm({
       name: category.name,
-      slug: category.slug,
       description: category.description,
       order: String(category.order || 0),
       is_active: category.is_active,
@@ -79,9 +76,6 @@ export default function BlogCategoriesPage() {
 
     const body = new FormData();
     body.append("name", form.name);
-    if (form.slug.trim()) {
-      body.append("slug", form.slug);
-    }
     body.append("description", form.description);
     body.append("order", form.order || "0");
     body.append("is_active", form.is_active ? "true" : "false");
@@ -116,10 +110,8 @@ export default function BlogCategoriesPage() {
     }
   };
 
-  const filteredCategories = categories.filter(
-    (item) =>
-      item.name.toLowerCase().includes(search.toLowerCase()) ||
-      item.slug.toLowerCase().includes(search.toLowerCase())
+  const filteredCategories = categories.filter((item) =>
+    item.name.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -159,19 +151,6 @@ export default function BlogCategoriesPage() {
                 placeholder="উদা: ইসলামের ইতিহাস"
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
-                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-                স্লাগ (Slug)
-              </label>
-              <input
-                type="text"
-                placeholder="ফাঁকা রাখলে স্বয়ংক্রিয়ভাবে তৈরি হবে"
-                value={form.slug}
-                onChange={(e) => setForm({ ...form, slug: e.target.value })}
                 className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
               />
             </div>
@@ -267,7 +246,6 @@ export default function BlogCategoriesPage() {
                 <thead>
                   <tr className="border-b border-gray-100 text-xs font-semibold text-gray-500 uppercase">
                     <th className="py-3 px-4 text-right">নাম</th>
-                    <th className="py-3 px-4 text-right">স্লাগ</th>
                     <th className="py-3 px-4 text-right">পোস্ট</th>
                     <th className="py-3 px-4 text-right">অবস্থা</th>
                     <th className="py-3 px-4 text-center">অ্যাকশন</th>
@@ -277,7 +255,6 @@ export default function BlogCategoriesPage() {
                   {filteredCategories.map((category) => (
                     <tr key={category.id} className="hover:bg-gray-50/50 transition">
                       <td className="py-3.5 px-4 font-medium text-gray-800 text-right">{category.name}</td>
-                      <td className="py-3.5 px-4 text-gray-500 text-right">{category.slug}</td>
                       <td className="py-3.5 px-4 text-gray-500 text-right">{category.posts_count ?? 0}</td>
                       <td className="py-3.5 px-4 text-right">
                         <span

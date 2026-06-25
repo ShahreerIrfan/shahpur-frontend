@@ -127,37 +127,38 @@ export default function BlogBlockEditor({ blocks, onChange }: BlogBlockEditorPro
   };
 
   return (
-    <div className="space-y-5">
-      <div className="rounded-2xl border border-dashed border-primary-200 bg-primary-50/30 p-4">
-        <div className="mb-3 flex items-center justify-between">
+    <div className="grid gap-5 lg:grid-cols-[250px_1fr]">
+      <aside className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm lg:sticky lg:top-24 lg:self-start">
+        <div className="mb-4 flex items-start justify-between gap-3">
           <div>
-            <h3 className="text-sm font-bold text-gray-800">কাস্টম উইজেট যোগ করুন</h3>
-            <p className="text-xs text-gray-500">ছবি, গ্যালারি, হেডিং, টেক্সট, বাটনসহ যত খুশি ব্লক যোগ করা যাবে।</p>
+            <h3 className="text-sm font-bold text-gray-900">Blocks</h3>
+            <p className="mt-1 text-xs text-gray-500">Click to add a block</p>
           </div>
-          <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-primary-700 shadow-sm">{blocks.length} ব্লক</span>
+          <span className="rounded-full bg-primary-50 px-2.5 py-1 text-xs font-semibold text-primary-700">{blocks.length}</span>
         </div>
-        <div className="grid grid-cols-2 gap-2 md:grid-cols-3 xl:grid-cols-5">
+        <div className="grid grid-cols-2 gap-2">
           {widgetOptions.map((option) => (
             <button
               key={option.type}
               type="button"
               onClick={() => addBlock(option)}
-              className="flex items-center gap-2 rounded-xl border border-white bg-white px-3 py-2 text-xs font-semibold text-gray-700 shadow-sm transition hover:border-primary-200 hover:bg-primary-50 hover:text-primary-700"
+              className="flex min-h-20 flex-col items-center justify-center gap-2 rounded-xl border border-gray-100 bg-gray-50 px-2 py-3 text-center text-xs font-semibold text-gray-700 transition hover:border-primary-200 hover:bg-primary-50 hover:text-primary-700"
             >
-              <span className="text-primary-600">{option.icon}</span>
+              <span className="text-lg text-primary-600">{option.icon}</span>
               {option.label}
             </button>
           ))}
         </div>
-      </div>
+      </aside>
 
-      {blocks.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-gray-200 bg-white p-10 text-center text-sm text-gray-400">
-          এখনো কোনো কাস্টম উইজেট যোগ করা হয়নি।
-        </div>
-      ) : (
-        <div className="space-y-4">
-          {blocks.map((block, index) => (
+      <div>
+        {blocks.length === 0 ? (
+          <div className="flex min-h-64 items-center justify-center rounded-2xl border border-dashed border-gray-200 bg-white p-10 text-center text-sm text-gray-400">
+            Type / to choose a block, or pick one from the left panel.
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {blocks.map((block, index) => (
             <div key={`${block.type}-${index}`} className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
               <div className="flex items-center justify-between border-b border-gray-100 bg-gray-50 px-4 py-3">
                 <div>
@@ -301,9 +302,10 @@ export default function BlogBlockEditor({ blocks, onChange }: BlogBlockEditorPro
                 )}
               </div>
             </div>
-          ))}
-        </div>
-      )}
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
