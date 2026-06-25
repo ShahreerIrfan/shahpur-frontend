@@ -13,11 +13,9 @@ export default function ContactInfo() {
                     <div>
                         <h3 className="font-semibold text-gray-800">ঠিকানা</h3>
                         <p className="text-gray-600 text-sm mt-1">
-                            শাহপুর দরবার শরীফ<br />
-                            গ্রাম: শাহপুর<br />
-                            ইউনিয়ন: পাঁচথুবী<br />
-                            থানা: কোতোয়ালী<br />
-                            জেলা: কুমিল্লা, বাংলাদেশ
+                            শাহপুর শাহপুর দরবার শরীফ-৩৫০০,<br />
+                            ওয়ার্ড - ৫, পাঁচথুবি,<br />
+                            কুমিল্লা আদর্শ সদর, কুমিল্লা
                         </p>
                     </div>
                 </div>

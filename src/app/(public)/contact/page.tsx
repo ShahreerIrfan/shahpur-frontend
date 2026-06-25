@@ -6,7 +6,7 @@ import Breadcrumbs from "@/components/ui/Breadcrumbs";
 
 export const metadata: Metadata = {
     title: "যোগাযোগ | শাহপুর দরবার শরীফ",
-    description: "শাহপুর দরবার শরীফ, পাঁচথুবী ইউনিয়ন, কোতোয়ালী থানা, কুমিল্লা, বাংলাদেশ - এর সাথে যোগাযোগ করুন।",
+    description: "শাহপুর শাহপুর দরবার শরীফ-৩৫০০, ওয়ার্ড - ৫, পাঁচথুবি, কুমিল্লা আদর্শ সদর, কুমিল্লা - এর সাথে যোগাযোগ করুন।",
     openGraph: {
         title: "যোগাযোগ | শাহপুর দরবার শরীফ",
         description: "আমাদের সাথে যোগাযোগ করুন",
