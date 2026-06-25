@@ -26,7 +26,6 @@ const menuItems: {
     { title: "মাদ্রাসা", url: "/madrasha" },
     { title: "খানকাহ", url: "/khankah" },
     { title: "ইভেন্ট", url: "/events" },
-    { title: "ব্লগ", url: "/blog" },
     { title: "মাজিউন্নবী", url: "#", comingSoon: true },
     {
         title: "আরও দেখুন",
