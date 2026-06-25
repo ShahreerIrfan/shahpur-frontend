@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import {
@@ -10,6 +9,7 @@ import {
   FaCalendarAlt,
   FaEye,
   FaImage,
+  FaLayerGroup,
   FaQuoteLeft,
   FaSpinner,
 } from "react-icons/fa";
@@ -87,9 +87,9 @@ function renderBlock(block: BlogBlock, index: number) {
   if (block.type === "image") {
     const width = data.align === "full" ? 100 : Number(data.width || 100);
     return (
-      <figure key={index} className={`overflow-hidden rounded-3xl ${imageAlignClass(data.align)}`} style={{ width: `${Math.min(Math.max(width, 25), 100)}%` }}>
+      <figure key={index} className={`${imageAlignClass(data.align)}`} style={{ width: `${Math.min(Math.max(width, 25), 100)}%` }}>
         {data.url ? (
-          <img src={mediaUrl(data.url)} alt={data.alt || data.caption || ""} className="w-full rounded-3xl border border-primary-100 object-cover shadow-sm" />
+          <img src={mediaUrl(data.url)} alt={data.alt || data.caption || ""} className="h-auto w-full rounded-3xl border border-primary-100 bg-white object-contain shadow-sm" />
         ) : (
           <div className="flex h-64 items-center justify-center rounded-3xl bg-primary-50 text-primary-300">
             <FaImage className="h-12 w-12" />
@@ -103,10 +103,10 @@ function renderBlock(block: BlogBlock, index: number) {
   if (block.type === "gallery") {
     const images = Array.isArray(data.images) ? data.images : [];
     return (
-      <div key={index} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div key={index} className="columns-1 gap-4 space-y-4 sm:columns-2 lg:columns-3">
         {images.map((item: any, imageIndex: number) => (
-          <figure key={imageIndex} className="overflow-hidden rounded-2xl border border-primary-100 bg-white shadow-sm">
-            {item.url && <img src={mediaUrl(item.url)} alt={item.alt || item.caption || ""} className="h-56 w-full object-cover" />}
+          <figure key={imageIndex} className="break-inside-avoid overflow-hidden rounded-2xl border border-primary-100 bg-white shadow-sm">
+            {item.url && <img src={mediaUrl(item.url)} alt={item.alt || item.caption || ""} className="h-auto w-full object-contain" />}
             {item.caption && <figcaption className="px-4 py-3 text-sm text-gray-600">{item.caption}</figcaption>}
           </figure>
         ))}
@@ -192,28 +192,32 @@ export default function BlogDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f7fbf8] pb-20">
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary-950 via-primary-900 to-primary-800 py-16 text-white md:py-24">
+    <div className="min-h-screen bg-[#f5fbf7] pb-20">
+      <section className="relative overflow-hidden bg-gradient-to-br from-primary-950 via-primary-900 to-emerald-950 py-10 text-white md:py-14">
         <div className="absolute inset-0 islamic-pattern opacity-10" />
-        <div className="relative z-10 mx-auto max-w-6xl px-4">
-          <Link href="/" className="mb-7 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-bold text-white/90 hover:bg-white/15">
-            <FaArrowLeft className="h-3 w-3" />
-            হোমে ফিরে যান
-          </Link>
-          <div className="max-w-4xl">
-            <div className="mb-4 flex flex-wrap items-center gap-2">
-              {post.category_name && <span className="rounded-full bg-white/12 px-3 py-1 text-xs font-bold">{post.category_name}</span>}
+        <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-primary-300/60 to-transparent" />
+        <div className="relative z-10 mx-auto flex max-w-6xl flex-col gap-4 px-4 md:flex-row md:items-center md:justify-between">
+          <div>
+            <Link href="/" className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-bold text-white/90 hover:bg-white/15">
+              <FaArrowLeft className="h-3 w-3" />
+              হোমে ফিরে যান
+            </Link>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="inline-flex items-center gap-2 rounded-full bg-white/12 px-3 py-1 text-xs font-bold">
+                <FaLayerGroup className="h-3 w-3" />
+                ব্লগ আর্টিকেল
+              </span>
+              {post.category_name && <span className="rounded-full bg-emerald-300/15 px-3 py-1 text-xs font-bold text-emerald-50">{post.category_name}</span>}
               {post.is_featured && <span className="rounded-full bg-amber-300 px-3 py-1 text-xs font-bold text-amber-950">ফিচার্ড</span>}
             </div>
-            <h1 className="text-4xl font-extrabold leading-tight md:text-6xl">{post.title}</h1>
-            <div className="mt-5 flex flex-wrap items-center gap-4 text-sm text-white/75">
-              <span className="inline-flex items-center gap-2">
-                <FaCalendarAlt /> {formatDate(post.published_at || post.created_at)}
-              </span>
-              <span className="inline-flex items-center gap-2">
-                <FaEye /> {post.view_count} পাঠ
-              </span>
-            </div>
+          </div>
+          <div className="flex flex-wrap items-center gap-4 text-sm text-white/75">
+            <span className="inline-flex items-center gap-2">
+              <FaCalendarAlt /> {formatDate(post.published_at || post.created_at)}
+            </span>
+            <span className="inline-flex items-center gap-2">
+              <FaEye /> {post.view_count} পাঠ
+            </span>
           </div>
         </div>
       </section>
@@ -221,16 +225,29 @@ export default function BlogDetailPage() {
       <div className="mx-auto max-w-6xl px-4 py-6">
         <Breadcrumbs items={[{ label: "ব্লগ" }, { label: post.title }]} />
 
-        <article className="mt-8 overflow-hidden rounded-[2rem] border border-primary-100 bg-white shadow-xl shadow-primary-950/5">
+        <article className="mt-8 overflow-hidden rounded-[2rem] border border-primary-100 bg-white shadow-[0_25px_70px_rgba(3,77,55,0.08)]">
           {post.featured_image && (
-            <div className="relative h-72 w-full overflow-hidden md:h-[480px]">
-              <Image src={mediaUrl(post.featured_image)} alt={post.title} fill className="object-cover" sizes="100vw" priority />
-            </div>
+            <figure className="border-b border-primary-50 bg-[#eefaf3]">
+              <img src={mediaUrl(post.featured_image)} alt={post.title} className="mx-auto h-auto w-full object-contain" />
+            </figure>
           )}
 
-          <div className="mx-auto max-w-4xl px-5 py-8 md:px-10 md:py-12">
+          <header className="mx-auto max-w-4xl px-5 pb-4 pt-8 md:px-10 md:pt-12">
+            <div className="mb-4 flex flex-wrap items-center gap-2">
+              {post.category_name && <span className="rounded-full bg-primary-50 px-3 py-1 text-xs font-bold text-primary-700">{post.category_name}</span>}
+              <span className="inline-flex items-center gap-2 rounded-full bg-gray-50 px-3 py-1 text-xs font-semibold text-gray-500">
+                <FaCalendarAlt /> {formatDate(post.published_at || post.created_at)}
+              </span>
+              <span className="inline-flex items-center gap-2 rounded-full bg-gray-50 px-3 py-1 text-xs font-semibold text-gray-500">
+                <FaEye /> {post.view_count} পাঠ
+              </span>
+            </div>
+            <h1 className="text-3xl font-extrabold leading-tight text-primary-950 md:text-5xl">{post.title}</h1>
+          </header>
+
+          <div className="mx-auto max-w-4xl px-5 pb-8 md:px-10 md:pb-12">
             {post.description && (
-              <div className="prose prose-lg max-w-none prose-headings:text-primary-950 prose-a:text-primary-700 prose-p:leading-9" dangerouslySetInnerHTML={{ __html: post.description }} />
+              <div className="prose prose-lg max-w-none rounded-3xl bg-primary-50/35 p-5 prose-headings:text-primary-950 prose-a:text-primary-700 prose-p:leading-9 prose-ul:ml-6 prose-ul:list-disc prose-ol:ml-6 prose-ol:list-decimal md:p-7" dangerouslySetInnerHTML={{ __html: post.description }} />
             )}
 
             {blocks.length > 0 && (

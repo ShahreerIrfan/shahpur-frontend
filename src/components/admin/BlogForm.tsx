@@ -55,6 +55,7 @@ interface BlogPostDetail {
 
 function RichTextEditor({ value, onChange }: { value: string; onChange: (value: string) => void }) {
   const editorRef = useRef<HTMLDivElement>(null);
+  const selectionRef = useRef<Range | null>(null);
 
   useEffect(() => {
     if (editorRef.current && editorRef.current.innerHTML !== value) {
@@ -64,10 +65,88 @@ function RichTextEditor({ value, onChange }: { value: string; onChange: (value: 
 
   const sync = () => onChange(editorRef.current?.innerHTML || "");
 
-  const command = (cmd: string, arg?: string) => {
+  const isInsideEditor = (node: Node | null) => {
+    const editor = editorRef.current;
+    return Boolean(editor && node && editor.contains(node));
+  };
+
+  const saveSelection = () => {
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) return;
+    const range = selection.getRangeAt(0);
+    if (isInsideEditor(range.commonAncestorContainer)) {
+      selectionRef.current = range.cloneRange();
+    }
+  };
+
+  const restoreSelection = () => {
+    const selection = window.getSelection();
+    const range = selectionRef.current;
+    if (!selection || !range || !isInsideEditor(range.commonAncestorContainer)) {
+      editorRef.current?.focus();
+      return false;
+    }
+    selection.removeAllRanges();
+    selection.addRange(range);
     editorRef.current?.focus();
+    return true;
+  };
+
+  const closestBlock = (node: Node | null) => {
+    const editor = editorRef.current;
+    let current: Node | null = node?.nodeType === Node.TEXT_NODE ? node.parentNode : node;
+    while (current && current !== editor) {
+      if (
+        current instanceof HTMLElement &&
+        /^(P|DIV|LI|H1|H2|H3|H4|H5|H6|BLOCKQUOTE|PRE)$/i.test(current.tagName)
+      ) {
+        return current;
+      }
+      current = current.parentNode;
+    }
+    return null;
+  };
+
+  const alignSelection = (alignment: "left" | "center" | "right") => {
+    restoreSelection();
+    const editor = editorRef.current;
+    const selection = window.getSelection();
+    if (!editor || !selection || selection.rangeCount === 0) return;
+
+    const range = selection.getRangeAt(0);
+    const blocks = new Set<HTMLElement>();
+    const walker = document.createTreeWalker(editor, NodeFilter.SHOW_TEXT);
+    let node = walker.nextNode();
+
+    while (node) {
+      if (range.intersectsNode(node)) {
+        const block = closestBlock(node);
+        if (block) blocks.add(block);
+      }
+      node = walker.nextNode();
+    }
+
+    if (blocks.size === 0) {
+      const block = closestBlock(selection.anchorNode);
+      if (block) blocks.add(block);
+    }
+
+    blocks.forEach((block) => {
+      block.style.textAlign = alignment;
+    });
+    sync();
+    saveSelection();
+  };
+
+  const command = (cmd: string, arg?: string) => {
+    restoreSelection();
     document.execCommand(cmd, false, arg);
     sync();
+    saveSelection();
+  };
+
+  const formatBlock = (tag: string) => {
+    command("formatBlock", tag.toUpperCase());
   };
 
   const addLink = () => {
@@ -83,13 +162,13 @@ function RichTextEditor({ value, onChange }: { value: string; onChange: (value: 
   return (
     <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
       <div className="flex flex-wrap items-center gap-1 border-b border-gray-100 bg-gray-50 p-2">
-        <select onChange={(e) => command("fontName", e.target.value)} defaultValue="" className="h-9 rounded-lg border border-gray-200 bg-white px-2 text-xs font-semibold text-gray-600 outline-none">
+        <select onMouseDown={saveSelection} onChange={(e) => command("fontName", e.target.value)} defaultValue="" className="h-9 rounded-lg border border-gray-200 bg-white px-2 text-xs font-semibold text-gray-600 outline-none">
           <option value="" disabled>Font</option>
           <option value="Arial">Sans Serif</option>
           <option value="Georgia">Serif</option>
           <option value="Courier New">Mono</option>
         </select>
-        <select onChange={(e) => command("formatBlock", e.target.value)} defaultValue="p" className="h-9 rounded-lg border border-gray-200 bg-white px-2 text-xs font-semibold text-gray-600 outline-none">
+        <select onMouseDown={saveSelection} onChange={(e) => formatBlock(e.target.value)} defaultValue="p" className="h-9 rounded-lg border border-gray-200 bg-white px-2 text-xs font-semibold text-gray-600 outline-none">
           <option value="p">Normal</option>
           <option value="h1">H1</option>
           <option value="h2">H2</option>
@@ -108,23 +187,29 @@ function RichTextEditor({ value, onChange }: { value: string; onChange: (value: 
           ["insertOrderedList", <FaListOl key="ol" />, "Number list"],
           ["outdent", <FaOutdent key="outdent" />, "Outdent"],
           ["indent", <FaIndent key="indent" />, "Indent"],
-          ["justifyLeft", <FaAlignLeft key="left" />, "Left"],
-          ["justifyCenter", <FaAlignCenter key="center" />, "Center"],
-          ["justifyRight", <FaAlignRight key="right" />, "Right"],
         ].map(([cmd, icon, label]) => (
           <button key={String(cmd)} title={String(label)} type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => command(String(cmd))} className="rounded-lg p-2 text-gray-600 hover:bg-white hover:text-primary-700">
             {icon}
           </button>
         ))}
+        {[
+          ["left", <FaAlignLeft key="left" />, "Left"],
+          ["center", <FaAlignCenter key="center" />, "Center"],
+          ["right", <FaAlignRight key="right" />, "Right"],
+        ].map(([align, icon, label]) => (
+          <button key={String(align)} title={String(label)} type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => alignSelection(align as "left" | "center" | "right")} className="rounded-lg p-2 text-gray-600 hover:bg-white hover:text-primary-700">
+            {icon}
+          </button>
+        ))}
         <label className="flex h-9 cursor-pointer items-center rounded-lg px-2 text-xs font-bold text-gray-600 hover:bg-white hover:text-primary-700" title="Text color">
           A
-          <input type="color" className="h-0 w-0 opacity-0" onChange={(e) => command("foreColor", e.target.value)} />
+          <input type="color" className="h-0 w-0 opacity-0" onMouseDown={saveSelection} onChange={(e) => command("foreColor", e.target.value)} />
         </label>
         <label className="flex h-9 cursor-pointer items-center rounded-lg px-2 text-xs font-bold text-gray-600 hover:bg-white hover:text-primary-700" title="Highlight">
           <FaHeading />
-          <input type="color" className="h-0 w-0 opacity-0" onChange={(e) => command("hiliteColor", e.target.value)} />
+          <input type="color" className="h-0 w-0 opacity-0" onMouseDown={saveSelection} onChange={(e) => command("hiliteColor", e.target.value)} />
         </label>
-        <button type="button" title="Quote" onMouseDown={(e) => e.preventDefault()} onClick={() => command("formatBlock", "blockquote")} className="rounded-lg p-2 text-gray-600 hover:bg-white hover:text-primary-700">
+        <button type="button" title="Quote" onMouseDown={(e) => e.preventDefault()} onClick={() => formatBlock("blockquote")} className="rounded-lg p-2 text-gray-600 hover:bg-white hover:text-primary-700">
           <FaQuoteRight />
         </button>
         <button type="button" title="Link" onMouseDown={(e) => e.preventDefault()} onClick={addLink} className="rounded-lg p-2 text-gray-600 hover:bg-white hover:text-primary-700">
@@ -142,7 +227,10 @@ function RichTextEditor({ value, onChange }: { value: string; onChange: (value: 
         contentEditable
         suppressContentEditableWarning
         onInput={sync}
-        className="min-h-[260px] px-4 py-3 text-base leading-8 text-gray-800 outline-none prose prose-sm max-w-none prose-ul:list-disc prose-ol:list-decimal prose-li:my-1"
+        onBlur={saveSelection}
+        onKeyUp={saveSelection}
+        onMouseUp={saveSelection}
+        className="min-h-[260px] px-4 py-3 text-base leading-8 text-gray-800 outline-none prose prose-sm max-w-none prose-ul:ml-6 prose-ul:list-disc prose-ol:ml-6 prose-ol:list-decimal prose-li:my-1 prose-h1:text-3xl prose-h1:font-extrabold prose-h2:text-2xl prose-h2:font-bold prose-h3:text-xl prose-h3:font-bold"
         data-placeholder="এখানে ব্লগ বর্ণনা লিখুন..."
       />
     </div>
