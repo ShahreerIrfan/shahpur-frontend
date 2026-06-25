@@ -56,6 +56,17 @@ export default function Header() {
         return () => window.clearTimeout(authTimer);
     }, []);
 
+    useEffect(() => {
+        if (mobileMenuOpen) {
+            document.body.style.overflow = "hidden";
+        } else {
+            document.body.style.overflow = "";
+        }
+        return () => {
+            document.body.style.overflow = "";
+        };
+    }, [mobileMenuOpen]);
+
     const handleLogout = () => {
         localStorage.removeItem("access_token");
         localStorage.removeItem("refresh_token");
@@ -202,77 +213,128 @@ export default function Header() {
                 </div>
             </div>
 
-            {/* Mobile Navigation */}
-            {mobileMenuOpen && (
-                <div className="lg:hidden px-3 pb-3">
-                    <nav className="max-w-7xl mx-auto rounded-2xl border border-primary-100 bg-white px-3 py-4 shadow-xl space-y-1">
-                        {menuItems.map((item) => (
-                            <div key={item.title}>
-                                {item.children ? (
-                                    <button
-                                        type="button"
-                                        className="w-full flex items-center justify-between px-4 py-2 text-gray-700 hover:bg-primary-50 hover:text-primary-600 rounded-md font-medium text-left"
-                                        aria-expanded={openMobileSubmenu === item.title}
-                                        onClick={() => setOpenMobileSubmenu((current) => current === item.title ? null : item.title)}
-                                    >
-                                        <span>{item.title}</span>
-                                        <svg
-                                            className={`w-4 h-4 transition-transform ${openMobileSubmenu === item.title ? "rotate-180" : ""}`}
-                                            fill="none"
-                                            stroke="currentColor"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                        </svg>
-                                    </button>
-                                ) : item.comingSoon ? (
-                                    <div className="flex items-center justify-between px-4 py-2 text-gray-400 rounded-md font-medium">
-                                        <span>{item.title}</span>
-                                        <span className="text-[10px] bg-amber-50 text-amber-700 border border-amber-100 px-1.5 py-0.5 rounded-full">Soon</span>
-                                    </div>
+            {/* Mobile Navigation Drawer */}
+            <div className={`fixed inset-0 z-[2000] lg:hidden transition-all duration-300 ${mobileMenuOpen ? "pointer-events-auto" : "pointer-events-none"}`}>
+                {/* Backdrop overlay */}
+                <div 
+                    className={`absolute inset-0 bg-black/55 backdrop-blur-xs transition-opacity duration-300 ${mobileMenuOpen ? "opacity-100" : "opacity-0"}`} 
+                    onClick={() => {
+                        setOpenMobileSubmenu(null);
+                        setMobileMenuOpen(false);
+                    }}
+                />
+                
+                {/* Drawer Panel content */}
+                <div className={`absolute top-0 left-0 bottom-0 w-[85%] max-w-[340px] bg-[#f8fafc] shadow-2xl transition-transform duration-300 transform flex flex-col p-4 space-y-4 ${mobileMenuOpen ? "translate-x-0" : "-translate-x-full"}`}>
+                    
+                    {/* Header Card */}
+                    <div className="bg-white rounded-2xl border border-primary-100/60 p-4 flex items-center justify-between shadow-sm">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-primary-500 rounded-full flex items-center justify-center overflow-hidden shadow-sm ring-2 ring-primary-100">
+                                {settings?.logo ? (
+                                    <img src={mediaUrl(settings.logo)} alt={settings.site_name} className="w-full h-full object-cover" />
                                 ) : (
-                                    <Link
-                                        href={item.url}
-                                        prefetch={false}
-                                        className="block px-4 py-2 text-gray-700 hover:bg-primary-50 hover:text-primary-600 rounded-md font-medium"
-                                        onClick={() => setMobileMenuOpen(false)}
-                                    >
-                                        {item.title}
-                                    </Link>
-                                )}
-                                {item.children && openMobileSubmenu === item.title && (
-                                    <div className="ml-4 mt-1 space-y-1 border-l border-primary-100 pl-2">
-                                        {item.children.map((child) => (
-                                            child.comingSoon ? (
-                                                <div key={child.title} className="px-4 py-2 text-sm text-gray-400 rounded-md">
-                                                    • {child.title} <span className="text-[10px] text-amber-600">(Soon)</span>
-                                                </div>
-                                            ) : (
-                                                <Link
-                                                    key={child.title}
-                                                    href={child.url}
-                                                    prefetch={false}
-                                                    className="block px-4 py-2 text-sm text-gray-600 hover:bg-primary-50 hover:text-primary-600 rounded-md"
-                                                    onClick={() => setMobileMenuOpen(false)}
-                                                >
-                                                    • {child.title}
-                                                </Link>
-                                            )
-                                        ))}
-                                    </div>
+                                    <span className="text-white text-base font-bold">শ</span>
                                 )}
                             </div>
-                        ))}
+                            <div>
+                                <h2 className="text-sm font-bold text-primary-750 leading-tight">
+                                    {settings?.site_name || "শাহপুর দরবার শরীফ"}
+                                </h2>
+                                <p className="text-[10px] text-gray-400 font-medium">{settings?.site_name_en || "Shahpur Darbar Sharif"}</p>
+                            </div>
+                        </div>
+                        <button 
+                            onClick={() => {
+                                setOpenMobileSubmenu(null);
+                                setMobileMenuOpen(false);
+                            }}
+                            className="p-1.5 text-gray-450 hover:text-gray-700 hover:bg-gray-105 rounded-xl transition-colors"
+                            aria-label="Close menu"
+                        >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    {/* Main Menu Panel Card */}
+                    <div className="bg-white rounded-[24px] border border-primary-100/80 p-4 shadow-sm flex flex-col flex-1 overflow-y-auto min-h-0 justify-between">
                         
-                        {/* Mobile Login/Register/Dashboard */}
-                        <div className="pt-4 border-t border-gray-100 mt-4 space-y-2">
+                        {/* Menu Links */}
+                        <div className="space-y-1 overflow-y-auto pr-1">
+                            {menuItems.map((item) => (
+                                <div key={item.title}>
+                                    {item.children ? (
+                                        <div>
+                                            <button
+                                                type="button"
+                                                className={`w-full flex items-center justify-between px-4 py-2.5 hover:bg-primary-50/50 hover:text-primary-700 rounded-xl font-bold text-[15px] text-left transition-colors ${
+                                                    openMobileSubmenu === item.title ? "text-primary-750 bg-primary-50/30" : "text-gray-700"
+                                                }`}
+                                                onClick={() => setOpenMobileSubmenu((current) => current === item.title ? null : item.title)}
+                                            >
+                                                <span>{item.title}</span>
+                                                <svg
+                                                    className={`w-4 h-4 transition-transform text-gray-400 ${openMobileSubmenu === item.title ? "rotate-180 text-primary-600" : ""}`}
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    viewBox="0 0 24 24"
+                                                >
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                                </svg>
+                                            </button>
+                                            
+                                            {openMobileSubmenu === item.title && (
+                                                <div className="ml-3 pl-3.5 border-l border-primary-100/70 space-y-1 mt-1 transition-all">
+                                                    {item.children.map((child) => (
+                                                        child.comingSoon ? (
+                                                            <div key={child.title} className="px-4 py-2 text-sm text-gray-455 rounded-lg">
+                                                                • {child.title} <span className="text-[9px] bg-amber-50 text-amber-700 border border-amber-100 px-1 py-0.5 rounded-full font-bold ml-1">Soon</span>
+                                                            </div>
+                                                        ) : (
+                                                            <Link
+                                                                key={child.title}
+                                                                href={child.url}
+                                                                prefetch={false}
+                                                                className="block px-4 py-2 text-sm text-gray-650 hover:bg-primary-50 hover:text-primary-700 rounded-lg transition-colors font-semibold"
+                                                                onClick={() => setMobileMenuOpen(false)}
+                                                            >
+                                                                • {child.title}
+                                                            </Link>
+                                                        )
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                    ) : item.comingSoon ? (
+                                        <div className="flex items-center justify-between px-4 py-2.5 text-gray-400 rounded-xl font-bold text-[15px]">
+                                            <span>{item.title}</span>
+                                            <span className="text-[9px] bg-amber-50 text-amber-700 border border-amber-100 px-1.5 py-0.5 rounded-full font-bold">Soon</span>
+                                        </div>
+                                    ) : (
+                                        <Link
+                                            href={item.url}
+                                            prefetch={false}
+                                            className="block px-4 py-2.5 text-gray-750 hover:bg-primary-50/50 hover:text-primary-700 rounded-xl font-bold text-[15px] transition-colors"
+                                            onClick={() => setMobileMenuOpen(false)}
+                                        >
+                                            {item.title}
+                                        </Link>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Bottom Footer Section (Admin/Logout/Login) */}
+                        <div className="pt-4 border-t border-gray-100 mt-4 space-y-1">
                             {isLoggedIn ? (
                                 <>
                                     <Link
                                         href={isAdmin ? "/admin" : "/dashboard"}
                                         prefetch={false}
                                         onClick={() => setMobileMenuOpen(false)}
-                                        className="block px-4 py-2 text-gray-700 hover:bg-primary-50 hover:text-primary-600 rounded-md font-medium"
+                                        className="block px-4 py-2.5 text-gray-755 hover:bg-primary-50/50 hover:text-primary-700 rounded-xl font-bold text-[15px] transition-colors"
                                     >
                                         {isAdmin ? "Admin Panel" : "Dashboard"}
                                     </Link>
@@ -281,7 +343,7 @@ export default function Header() {
                                             setMobileMenuOpen(false);
                                             handleLogout();
                                         }}
-                                        className="w-full text-left block px-4 py-2 text-red-600 hover:bg-red-50 rounded-md font-medium"
+                                        className="w-full text-left block px-4 py-2.5 text-red-600 hover:bg-red-50 rounded-xl font-bold text-[15px] transition-colors"
                                     >
                                         Logout
                                     </button>
@@ -292,7 +354,7 @@ export default function Header() {
                                         href="/login"
                                         prefetch={false}
                                         onClick={() => setMobileMenuOpen(false)}
-                                        className="block px-4 py-2 text-gray-700 hover:bg-primary-50 hover:text-primary-600 rounded-md font-medium"
+                                        className="block px-4 py-2.5 text-gray-755 hover:bg-primary-50/50 hover:text-primary-700 rounded-xl font-bold text-[15px] transition-colors"
                                     >
                                         Login
                                     </Link>
@@ -300,16 +362,18 @@ export default function Header() {
                                         href="/register"
                                         prefetch={false}
                                         onClick={() => setMobileMenuOpen(false)}
-                                        className="block mx-4 my-2 text-center bg-primary-500 hover:bg-primary-600 text-white py-2 rounded-lg font-medium transition-colors"
+                                        className="block text-center bg-primary-500 hover:bg-primary-600 text-white py-2.5 rounded-xl font-bold text-[15px] transition-colors shadow-sm mt-2"
                                     >
                                         Register
                                     </Link>
                                 </>
                             )}
                         </div>
-                    </nav>
+
+                    </div>
+
                 </div>
-            )}
+            </div>
         </header>
     );
 }
