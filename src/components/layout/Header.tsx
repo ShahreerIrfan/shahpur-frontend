@@ -12,31 +12,32 @@ const menuItems: {
     comingSoon?: boolean;
     children?: { title: string; url: string; comingSoon?: boolean }[];
 }[] = [
-    { title: "হোম", url: "/" },
-    {
-        title: "জীবনী",
-        url: "#",
-        children: [
-            { title: "আল্লামা ড. আহমদ পেয়ারা বাগদাদী (রাঃ) এঁর জীবনী", url: "/biography/baghdadi" },
-            { title: "মাও. আব্দুস সুবহান (রাঃ) এঁর জীবনী", url: "/biography/subhan" },
-        ],
-    },
-    { title: "হাদিস", url: "/hadith" },
-    { title: "বই", url: "/books" },
-    { title: "মাদ্রাসা", url: "/madrasha" },
-    { title: "খানকাহ", url: "/khankah" },
-    { title: "ইভেন্ট", url: "/events" },
-    { title: "মাজিউন্নবী", url: "#", comingSoon: true },
-    {
-        title: "আরও দেখুন",
-        url: "#",
-        children: [
-            { title: "সেবা কার্যক্রম", url: "/seva" },
-            { title: "গ্যালারি", url: "/gallery" },
-            { title: "যোগাযোগ", url: "/contact" },
-        ],
-    },
-];
+        { title: "হোম", url: "/" },
+        {
+            title: "জীবনী",
+            url: "#",
+            children: [
+                { title: "আল্লামা ড. আহমদ পেয়ারা বাগদাদী (রাঃ) এঁর জীবনী", url: "/biography/baghdadi" },
+                { title: "মাও. আব্দুস সুবহান (রাঃ) এঁর জীবনী", url: "/biography/subhan" },
+            ],
+        },
+        { title: "হাদিস", url: "/hadith" },
+        { title: "ব্লগ", url: "/blog" },
+        { title: "বই", url: "/books" },
+        { title: "মাদ্রাসা", url: "/madrasha" },
+        { title: "খানকাহ", url: "/khankah" },
+        { title: "ইভেন্ট", url: "/events" },
+        { title: "মাজিউন্নবী", url: "#", comingSoon: true },
+        {
+            title: "আরও দেখুন",
+            url: "#",
+            children: [
+                { title: "সেবা কার্যক্রম", url: "/seva" },
+                { title: "গ্যালারি", url: "/gallery" },
+                { title: "যোগাযোগ", url: "/contact" },
+            ],
+        },
+    ];
 
 export default function Header() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -162,15 +163,15 @@ export default function Header() {
                             {isLoggedIn ? (
                                 <>
                                     <Link
-                                        href={isAdmin ? "/admin" : "/dashboard"} 
+                                        href={isAdmin ? "/admin" : "/dashboard"}
                                         prefetch={false}
                                         className="flex items-center gap-2 text-gray-600 hover:text-primary-600 text-sm font-medium"
                                     >
                                         <FaUser className="w-3.5 h-3.5" />
                                         <span>{isAdmin ? "Admin Panel" : "Dashboard"}</span>
                                     </Link>
-                                    <button 
-                                        onClick={handleLogout} 
+                                    <button
+                                        onClick={handleLogout}
                                         className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors shadow-sm"
                                     >
                                         Logout
@@ -215,17 +216,17 @@ export default function Header() {
             {/* Mobile Navigation Drawer */}
             <div className={`fixed inset-0 z-[2000] lg:hidden transition-all duration-300 ${mobileMenuOpen ? "pointer-events-auto" : "pointer-events-none"}`}>
                 {/* Backdrop overlay */}
-                <div 
-                    className={`absolute inset-0 bg-black/55 backdrop-blur-xs transition-opacity duration-300 ${mobileMenuOpen ? "opacity-100" : "opacity-0"}`} 
+                <div
+                    className={`absolute inset-0 bg-black/55 backdrop-blur-xs transition-opacity duration-300 ${mobileMenuOpen ? "opacity-100" : "opacity-0"}`}
                     onClick={() => {
                         setOpenMobileSubmenu(null);
                         setMobileMenuOpen(false);
                     }}
                 />
-                
+
                 {/* Drawer Panel content */}
                 <div className={`absolute top-0 left-0 bottom-0 w-[85%] max-w-[340px] bg-[#f8fafc] shadow-2xl transition-transform duration-300 transform flex flex-col p-4 space-y-4 ${mobileMenuOpen ? "translate-x-0" : "-translate-x-full"}`}>
-                    
+
                     {/* Header Card */}
                     <div className="bg-white rounded-2xl border border-primary-100/60 p-4 flex items-center justify-between shadow-sm">
                         <div className="flex items-center gap-3">
@@ -243,7 +244,7 @@ export default function Header() {
                                 <p className="text-[10px] text-gray-400 font-medium">{settings?.site_name_en || "Shahpur Darbar Sharif"}</p>
                             </div>
                         </div>
-                        <button 
+                        <button
                             onClick={() => {
                                 setOpenMobileSubmenu(null);
                                 setMobileMenuOpen(false);
@@ -259,7 +260,7 @@ export default function Header() {
 
                     {/* Main Menu Panel Card */}
                     <div className="bg-white rounded-[24px] border border-primary-100/80 p-4 shadow-sm flex flex-col flex-1 overflow-y-auto min-h-0 justify-between">
-                        
+
                         {/* Menu Links */}
                         <div className="space-y-1 overflow-y-auto pr-1">
                             {menuItems.map((item) => (
@@ -268,9 +269,8 @@ export default function Header() {
                                         <div>
                                             <button
                                                 type="button"
-                                                className={`w-full flex items-center justify-between px-4 py-2.5 hover:bg-primary-50/50 hover:text-primary-700 rounded-xl font-bold text-[15px] text-left transition-colors ${
-                                                    openMobileSubmenu === item.title ? "text-primary-750 bg-primary-50/30" : "text-gray-700"
-                                                }`}
+                                                className={`w-full flex items-center justify-between px-4 py-2.5 hover:bg-primary-50/50 hover:text-primary-700 rounded-xl font-bold text-[15px] text-left transition-colors ${openMobileSubmenu === item.title ? "text-primary-750 bg-primary-50/30" : "text-gray-700"
+                                                    }`}
                                                 onClick={() => setOpenMobileSubmenu((current) => current === item.title ? null : item.title)}
                                             >
                                                 <span>{item.title}</span>
@@ -283,7 +283,7 @@ export default function Header() {
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                                 </svg>
                                             </button>
-                                            
+
                                             {openMobileSubmenu === item.title && (
                                                 <div className="ml-3 pl-3.5 border-l border-primary-100/70 space-y-1 mt-1 transition-all">
                                                     {item.children.map((child) => (
