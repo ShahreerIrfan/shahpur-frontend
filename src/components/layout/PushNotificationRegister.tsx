@@ -64,7 +64,8 @@ export default function PushNotificationRegister() {
         // 5. Handle foreground notification delivery
         onMessage(messaging, (payload) => {
           console.log("Foreground push notification received:", payload);
-          if (payload.notification) {
+          // Only show the banner if this tab is the active visible tab, preventing duplicates when multiple tabs are open
+          if (document.visibilityState === "visible" && payload.notification) {
             new Notification(payload.notification.title || "শাহপুর দরবার শরীফ", {
               body: payload.notification.body,
               icon: "/favicon.ico",
