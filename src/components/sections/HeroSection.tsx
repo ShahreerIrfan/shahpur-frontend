@@ -72,7 +72,7 @@ export default function HeroSection() {
   };
 
   return (
-    <section className="relative min-h-[480px] sm:min-h-[520px] md:min-h-[580px] flex items-center overflow-hidden">
+    <section className="relative h-[220px] xs:h-[260px] sm:h-[360px] md:h-[480px] lg:h-[580px] w-full flex items-center overflow-hidden">
       {slides.map((slide, index) => {
         const imgSrc = slideImageUrl(slide);
         return (
@@ -96,26 +96,26 @@ export default function HeroSection() {
       <div className="absolute inset-0 islamic-pattern opacity-[0.06]" />
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary-500 via-primary-400 to-primary-500" />
 
-      <div className="relative max-w-7xl mx-auto px-4 py-8 sm:py-12 md:py-16 w-full">
-        <div className="max-w-2xl space-y-3 sm:space-y-4 md:space-y-6">
-          <div className="inline-flex items-center gap-2 bg-white/12 backdrop-blur-md px-4 py-2 rounded-full border border-white/25 shadow-lg shadow-black/10">
-            <FaMosque className="text-emerald-200" />
-            <span className="text-sm text-white font-medium">{activeSlide.eyebrow || fallbackSlide.eyebrow}</span>
+      <div className="relative max-w-7xl mx-auto px-4 py-4 sm:py-8 md:py-16 w-full">
+        <div className="max-w-2xl space-y-2 sm:space-y-4 md:space-y-6">
+          <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-white/12 backdrop-blur-md px-2.5 py-1 sm:px-4 sm:py-2 rounded-full border border-white/25 shadow-lg shadow-black/10 text-[10px] sm:text-sm">
+            <FaMosque className="text-emerald-200 text-[10px] sm:text-sm" />
+            <span className="text-white font-medium">{activeSlide.eyebrow || fallbackSlide.eyebrow}</span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-white whitespace-pre-line drop-shadow-[0_4px_18px_rgba(0,0,0,0.38)]">
+          <h1 className="text-lg xs:text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-white whitespace-pre-line drop-shadow-[0_4px_18px_rgba(0,0,0,0.38)]">
             {activeSlide.title}
           </h1>
 
-          <p className="text-base sm:text-lg text-white/85 max-w-lg leading-relaxed drop-shadow-[0_2px_10px_rgba(0,0,0,0.35)]">
+          <p className="hidden xs:block text-xs sm:text-lg text-white/85 max-w-lg leading-relaxed drop-shadow-[0_2px_10px_rgba(0,0,0,0.35)]">
             {activeSlide.subtitle}
           </p>
 
-          <div className="flex flex-wrap gap-4 pt-2">
+          <div className="flex flex-wrap gap-2 sm:gap-4 pt-1 sm:pt-2">
             {activeSlide.primary_button_text && activeSlide.primary_button_url && (
               <Link
                 href={activeSlide.primary_button_url}
-                className="inline-flex items-center gap-2 bg-primary-500 hover:bg-primary-400 text-white px-6 py-3 rounded-lg font-medium transition-all hover:scale-105 shadow-xl shadow-primary-950/25"
+                className="inline-flex items-center gap-1.5 sm:gap-2 bg-primary-500 hover:bg-primary-400 text-white px-3 py-1.5 sm:px-6 sm:py-3 rounded-lg text-xs sm:text-base font-medium transition-all hover:scale-105 shadow-xl shadow-primary-950/25"
               >
                 <FaBookOpen />
                 {activeSlide.primary_button_text}
@@ -124,14 +124,14 @@ export default function HeroSection() {
             {activeSlide.secondary_button_text && activeSlide.secondary_button_url && (
               <Link
                 href={activeSlide.secondary_button_url}
-                className="inline-flex items-center gap-2 border-2 border-white/45 bg-white/10 hover:bg-white/20 text-white px-6 py-3 rounded-lg font-medium transition-all backdrop-blur-sm"
+                className="inline-flex items-center gap-1.5 sm:gap-2 border-2 border-white/45 bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 sm:px-6 sm:py-3 rounded-lg text-xs sm:text-base font-medium transition-all backdrop-blur-sm"
               >
                 {activeSlide.secondary_button_text}
               </Link>
             )}
           </div>
 
-          <div className="flex flex-wrap gap-6 sm:gap-8 pt-4">
+          <div className="hidden sm:flex flex-wrap gap-6 sm:gap-8 pt-4">
             {stats.map((stat, index) => (
               <div key={`${stat.label}-${index}`}>
                 <p className="text-2xl sm:text-3xl font-bold text-emerald-200 drop-shadow-[0_2px_10px_rgba(0,0,0,0.35)]">{stat.value}</p>

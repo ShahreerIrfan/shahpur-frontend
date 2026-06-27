@@ -31,11 +31,12 @@ export default function BooksSection() {
         <section className="py-20 bg-white">
             <div className="max-w-5xl mx-auto px-4">
                 {/* Header */}
-                <div className="flex items-center gap-3 mb-10">
-                    <div className="w-11 h-11 bg-primary-500 rounded-xl flex items-center justify-center">
+                <div className="flex flex-col items-center text-center gap-2 mb-10">
+                    <div className="w-11 h-11 bg-primary-500 rounded-xl flex items-center justify-center mb-2">
                         <FaBook className="text-white w-5 h-5" />
                     </div>
-                    <h2 className="text-2xl md:text-3xl font-bold text-gray-800">রচিত গ্রন্থসমূহ</h2>
+                    <h2 className="text-2xl md:text-3xl font-black text-gray-800">রচিত গ্রন্থসমূহ</h2>
+                    <div className="w-20 h-1 bg-primary-500 mx-auto mt-1"></div>
                 </div>
 
                 {/* Book Cards Grid */}
