@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import Script from "next/script";
 import FaviconSync from "@/components/layout/FaviconSync";
 import RouteChangeSync from "@/components/layout/RouteChangeSync";
+import PushNotificationRegister from "@/components/layout/PushNotificationRegister";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -29,6 +30,7 @@ export default function RootLayout({
       </head>
       <body suppressHydrationWarning className="min-h-screen flex flex-col bg-gray-50">
         <FaviconSync />
+        <PushNotificationRegister />
         <Suspense fallback={null}>
           <RouteChangeSync />
         </Suspense>
