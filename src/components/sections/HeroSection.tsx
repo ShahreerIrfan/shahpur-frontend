@@ -72,7 +72,7 @@ export default function HeroSection() {
   };
 
   return (
-    <section className="relative min-h-[580px] flex items-center overflow-hidden">
+    <section className="relative min-h-[480px] sm:min-h-[520px] md:min-h-[580px] flex items-center overflow-hidden">
       {slides.map((slide, index) => {
         const imgSrc = slideImageUrl(slide);
         return (
@@ -96,8 +96,8 @@ export default function HeroSection() {
       <div className="absolute inset-0 islamic-pattern opacity-[0.06]" />
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary-500 via-primary-400 to-primary-500" />
 
-      <div className="relative max-w-7xl mx-auto px-4 py-16 w-full">
-        <div className="max-w-2xl space-y-6">
+      <div className="relative max-w-7xl mx-auto px-4 py-8 sm:py-12 md:py-16 w-full">
+        <div className="max-w-2xl space-y-3 sm:space-y-4 md:space-y-6">
           <div className="inline-flex items-center gap-2 bg-white/12 backdrop-blur-md px-4 py-2 rounded-full border border-white/25 shadow-lg shadow-black/10">
             <FaMosque className="text-emerald-200" />
             <span className="text-sm text-white font-medium">{activeSlide.eyebrow || fallbackSlide.eyebrow}</span>
