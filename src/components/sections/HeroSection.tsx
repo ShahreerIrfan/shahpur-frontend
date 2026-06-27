@@ -81,7 +81,7 @@ export default function HeroSection() {
               <img
                 src={imgSrc}
                 alt=""
-                className="absolute inset-0 h-full w-full object-fill"
+                className="absolute inset-0 h-full w-full object-cover"
                 loading={index === 0 ? "eager" : "lazy"}
                 fetchPriority={index === 0 ? "high" : "low"}
                 aria-hidden="true"
@@ -103,11 +103,11 @@ export default function HeroSection() {
             <span className="text-sm text-white font-medium">{activeSlide.eyebrow || fallbackSlide.eyebrow}</span>
           </div>
 
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-white whitespace-pre-line drop-shadow-[0_4px_18px_rgba(0,0,0,0.38)]">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-white whitespace-pre-line drop-shadow-[0_4px_18px_rgba(0,0,0,0.38)]">
             {activeSlide.title}
           </h1>
 
-          <p className="text-lg text-white/85 max-w-lg leading-relaxed drop-shadow-[0_2px_10px_rgba(0,0,0,0.35)]">
+          <p className="text-base sm:text-lg text-white/85 max-w-lg leading-relaxed drop-shadow-[0_2px_10px_rgba(0,0,0,0.35)]">
             {activeSlide.subtitle}
           </p>
 
@@ -131,11 +131,11 @@ export default function HeroSection() {
             )}
           </div>
 
-          <div className="flex flex-wrap gap-8 pt-4">
+          <div className="flex flex-wrap gap-6 sm:gap-8 pt-4">
             {stats.map((stat, index) => (
               <div key={`${stat.label}-${index}`}>
-                <p className="text-3xl font-bold text-emerald-200 drop-shadow-[0_2px_10px_rgba(0,0,0,0.35)]">{stat.value}</p>
-                <p className="text-sm text-white/75">{stat.label}</p>
+                <p className="text-2xl sm:text-3xl font-bold text-emerald-200 drop-shadow-[0_2px_10px_rgba(0,0,0,0.35)]">{stat.value}</p>
+                <p className="text-xs sm:text-sm text-white/75">{stat.label}</p>
               </div>
             ))}
           </div>
