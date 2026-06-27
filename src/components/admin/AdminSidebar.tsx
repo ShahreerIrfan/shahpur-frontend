@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FaHome, FaMosque, FaBookOpen, FaCog, FaSignOutAlt, FaChevronRight, FaChevronDown, FaChevronUp, FaUserTie, FaCalendarAlt, FaFilePdf, FaPalette, FaQuoteRight, FaEdit } from "react-icons/fa";
+import { FaHome, FaMosque, FaBookOpen, FaCog, FaSignOutAlt, FaChevronRight, FaChevronDown, FaChevronUp, FaUserTie, FaCalendarAlt, FaFilePdf, FaPalette, FaQuoteRight, FaEdit, FaBell } from "react-icons/fa";
 import { fetchSiteSettings, SiteSettings } from "@/lib/appearance";
 import { mediaUrl } from "@/lib/media";
 
@@ -75,6 +75,7 @@ const menuItems: MenuItem[] = [
             { title: "লোগো", href: "/admin/appearance/logo" },
         ],
     },
+    { title: "পুশ নোটিফিকেশন", href: "/admin/notifications", icon: <FaBell className="w-4 h-4" /> },
     { title: "সেটিংস", href: "/admin/settings", icon: <FaCog className="w-4 h-4" /> },
 ];
 
