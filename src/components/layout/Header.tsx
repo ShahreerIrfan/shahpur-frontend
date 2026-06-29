@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { FaUser } from "react-icons/fa";
+import { FaUser, FaBell, FaSpinner } from "react-icons/fa";
 import { fetchSiteSettings, SiteSettings } from "@/lib/appearance";
 import { mediaUrl } from "@/lib/media";
+import { API_URL } from "@/lib/api";
 
 const menuItems: {
     title: string;
@@ -47,14 +48,65 @@ export default function Header() {
     const [isAdmin, setIsAdmin] = useState(false);
     const [settings, setSettings] = useState<SiteSettings | null>(null);
 
+    // Notification states
+    const [notifications, setNotifications] = useState<any[]>([]);
+    const [unreadCount, setUnreadCount] = useState(0);
+    const [showNotifications, setShowNotifications] = useState(false);
+    const [selectedNotification, setSelectedNotification] = useState<any | null>(null);
+    const [loadingNotifications, setLoadingNotifications] = useState(false);
+
+    const fetchNotifications = async () => {
+        setLoadingNotifications(true);
+        try {
+            const res = await fetch(`${API_URL}/core/notifications/`);
+            if (res.ok) {
+                const data = await res.json();
+                const results = data.results || [];
+                setNotifications(results);
+                
+                // Calculate unread count
+                const readIds = JSON.parse(localStorage.getItem("read_notification_ids") || "[]");
+                const unread = results.filter((n: any) => !readIds.includes(n.id));
+                setUnreadCount(unread.length);
+            }
+        } catch (err) {
+            console.error("Failed to fetch notifications:", err);
+        } finally {
+            setLoadingNotifications(false);
+        }
+    };
+
     useEffect(() => {
         const authTimer = window.setTimeout(() => {
             setIsLoggedIn(!!localStorage.getItem("access_token"));
             setIsAdmin(localStorage.getItem("is_admin") === "true");
         }, 0);
         fetchSiteSettings().then(setSettings).catch(() => undefined);
-        return () => window.clearTimeout(authTimer);
+        fetchNotifications();
+        
+        // Periodically check every 2 minutes
+        const interval = setInterval(fetchNotifications, 120000);
+
+        return () => {
+            window.clearTimeout(authTimer);
+            clearInterval(interval);
+        };
     }, []);
+
+    const handleToggleDropdown = () => {
+        if (!showNotifications) {
+            fetchNotifications();
+            // Mark all fetched notifications as read
+            if (notifications.length > 0) {
+                const ids = notifications.map((n: any) => n.id);
+                const existingRead = JSON.parse(localStorage.getItem("read_notification_ids") || "[]");
+                const updatedRead = Array.from(new Set([...existingRead, ...ids]));
+                localStorage.setItem("read_notification_ids", JSON.stringify(updatedRead));
+                setUnreadCount(0);
+            }
+        }
+        setShowNotifications(!showNotifications);
+    };
 
     useEffect(() => {
         if (mobileMenuOpen) {
@@ -158,6 +210,92 @@ export default function Header() {
                             ))}
                         </nav>
 
+                        {/* Desktop Notifications Bell */}
+                        <div className="relative mr-1 hidden lg:block">
+                            <button
+                                onClick={handleToggleDropdown}
+                                className="relative p-2.5 text-gray-500 hover:text-primary-600 hover:bg-primary-50 rounded-xl transition-colors focus:outline-none"
+                                aria-label="Notifications"
+                            >
+                                <FaBell className="w-[18px] h-[18px]" />
+                                {unreadCount > 0 && (
+                                    <span className="absolute top-1.5 right-1.5 bg-red-500 text-white text-[9px] font-bold h-4 min-w-4 px-1 rounded-full flex items-center justify-center shadow-sm">
+                                        {unreadCount > 9 ? "9+" : unreadCount}
+                                    </span>
+                                )}
+                            </button>
+
+                            {/* Dropdown panel */}
+                            {showNotifications && (
+                                <>
+                                    <div className="fixed inset-0 z-[900]" onClick={() => setShowNotifications(false)} />
+                                    <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-2xl shadow-xl border border-gray-100 py-3 z-[910] overflow-hidden animate-fadeIn">
+                                        <div className="px-4 pb-2 border-b border-gray-50 flex items-center justify-between">
+                                            <h3 className="font-bold text-gray-800 text-xs flex items-center gap-1.5">
+                                                <FaBell className="text-primary-500 w-3.5 h-3.5" /> নোটিফিকেশন
+                                            </h3>
+                                            {unreadCount > 0 && (
+                                                <span className="text-[10px] bg-red-50 text-red-655 px-2 py-0.5 rounded-full font-semibold">
+                                                    {unreadCount}টি নতুন
+                                                </span>
+                                            )}
+                                        </div>
+
+                                        <div className="max-h-[320px] overflow-y-auto divide-y divide-gray-50">
+                                            {loadingNotifications && notifications.length === 0 ? (
+                                                <div className="flex items-center justify-center py-8">
+                                                    <FaSpinner className="w-5 h-5 text-primary-500 animate-spin" />
+                                                </div>
+                                            ) : notifications.length === 0 ? (
+                                                <p className="text-center text-xs text-gray-400 py-8 font-medium">কোনো নোটিফিকেশন পাওয়া যায়নি</p>
+                                            ) : (
+                                                notifications.map((notif) => {
+                                                    const isUnread = !JSON.parse(localStorage.getItem("read_notification_ids") || "[]").includes(notif.id);
+                                                    return (
+                                                        <div
+                                                            key={notif.id}
+                                                            onClick={() => {
+                                                                setSelectedNotification(notif);
+                                                                setShowNotifications(false);
+                                                            }}
+                                                            className="flex gap-3 p-3 hover:bg-primary-50/30 transition-colors cursor-pointer text-left"
+                                                        >
+                                                            {notif.image ? (
+                                                                <img
+                                                                    src={mediaUrl(notif.image)}
+                                                                    alt=""
+                                                                    className="w-10 h-10 object-cover rounded-lg border border-gray-100 shrink-0"
+                                                                />
+                                                            ) : (
+                                                                <div className="w-10 h-10 bg-gray-50 rounded-lg border border-gray-100 flex items-center justify-center text-gray-400 shrink-0">
+                                                                    <FaBell className="w-4 h-4" />
+                                                                </div>
+                                                            )}
+                                                            <div className="min-w-0 flex-1">
+                                                                <div className="flex items-start justify-between gap-1">
+                                                                    <h4 className={`text-xs text-gray-800 truncate ${isUnread ? "font-bold" : "font-semibold"}`}>
+                                                                        {notif.title}
+                                                                    </h4>
+                                                                    {isUnread && <span className="w-2 h-2 rounded-full bg-primary-500 shrink-0 mt-1"></span>}
+                                                                </div>
+                                                                <p className="text-[11px] text-gray-450 line-clamp-2 mt-0.5">{notif.description}</p>
+                                                                <p className="text-[9px] text-gray-400 mt-1">
+                                                                    {new Date(notif.created_at).toLocaleDateString("bn-BD", {
+                                                                        month: 'short',
+                                                                        day: 'numeric'
+                                                                    })}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                })
+                                            )}
+                                        </div>
+                                    </div>
+                                </>
+                            )}
+                        </div>
+
                         {/* Login/Register / Dashboard */}
                         <div className="hidden lg:flex items-center gap-3 ml-4">
                             {isLoggedIn ? (
@@ -186,6 +324,86 @@ export default function Header() {
                                     <Link href="/register" prefetch={false} className="bg-primary-500 hover:bg-primary-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors shadow-sm">
                                         Register
                                     </Link>
+                                </>
+                            )}
+                        </div>
+
+                        {/* Mobile Notifications Bell */}
+                        <div className="relative mr-1 lg:hidden">
+                            <button
+                                onClick={handleToggleDropdown}
+                                className="relative p-2.5 text-gray-500 hover:text-primary-600 hover:bg-primary-50 rounded-xl transition-colors focus:outline-none"
+                                aria-label="Notifications"
+                            >
+                                <FaBell className="w-[18px] h-[18px]" />
+                                {unreadCount > 0 && (
+                                    <span className="absolute top-1.5 right-1.5 bg-red-500 text-white text-[8px] font-bold h-3.5 min-w-[14px] px-0.5 rounded-full flex items-center justify-center shadow-sm">
+                                        {unreadCount > 9 ? "9+" : unreadCount}
+                                    </span>
+                                )}
+                            </button>
+
+                            {/* Mobile Dropdown panel */}
+                            {showNotifications && (
+                                <>
+                                    <div className="fixed inset-0 z-[900]" onClick={() => setShowNotifications(false)} />
+                                    <div className="absolute right-0 mt-2 w-72 sm:w-80 bg-white rounded-2xl shadow-xl border border-gray-100 py-2.5 z-[910] overflow-hidden animate-fadeIn">
+                                        <div className="px-3 pb-1.5 border-b border-gray-50 flex items-center justify-between">
+                                            <h3 className="font-bold text-gray-800 text-xs flex items-center gap-1.5">
+                                                <FaBell className="text-primary-500 w-3.5 h-3.5" /> নোটিফিকেশন
+                                            </h3>
+                                            {unreadCount > 0 && (
+                                                <span className="text-[9px] bg-red-50 text-red-650 px-2 py-0.5 rounded-full font-semibold">
+                                                    {unreadCount}টি নতুন
+                                                </span>
+                                            )}
+                                        </div>
+
+                                        <div className="max-h-[280px] overflow-y-auto divide-y divide-gray-50">
+                                            {loadingNotifications && notifications.length === 0 ? (
+                                                <div className="flex items-center justify-center py-6">
+                                                    <FaSpinner className="w-4 h-4 text-primary-500 animate-spin" />
+                                                </div>
+                                            ) : notifications.length === 0 ? (
+                                                <p className="text-center text-xs text-gray-400 py-6">কোনো নোটিফিকেশন পাওয়া যায়নি</p>
+                                            ) : (
+                                                notifications.map((notif) => {
+                                                    const isUnread = !JSON.parse(localStorage.getItem("read_notification_ids") || "[]").includes(notif.id);
+                                                    return (
+                                                        <div
+                                                            key={notif.id}
+                                                            onClick={() => {
+                                                                setSelectedNotification(notif);
+                                                                setShowNotifications(false);
+                                                            }}
+                                                            className="flex gap-2.5 p-2.5 hover:bg-primary-50/30 transition-colors cursor-pointer text-left"
+                                                        >
+                                                            {notif.image ? (
+                                                                <img
+                                                                    src={mediaUrl(notif.image)}
+                                                                    alt=""
+                                                                    className="w-8 h-8 object-cover rounded-lg border border-gray-100 shrink-0"
+                                                                />
+                                                            ) : (
+                                                                <div className="w-8 h-8 bg-gray-50 rounded-lg border border-gray-100 flex items-center justify-center text-gray-400 shrink-0">
+                                                                    <FaBell className="w-3.5 h-3.5" />
+                                                                </div>
+                                                            )}
+                                                            <div className="min-w-0 flex-1">
+                                                                <div className="flex items-start justify-between gap-1">
+                                                                    <h4 className={`text-xs text-gray-800 truncate ${isUnread ? "font-bold" : "font-semibold"}`}>
+                                                                        {notif.title}
+                                                                    </h4>
+                                                                    {isUnread && <span className="w-1.5 h-1.5 rounded-full bg-primary-500 shrink-0 mt-1"></span>}
+                                                                </div>
+                                                                <p className="text-[10px] text-gray-400 truncate mt-0.5">{notif.description}</p>
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                })
+                                            )}
+                                        </div>
+                                    </div>
                                 </>
                             )}
                         </div>
@@ -373,6 +591,49 @@ export default function Header() {
 
                 </div>
             </div>
+
+            {/* Notification Details Modal */}
+            {selectedNotification && (
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 z-[9999] animate-fadeIn">
+                    <div className="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border border-gray-100 flex flex-col max-h-[90vh] text-left">
+                        <div className="p-5 border-b border-gray-100 flex items-center justify-between">
+                            <h3 className="font-bold text-gray-800 text-sm flex items-center gap-2">
+                                <FaBell className="text-primary-500" />
+                                ঘোষণা / নোটিফিকেশন
+                            </h3>
+                            <button
+                                onClick={() => setSelectedNotification(null)}
+                                className="w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-450 hover:text-gray-600 transition-colors"
+                            >
+                                ✕
+                            </button>
+                        </div>
+                        <div className="p-6 space-y-4 overflow-y-auto">
+                            {selectedNotification.image && (
+                                <img
+                                    src={mediaUrl(selectedNotification.image)}
+                                    alt=""
+                                    className="w-full max-h-60 object-cover rounded-2xl border border-gray-100 shadow-sm"
+                                />
+                            )}
+                            <h4 className="font-bold text-base text-gray-905 leading-tight">{selectedNotification.title}</h4>
+                            <p className="text-[10px] text-gray-400">
+                                {new Date(selectedNotification.created_at).toLocaleString("bn-BD", {
+                                    year: "numeric",
+                                    month: "long",
+                                    day: "numeric",
+                                    hour: "2-digit",
+                                    minute: "2-digit"
+                                })}
+                            </p>
+                            <div className="h-[1px] bg-gray-100" />
+                            <p className="text-xs text-gray-600 leading-relaxed whitespace-pre-line">
+                                {selectedNotification.description}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            )}
         </header>
     );
 }
