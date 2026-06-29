@@ -345,7 +345,6 @@ export default function Header() {
                                 )}
                             </button>
 
-                            /* Mobile Dropdown panel */
                             {showNotifications && (
                                 <>
                                     <div className="fixed inset-0 z-[900]" onClick={() => setShowNotifications(false)} />
