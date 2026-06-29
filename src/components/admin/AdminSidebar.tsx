@@ -75,7 +75,7 @@ const menuItems: MenuItem[] = [
             { title: "লোগো", href: "/admin/appearance/logo" },
         ],
     },
-    { title: "পুশ নোটিফিকেশন", href: "/admin/notifications", icon: <FaBell className="w-4 h-4" /> },
+    { title: "ঘোষণা ও নোটিশ", href: "/admin/notifications", icon: <FaBell className="w-4 h-4" /> },
     { title: "সেটিংস", href: "/admin/settings", icon: <FaCog className="w-4 h-4" /> },
 ];
 

@@ -6,6 +6,7 @@ import { FaUser, FaBell, FaSpinner } from "react-icons/fa";
 import { fetchSiteSettings, SiteSettings } from "@/lib/appearance";
 import { mediaUrl } from "@/lib/media";
 import { API_URL } from "@/lib/api";
+import { useRouter } from "next/navigation";
 
 const menuItems: {
     title: string;
@@ -41,6 +42,7 @@ const menuItems: {
     ];
 
 export default function Header() {
+    const router = useRouter();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [openDropdown, setOpenDropdown] = useState<string | null>(null);
     const [openMobileSubmenu, setOpenMobileSubmenu] = useState<string | null>(null);
@@ -255,8 +257,8 @@ export default function Header() {
                                                         <div
                                                             key={notif.id}
                                                             onClick={() => {
-                                                                setSelectedNotification(notif);
                                                                 setShowNotifications(false);
+                                                                router.push(`/announcements/${notif.id}`);
                                                             }}
                                                             className="flex gap-3 p-3 hover:bg-primary-50/30 transition-colors cursor-pointer text-left"
                                                         >
@@ -373,8 +375,8 @@ export default function Header() {
                                                         <div
                                                             key={notif.id}
                                                             onClick={() => {
-                                                                setSelectedNotification(notif);
                                                                 setShowNotifications(false);
+                                                                router.push(`/announcements/${notif.id}`);
                                                             }}
                                                             className="flex gap-2.5 p-2.5 hover:bg-primary-50/30 transition-colors cursor-pointer text-left"
                                                         >
