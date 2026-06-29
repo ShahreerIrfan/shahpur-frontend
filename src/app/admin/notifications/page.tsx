@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { FaBell, FaPlus, FaTrash, FaSpinner, FaTimes, FaImage, FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import { useAuth } from "@/lib/auth-context";
 import { mediaUrl } from "@/lib/media";
+import { authFetch } from "@/lib/api";
 
 interface Announcement {
     id: number;
@@ -22,7 +22,6 @@ interface Announcement {
 }
 
 export default function AdminNotificationsPage() {
-    const { authFetch } = useAuth();
     const [announcements, setAnnouncements] = useState<Announcement[]>([]);
     const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(1);
