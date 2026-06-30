@@ -128,93 +128,78 @@ export default function BooksArchivePage() {
               </p>
             </div>
 
-            <div className="bg-[#140b05] border-[12px] md:border-[20px] border-[#382315] rounded-3xl shadow-[0_30px_70px_rgba(0,0,0,0.85),_inset_0_4px_20px_rgba(0,0,0,0.6)] p-0.5 relative overflow-hidden">
-              {/* Vertical wood sides/pillars visual effect */}
-              <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-[#25150c] shadow-[inset_-1px_0_3px_rgba(0,0,0,0.8)] z-30"></div>
-              <div className="absolute right-0 top-0 bottom-0 w-1.5 bg-[#25150c] shadow-[inset_1px_0_3px_rgba(0,0,0,0.8)] z-30"></div>
-              
-              {/* Shelf inner background */}
-              <div className="bg-[#1c120c] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#2a1b11] via-[#150d08] to-[#0d0704] p-4 md:p-8">
-                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-x-0 gap-y-16">
-                  {paddedBooks.map((book) => {
-                    const isEmptyShelf = book.id.toString().startsWith("empty-shelf");
-                    
-                    if (isEmptyShelf) {
-                      return (
-                        <div key={book.id} className="flex flex-col justify-end items-center h-full relative pointer-events-none select-none">
-                          {/* Empty shelf space above */}
-                          <div className="px-3 md:px-5 pb-0 flex flex-col items-center justify-end relative h-full w-full min-h-[160px] md:min-h-[210px]">
-                            {/* Empty space */}
-                          </div>
-
-                          {/* Shelf Top Face */}
-                          <div className="w-full h-4 bg-gradient-to-r from-[#442c1e] via-[#563826] to-[#442c1e] border-t border-[#ffffff15] relative z-10 shadow-[inset_0_1px_0_rgba(255,255,255,0.12),_0_2px_4px_rgba(0,0,0,0.5)]"></div>
-
-                          {/* Shelf Front Face */}
-                          <div className="w-full px-2 py-4 bg-gradient-to-b from-[#2e1d13] to-[#1e130c] border-t border-[#603e29] shadow-[0_8px_16px_rgba(0,0,0,0.6)] min-h-[140px] relative z-10">
-                            {/* Drop shadow overlay cast to the shelf below */}
-                            <div className="absolute left-0 right-0 top-full h-6 bg-gradient-to-b from-black/60 to-transparent pointer-events-none z-0"></div>
-                          </div>
-                        </div>
-                      );
-                    }
-
+            <div className="bg-gray-50/50 p-4 md:p-6 rounded-3xl border border-gray-100 shadow-sm">
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6">
+                {paddedBooks.map((book) => {
+                  const isEmptyShelf = book.id.toString().startsWith("empty-shelf");
+                  
+                  if (isEmptyShelf) {
                     return (
-                      <Link key={book.id} href={`/books/${book.id}`} className="group flex flex-col justify-end items-center h-full relative">
+                      <div key={book.id} className="flex flex-col justify-end items-center bg-[#fcfcfa]/60 rounded-2xl border border-gray-100/75 shadow-sm opacity-40 overflow-hidden h-full relative pointer-events-none select-none">
+                        {/* Empty space */}
+                        <div className="px-3 md:px-5 pb-0 flex flex-col items-center justify-end relative h-full w-full min-h-[160px] md:min-h-[190px]"></div>
                         
-                        {/* Upright Standing Book Cover */}
-                        <div className="px-3 md:px-5 pb-0 flex flex-col items-center justify-end relative h-full w-full">
-                          <div className="relative w-[110px] h-[160px] md:w-[145px] md:h-[210px] transition-all duration-300 group-hover:-translate-y-3.5 group-hover:scale-102 flex-shrink-0 mb-[-1px] rounded-r-xl rounded-l-md overflow-hidden shadow-[8px_8px_20px_rgba(0,0,0,0.65),_-1px_0_4px_rgba(255,255,255,0.15)_inset] bg-[#2d1b10] border-y border-r border-[#ffffff15]">
-                            {book.cover_image ? (
-                              <Image
-                                src={mediaUrl(book.cover_image)}
-                                alt={book.title}
-                                fill
-                                className="object-cover"
-                                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                              />
-                            ) : (
-                              <div className="w-full h-full flex flex-col items-center justify-center p-4 text-center bg-gradient-to-br from-[#4d3222] to-[#241710]">
-                                <FaFilePdf className="w-10 h-10 md:w-14 md:h-14 text-yellow-500/60 mb-2" />
-                                <span className="text-[10px] md:text-xs text-white/70 font-bold line-clamp-2 px-1">{book.title}</span>
-                              </div>
-                            )}
-                            {/* Book spine line overlay for 3D realism */}
-                            <div className="absolute left-0 top-0 bottom-0 w-3 bg-gradient-to-r from-black/45 via-white/10 to-transparent z-10 rounded-l-md"></div>
-                            {/* Gloss overlay */}
-                            <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-white/10 z-10 pointer-events-none"></div>
-                          </div>
-                        </div>
-
                         {/* Shelf Top Face */}
-                        <div className="w-full h-4 bg-gradient-to-r from-[#442c1e] via-[#563826] to-[#442c1e] border-t border-[#ffffff15] relative z-10 shadow-[inset_0_1px_0_rgba(255,255,255,0.12),_0_2px_4px_rgba(0,0,0,0.5)]"></div>
-
-                        {/* Shelf Front Face & Details */}
-                        <div className="w-full px-2 py-4 bg-gradient-to-b from-[#2e1d13] to-[#1e130c] border-t border-[#603e29] text-center shadow-[0_8px_16px_rgba(0,0,0,0.6)] flex flex-col justify-between min-h-[140px] relative z-10">
-                          <div className="space-y-1">
-                            <h3 className="font-bold text-white text-xs md:text-sm leading-snug group-hover:text-yellow-400 transition-colors line-clamp-2 px-1">
-                              {book.title}
-                            </h3>
-                            {book.author_name && (
-                              <p className="text-[10px] md:text-xs font-semibold text-[#c0b0a5] line-clamp-1">
-                                {book.author_name}
-                              </p>
-                            )}
-                          </div>
-                          <div className="mt-3">
-                            <span className="inline-block px-3.5 py-1 text-[10px] md:text-xs font-bold text-white/90 border border-white/20 hover:border-white/50 hover:bg-white/5 rounded transition-all">
-                              বিস্তারিত দেখুন
-                            </span>
-                          </div>
-                          
-                          {/* Drop shadow overlay cast to the shelf below */}
-                          <div className="absolute left-0 right-0 top-full h-6 bg-gradient-to-b from-black/60 to-transparent pointer-events-none z-0"></div>
-                        </div>
-
-                      </Link>
+                        <div className="w-full h-3.5 bg-gradient-to-r from-[#e5d5c5] via-[#f3e6d8] to-[#e5d5c5] border-t border-white/50 relative z-10 shadow-[inset_0_1px_0_rgba(255,255,255,0.3)]"></div>
+                        
+                        {/* Shelf Front Face */}
+                        <div className="w-full bg-gradient-to-b from-[#034838] to-[#023126] border-t-2 border-[#d4af37]/60 min-h-[130px] relative z-10"></div>
+                      </div>
                     );
-                  })}
-                </div>
+                  }
+
+                  return (
+                    <Link key={book.id} href={`/books/${book.id}`} className="group flex flex-col justify-end items-center bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-primary-300 hover:-translate-y-1.5 transition-all duration-300 overflow-hidden h-full relative">
+                      
+                      {/* Upright Standing Book Cover */}
+                      <div className="px-3 md:px-5 pt-5 pb-3 flex flex-col items-center justify-end relative h-full w-full min-h-[160px] md:min-h-[190px]">
+                        <div className="relative w-[90px] h-[130px] md:w-[110px] md:h-[160px] transition-transform duration-300 group-hover:scale-105 flex-shrink-0 mb-[-1px] rounded-r-lg rounded-l-sm overflow-hidden shadow-[5px_5px_12px_rgba(0,0,0,0.3),_-1px_0_3px_rgba(255,255,255,0.15)_inset] bg-[#2d1b10] border-y border-r border-[#ffffff15]">
+                          {book.cover_image ? (
+                            <Image
+                              src={mediaUrl(book.cover_image)}
+                              alt={book.title}
+                              fill
+                              className="object-cover"
+                              sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex flex-col items-center justify-center p-3 text-center bg-gradient-to-br from-primary-900 to-primary-950">
+                              <FaFilePdf className="w-8 h-8 text-gold-light/60 mb-2" />
+                              <span className="text-[9px] md:text-[10px] text-white/70 font-bold line-clamp-2 px-1">{book.title}</span>
+                            </div>
+                          )}
+                          {/* Book spine line overlay for 3D realism */}
+                          <div className="absolute left-0 top-0 bottom-0 w-2.5 bg-gradient-to-r from-black/40 via-white/15 to-transparent z-10 rounded-l-sm"></div>
+                          {/* Gloss overlay */}
+                          <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-white/10 z-10 pointer-events-none"></div>
+                        </div>
+                      </div>
+
+                      {/* Shelf Top Face */}
+                      <div className="w-full h-3.5 bg-gradient-to-r from-[#e5d5c5] via-[#f3e6d8] to-[#e5d5c5] border-t border-white/50 relative z-10 shadow-[inset_0_1px_0_rgba(255,255,255,0.3),_0_1px_2px_rgba(0,0,0,0.05)]"></div>
+
+                      {/* Shelf Front Face & Details */}
+                      <div className="w-full px-2 py-4 bg-gradient-to-b from-[#034838] to-[#023126] border-t-2 border-[#d4af37] text-center flex flex-col justify-between min-h-[130px] relative z-10">
+                        <div className="space-y-1">
+                          <h3 className="font-bold text-white text-xs md:text-sm leading-snug group-hover:text-gold-light transition-colors line-clamp-2 px-1">
+                            {book.title}
+                          </h3>
+                          {book.author_name && (
+                            <p className="text-[10px] md:text-xs font-semibold text-emerald-100/70 line-clamp-1">
+                              {book.author_name}
+                            </p>
+                          )}
+                        </div>
+                        <div className="mt-3">
+                          <span className="inline-block px-3 py-1 text-[10px] md:text-xs font-bold text-white/90 border border-[#d4af37]/35 hover:border-gold-light hover:bg-white/5 rounded transition-all">
+                            বিস্তারিত দেখুন
+                          </span>
+                        </div>
+                      </div>
+
+                    </Link>
+                  );
+                })}
               </div>
             </div>
             {totalPages > 1 && (
